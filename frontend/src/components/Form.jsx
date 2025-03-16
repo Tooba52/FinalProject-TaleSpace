@@ -8,6 +8,9 @@ import LoadingIndicator from "./LoadingIndicator";
 function Form({ route, method }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [dateOfBirth, setDateOfBirth] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -17,7 +20,16 @@ function Form({ route, method }) {
     setLoading(true);
     e.preventDefault();
 
-    const payload = { email, password };
+    const payload =
+      method === "login"
+        ? { email, password } // Only include these for login
+        : {
+            email,
+            password,
+            first_name: firstName,
+            last_name: lastName,
+            date_of_birth: dateOfBirth,
+          }; // Include full data for registration
 
     try {
       const res = await api.post(route, payload);
@@ -38,6 +50,33 @@ function Form({ route, method }) {
   return (
     <form onSubmit={handleSubmit} className="form-container">
       <h1>{name}</h1>
+
+      {name === "Register" && (
+        <>
+          <input
+            className="form-input"
+            type="text"
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+            placeholder="First Name"
+          />
+          <input
+            className="form-input"
+            type="text"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
+            placeholder="Last Name"
+          />
+          <input
+            className="form-input"
+            type="date"
+            value={dateOfBirth}
+            onChange={(e) => setDateOfBirth(e.target.value)}
+            placeholder="Date of Birth"
+          />
+        </>
+      )}
+
       <input
         className="form-input"
         type="text"
@@ -52,6 +91,7 @@ function Form({ route, method }) {
         onChange={(e) => setPassword(e.target.value)}
         placeholder="Password"
       />
+
       {loading && <LoadingIndicator />}
       <button className="form-button" type="submit">
         {name}
