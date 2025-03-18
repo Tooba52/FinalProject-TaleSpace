@@ -34,6 +34,9 @@ function Form({ route, method }) {
   // Determine form title based on method
   const name = method === "login" ? "Login" : "Register";
 
+  const formTitle =
+    method === "login" ? "Welcome Back!" : "Welcome To TaleSpace!";
+
   // Form submission logic
   const handleSubmit = async (e) => {
     setLoading(true);
@@ -91,46 +94,61 @@ function Form({ route, method }) {
   return (
     <div className="form-layout">
       <form onSubmit={handleSubmit} className="form-container">
-        <h1>{name}</h1>
+        <h1>{formTitle}</h1>
 
         {/* Registration fields */}
         {name === "Register" && (
           <>
+            <label htmlFor="firstName" className="form-label">
+              First Name
+            </label>
             <input
               className="form-input"
               type="text"
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
-              placeholder="First Name"
+              placeholder=""
             />
+            <label htmlFor="lastName" className="form-label">
+              Last Name
+            </label>
             <input
               className="form-input"
               type="text"
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
-              placeholder="Last Name"
+              placeholder=""
             />
+            <label htmlFor="dob" className="form-label">
+              Date of Birth
+            </label>
             <input
-              className="form-input"
+              className="form-input dob-input"
+              id="dob"
               type="date"
               value={dateOfBirth}
               onChange={(e) => setDateOfBirth(e.target.value)}
-              placeholder="Date of Birth"
             />
           </>
         )}
 
         {/* Email input */}
+        <label htmlFor="email" className="form-label">
+          Email
+        </label>
         <input
           className="form-input"
           type="text"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          placeholder="Email"
+          placeholder=""
         />
 
         {/* Password input with toggle visibility */}
         <div className="password-container">
+          <label htmlFor="password" className="form-label">
+            Password
+          </label>
           <input
             className="form-input"
             type={showPassword ? "text" : "password"}
@@ -139,7 +157,7 @@ function Form({ route, method }) {
               setPassword(e.target.value);
               setIsPasswordStarted(true);
             }}
-            placeholder="Password"
+            placeholder=""
           />
           <span
             className="password-toggle"

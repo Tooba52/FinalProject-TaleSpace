@@ -2,12 +2,11 @@
 .form-layout {
   display: flex;
   width: 100%;
-  background-color: #ffffff;
 }
 
 h1 {
   text-align: left;
-  color: #8b8b8b;
+  color: #535353;
   font-size: 130%;
   padding-bottom: 10%;
 }
@@ -18,18 +17,21 @@ h1 {
   max-width: 320px; /* Reduced width for a more compact look */
   display: flex;
   flex-direction: column;
-  background-color: #ffffff;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
   padding-top: 10px; /* Reduced padding at the top */
   padding-bottom: 10px; /* Reduced padding at the bottom */
+  box-shadow: none; /* Removes any shadow */
 }
 
+.form-label {
+  display: block;
+  color: #808080;
+  font-size: 0.9rem;
+}
 /* Input field styling */
 .form-input {
   width: 100%;
-  padding: 12px;
-  margin-bottom: 15px;
+  padding: 10px;
+  margin-bottom: 5px;
   border: 1px solid #f5f5f5;
   border-radius: 4px;
   background-color: #f5f5f5;
@@ -37,6 +39,7 @@ h1 {
 
 /* Button styling */
 .form-button {
+  margin-top: 5%;
   width: 100%;
   padding: 12px;
   background-color: #6495ed;
@@ -48,7 +51,7 @@ h1 {
 }
 
 .form-button:hover {
-  background-color: #6495ed;
+  background-color: #537bc5;
 }
 
 /* Password visibility toggle */
@@ -60,7 +63,7 @@ h1 {
 .password-toggle {
   position: absolute;
   right: 15px;
-  top: 50%;
+  top: 70%;
   transform: translateY(-50%);
   cursor: pointer;
   color: #666;
@@ -147,9 +150,22 @@ input:checked + .slider:before {
 
 .forgot-password a:hover {
   text-decoration: underline;
+  color: #537bc5;
 }
 
 .links {
   text-align: center;
   color: #5f5f5f;
+}
+
+.dob-input {
+  color: #5f5f5f; /* Softer text color */
+  cursor: pointer; /* Emphasizes it's clickable */
+}
+
+.dob-input::-webkit-calendar-picker-indicator {
+  filter: invert(36%) sepia(60%) saturate(400%) hue-rotate(200deg);
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
 }
