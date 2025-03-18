@@ -1,0 +1,68 @@
+/* Overall page layout with header and content sections */
+.page-container {
+  display: flex;
+  flex-direction: column;
+  height: 97vh;
+}
+
+/* Header styling for logo and text */
+.header {
+  display: flex;
+  align-items: center;
+  padding: 10px 10px;
+  background-color: #ffffff;
+}
+
+.logo-section {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  width: 60px;
+  height: auto;
+  margin-right: 10px;
+}
+
+.logo-text {
+  color: #0192cc;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+/* Main content layout - form and image split */
+.content-container {
+  display: flex;
+  flex: 1;
+}
+
+.image-section {
+  flex: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffffff;
+}
+
+.auth-image {
+  max-width: 80%;
+  max-height: 90%;
+  object-fit: contain;
+}
+
+.form-section {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffffff;
+  border-left: 3px solid #ececec; /* Added border to separate form and image */
+}
+
+.form-container {
+  width: 100%;
+  max-width: 320px; /* Reduced width for a more compact look */
+  padding: 40px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}

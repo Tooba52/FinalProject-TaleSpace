@@ -1,38 +1,45 @@
 import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import api from "../api";
-import { useNavigate } from "react-router-dom";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
 import "../styles/Form.css";
 import LoadingIndicator from "./LoadingIndicator";
 import zxcvbn from "zxcvbn";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
+// Password strength component to indicate strength levels
 function PasswordStrengthIndicator({ password }) {
   const score = zxcvbn(password).score;
   const strengthLevels = ["Weak", "Fair", "Good", "Strong", "Very Strong"];
 
-  return password ? ( // Only show if password exists
+  return password ? (
     <div className={`strength-meter strength-${score}`}>
       {strengthLevels[score]}
     </div>
-  ) : null; // Hide meter if no password is entered
+  ) : null;
 }
 
 function Form({ route, method }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState("");
   const [loading, setLoading] = useState(false);
-  const [isPasswordStarted, setIsPasswordStarted] = useState(false); // New state for tracking password entry
+  const [isPasswordStarted, setIsPasswordStarted] = useState(false);
   const navigate = useNavigate();
 
+  // Determine form title based on method
   const name = method === "login" ? "Login" : "Register";
 
+  // Form submission logic
   const handleSubmit = async (e) => {
     setLoading(true);
     e.preventDefault();
 
+    // Password validation check
     const passwordRequirements =
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
 
@@ -45,15 +52,16 @@ function Form({ route, method }) {
 
     const payload =
       method === "login"
-        ? { email, password } // Only include these for login
+        ? { email, password }
         : {
             email,
             password,
             first_name: firstName,
             last_name: lastName,
             date_of_birth: dateOfBirth,
-          }; // Include full data for registration
+          };
 
+    // API request handling
     try {
       const res = await api.post(route, payload);
       if (method === "login") {
@@ -64,70 +72,127 @@ function Form({ route, method }) {
         navigate("/login");
       }
     } catch (error) {
-      alert(error.response?.data?.detail || "An error occurred");
-    } finally {
-      setLoading(false);
+      if (error.response) {
+        const errorData = error.response.data;
+
+        if (errorData.email) {
+          alert(errorData.email[0]); // Displays "Email already exists" or similar messages
+        } else if (errorData.detail) {
+          alert(errorData.detail); // For general API error messages
+        } else {
+          alert("An unknown error occurred. Please try again.");
+        }
+      } else {
+        alert("Network error or no response from server.");
+      }
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="form-container">
-      <h1>{name}</h1>
+    <div className="form-layout">
+      <form onSubmit={handleSubmit} className="form-container">
+        <h1>{name}</h1>
 
-      {name === "Register" && (
-        <>
+        {/* Registration fields */}
+        {name === "Register" && (
+          <>
+            <input
+              className="form-input"
+              type="text"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              placeholder="First Name"
+            />
+            <input
+              className="form-input"
+              type="text"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              placeholder="Last Name"
+            />
+            <input
+              className="form-input"
+              type="date"
+              value={dateOfBirth}
+              onChange={(e) => setDateOfBirth(e.target.value)}
+              placeholder="Date of Birth"
+            />
+          </>
+        )}
+
+        {/* Email input */}
+        <input
+          className="form-input"
+          type="text"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Email"
+        />
+
+        {/* Password input with toggle visibility */}
+        <div className="password-container">
           <input
             className="form-input"
-            type="text"
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
-            placeholder="First Name"
+            type={showPassword ? "text" : "password"}
+            value={password}
+            onChange={(e) => {
+              setPassword(e.target.value);
+              setIsPasswordStarted(true);
+            }}
+            placeholder="Password"
           />
-          <input
-            className="form-input"
-            type="text"
-            value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
-            placeholder="Last Name"
-          />
-          <input
-            className="form-input"
-            type="date"
-            value={dateOfBirth}
-            onChange={(e) => setDateOfBirth(e.target.value)}
-            placeholder="Date of Birth"
-          />
-        </>
-      )}
+          <span
+            className="password-toggle"
+            onClick={() => setShowPassword(!showPassword)}
+          >
+            <FontAwesomeIcon icon={showPassword ? faEye : faEyeSlash} />
+          </span>
+        </div>
 
-      <input
-        className="form-input"
-        type="text"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder="Email"
-      />
-      <input
-        className="form-input"
-        type="password"
-        value={password}
-        onChange={(e) => {
-          setPassword(e.target.value);
-          setIsPasswordStarted(true); // Activate meter only after typing starts
-        }}
-        placeholder="Password"
-      />
+        {/* Password strength indicator for registration */}
+        {name === "Register" && isPasswordStarted && (
+          <PasswordStrengthIndicator password={password} />
+        )}
 
-      {/* Show the strength meter ONLY for registration and after password entry begins */}
-      {name === "Register" && isPasswordStarted && (
-        <PasswordStrengthIndicator password={password} />
-      )}
+        {/* "Remember me" and "Forgot password?" for login */}
+        {name === "Login" && (
+          <div className="options-container">
+            <div className="remember-me">
+              <label htmlFor="rememberMe">
+                Remember me
+                <label className="toggle-switch">
+                  <input type="checkbox" id="rememberMe" />
+                  <span className="slider"></span>
+                </label>
+              </label>
+            </div>
 
-      {loading && <LoadingIndicator />}
-      <button className="form-button" type="submit">
-        {name}
-      </button>
-    </form>
+            <div className="forgot-password">
+              <Link to="/forgot-password">Forgot password?</Link>
+            </div>
+          </div>
+        )}
+
+        {loading && <LoadingIndicator />}
+
+        {/* Form submit button */}
+        <button className="form-button" type="submit">
+          {name}
+        </button>
+
+        {/* Account navigation links */}
+        {name === "Login" && (
+          <p className="links">
+            Don't have an account? <Link to="/register">Sign up now</Link>
+          </p>
+        )}
+        {name === "Register" && (
+          <p className="links">
+            Already have an account? <Link to="/login">Login</Link>
+          </p>
+        )}
+      </form>
+    </div>
   );
 }
 

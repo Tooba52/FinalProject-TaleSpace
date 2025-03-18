@@ -1,32 +1,46 @@
+/* Form layout container */
+.form-layout {
+  display: flex;
+  width: 100%;
+  background-color: #ffffff;
+}
+
+h1 {
+  text-align: left;
+  color: #8b8b8b;
+  font-size: 130%;
+  padding-bottom: 10%;
+}
+
+/* Form container styling */
 .form-container {
+  flex: 1;
+  max-width: 320px; /* Reduced width for a more compact look */
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  margin: 50px auto;
-  padding: 20px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  max-width: 400px;
+  padding-top: 10px; /* Reduced padding at the top */
+  padding-bottom: 10px; /* Reduced padding at the bottom */
 }
 
-/*agfrfrain?*/
-
+/* Input field styling */
 .form-input {
-  width: 90%;
-  padding: 10px;
-  margin: 10px 0;
-  border: 1px solid #ccc;
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border: 1px solid #f5f5f5;
   border-radius: 4px;
-  box-sizing: border-box;
+  background-color: #f5f5f5;
 }
 
+/* Button styling */
 .form-button {
-  width: 95%;
-  padding: 10px;
-  margin: 20px 0;
-  background-color: #007bff;
-  color: white;
+  width: 100%;
+  padding: 12px;
+  background-color: #6495ed;
+  color: #fff;
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -34,5 +48,108 @@
 }
 
 .form-button:hover {
-  background-color: #0056b3;
+  background-color: #6495ed;
+}
+
+/* Password visibility toggle */
+.password-container {
+  position: relative;
+  width: 100%;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #666;
+  font-size: 1.2rem;
+}
+
+.password-toggle:hover {
+  color: #6495ed;
+}
+
+/* Remember me, toggle switch, and forgot password alignment */
+.options-container {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  align-items: center; /* Ensures everything aligns vertically */
+  margin-bottom: 15px;
+}
+
+.remember-me label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-align: left;
+  white-space: nowrap;
+  font-weight: normal; /* Remove bold styling */
+  font-size: 90%;
+  color: #5f5f5f;
+}
+
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 34px;
+  height: 20px;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  border-radius: 20px;
+  transition: 0.4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 14px;
+  width: 14px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  border-radius: 50%;
+  transition: 0.4s;
+}
+
+input:checked + .slider {
+  background-color: #6495ed;
+}
+
+input:checked + .slider:before {
+  transform: translateX(14px);
+}
+
+.forgot-password {
+  margin-left: auto;
+}
+
+.forgot-password a {
+  color: #6495ed;
+  text-decoration: none;
+}
+
+.forgot-password a:hover {
+  text-decoration: underline;
+}
+
+.links {
+  text-align: center;
+  color: #5f5f5f;
 }
