@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from .models import WebsiteUser  
-from .models import Note
+from .models import WebsiteUser, Note, Book
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -29,3 +28,8 @@ class NoteSerializer(serializers.ModelSerializer):
         extra_kwargs = {"author": {"read_only": True}}
 
 
+class BookSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Book
+        fields = ["id", "title", "description", "genres", "language", "mature", "cover_photo", "author", "created_at"]
+        extra_kwargs = {"author": {"read_only": True}}

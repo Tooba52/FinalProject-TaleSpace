@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import api from "../api";
 import Notes from "../components/Notes";
-import "../styles/Home.css"
+import "../styles/Home.css";
 
 function Home() {
   const [notes, setNotes] = useState([]);
@@ -48,12 +49,20 @@ function Home() {
 
   return (
     <div>
+      {/* Link to the CreateBook Page */}
+      <div style={{ margin: "20px 0" }}>
+        <Link to="/create-book" className="create-book-link">
+          Create a New Book
+        </Link>
+      </div>
+
       <div>
         <h2>Notes</h2>
         {notes.map((note) => (
           <Notes note={note} onDelete={deleteNote} key={note.id} />
         ))}
       </div>
+
       <h2>Create a Note</h2>
       <form onSubmit={createNote}>
         <label htmlFor="title">Title:</label>

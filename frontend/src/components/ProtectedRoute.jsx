@@ -13,6 +13,12 @@ function ProtectedRoute({ children }) {
 
   const refreshToken = async () => {
     const refreshToken = localStorage.getItem(REFRESH_TOKEN);
+    if (!refreshToken) {
+      localStorage.clear();
+      setIsAuthorized(false);
+      return;
+    }
+
     try {
       const res = await api.post("/api/token/refresh/", {
         refresh: refreshToken,
@@ -21,10 +27,12 @@ function ProtectedRoute({ children }) {
         localStorage.setItem(ACCESS_TOKEN, res.data.access);
         setIsAuthorized(true);
       } else {
+        localStorage.clear();
         setIsAuthorized(false);
       }
     } catch (error) {
-      console.log(error);
+      console.log("Refresh token expired, logging out.");
+      localStorage.clear();
       setIsAuthorized(false);
     }
   };

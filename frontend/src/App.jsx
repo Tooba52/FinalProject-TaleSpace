@@ -5,6 +5,7 @@ import Register from "./pages/Register";
 import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
+import CreateBook from "./pages/CreateBook";
 
 function Logout() {
   localStorage.clear();
@@ -32,6 +33,7 @@ function App() {
         <Route path="/logout" element={<Logout />} />
         <Route path="/register" element={<RegisterAndLogout />} />
         <Route path="*" element={<NotFound />}></Route>
+        <Route path="/create-book" element={<CreateBook />} />
       </Routes>
     </BrowserRouter>
   );
