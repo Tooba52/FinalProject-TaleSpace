@@ -1,58 +1,45 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import api from "../api";
-import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
-import "../styles/Form.css";
-import LoadingIndicator from "./LoadingIndicator";
-import zxcvbn from "zxcvbn";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
-
-// Password strength component to indicate strength levels
-function PasswordStrengthIndicator({ password }) {
-  const score = zxcvbn(password).score;
-  const strengthLevels = ["Weak", "Fair", "Good", "Strong", "Very Strong"];
-
-  return password ? (
-    <div className={`strength-meter strength-${score}`}>
-      {strengthLevels[score]}
-    </div>
-  ) : null;
-}
+import { useState } from "react"; // Import React's useState hook
+import { Link, useNavigate } from "react-router-dom"; // Import Link for navigation and useNavigate for programmatic navigation
+import api from "../api"; // Import the API instance to make requests
+import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants"; // Import constants for token storage
+import "../styles/Form.css"; // Import CSS styles
+import LoadingIndicator from "./LoadingIndicator"; // Import LoadingIndicator component
+import { validatePassword } from "./utils"; // Import the password validation utility
+import PasswordStrengthIndicator from "./PasswordStrengthIndicator"; // Import PasswordStrengthIndicator component
+import PasswordField from "./PasswordField"; // Import PasswordField component
+import FormFields from "./FormFields"; // Import FormFields component to render additional user info for registration
 
 function Form({ route, method }) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [dateOfBirth, setDateOfBirth] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [isPasswordStarted, setIsPasswordStarted] = useState(false);
-  const navigate = useNavigate();
+  // State variables to manage form inputs
+  const [email, setEmail] = useState(""); // For email input field
+  const [password, setPassword] = useState(""); // For password input field
+  const [showPassword, setShowPassword] = useState(false); // Toggle for password visibility
+  const [firstName, setFirstName] = useState(""); // For first name input (only for registration)
+  const [lastName, setLastName] = useState(""); // For last name input (only for registration)
+  const [dateOfBirth, setDateOfBirth] = useState(""); // For date of birth input (only for registration)
+  const [loading, setLoading] = useState(false); // Loading state for API requests
+  const [isPasswordStarted, setIsPasswordStarted] = useState(false); // To track if password field has been modified
+  const navigate = useNavigate(); // Hook to programmatically navigate to different routes
 
-  // Determine form title based on method
+  // Determine form title based on method (login or register)
   const name = method === "login" ? "Login" : "Register";
-
   const formTitle =
     method === "login" ? "Welcome Back!" : "Welcome To TaleSpace!";
 
-  // Form submission logic
+  // Handle form submission
   const handleSubmit = async (e) => {
-    setLoading(true);
-    e.preventDefault();
+    setLoading(true); // Set loading to true when the form is submitted
+    e.preventDefault(); // Prevent default form submission behavior
 
-    // Password validation check
-    const passwordRequirements =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
-
-    if (!passwordRequirements.test(password)) {
+    // Password validation check using the imported utility function
+    if (!validatePassword(password)) {
       alert(
         "Password must be at least 8 characters long and include uppercase, lowercase, a number, and a special character."
       );
       return;
     }
 
+    // Create the payload based on the method (login or register)
     const payload =
       method === "login"
         ? { email, password }
@@ -64,22 +51,22 @@ function Form({ route, method }) {
             date_of_birth: dateOfBirth,
           };
 
-    // API request handling
+    // Make the API request
     try {
-      const res = await api.post(route, payload);
+      const res = await api.post(route, payload); // Send request with appropriate payload
       if (method === "login") {
-        localStorage.setItem(ACCESS_TOKEN, res.data.access);
-        localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
-        navigate("/");
+        localStorage.setItem(ACCESS_TOKEN, res.data.access); // Store the access token on successful login
+        localStorage.setItem(REFRESH_TOKEN, res.data.refresh); // Store the refresh token
+        navigate("/"); // Redirect to the home page after login
       } else {
-        navigate("/login");
+        navigate("/login"); // Redirect to the login page after successful registration
       }
     } catch (error) {
+      // Handle error if API request fails
       if (error.response) {
         const errorData = error.response.data;
-
         if (errorData.email) {
-          alert(errorData.email[0]); // Displays "Email already exists" or similar messages
+          alert(errorData.email[0]); // If email already exists, display the error message
         } else if (errorData.detail) {
           alert(errorData.detail); // For general API error messages
         } else {
@@ -95,44 +82,17 @@ function Form({ route, method }) {
     <div className="form-layout">
       <form onSubmit={handleSubmit} className="form-container">
         <h1>{formTitle}</h1>
-
-        {/* Registration fields */}
-        {name === "Register" && (
-          <>
-            <label htmlFor="firstName" className="form-label">
-              First Name
-            </label>
-            <input
-              className="form-input"
-              type="text"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-              placeholder=""
-            />
-            <label htmlFor="lastName" className="form-label">
-              Last Name
-            </label>
-            <input
-              className="form-input"
-              type="text"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-              placeholder=""
-            />
-            <label htmlFor="dob" className="form-label">
-              Date of Birth
-            </label>
-            <input
-              className="form-input dob-input"
-              id="dob"
-              type="date"
-              value={dateOfBirth}
-              onChange={(e) => setDateOfBirth(e.target.value)}
-            />
-          </>
-        )}
-
-        {/* Email input */}
+        {/* Render additional fields for registration only */}
+        <FormFields
+          method={method}
+          firstName={firstName}
+          setFirstName={setFirstName}
+          lastName={lastName}
+          setLastName={setLastName}
+          dateOfBirth={dateOfBirth}
+          setDateOfBirth={setDateOfBirth}
+        />
+        {/* Email input field */}
         <label htmlFor="email" className="form-label">
           Email
         </label>
@@ -140,40 +100,23 @@ function Form({ route, method }) {
           className="form-input"
           type="text"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(e) => setEmail(e.target.value)} // Update email state on change
           placeholder=""
         />
-
-        {/* Password input with toggle visibility */}
-        <div className="password-container">
-          <label htmlFor="password" className="form-label">
-            Password
-          </label>
-          <input
-            className="form-input"
-            type={showPassword ? "text" : "password"}
-            value={password}
-            onChange={(e) => {
-              setPassword(e.target.value);
-              setIsPasswordStarted(true);
-            }}
-            placeholder=""
-          />
-          <span
-            className="password-toggle"
-            onClick={() => setShowPassword(!showPassword)}
-          >
-            <FontAwesomeIcon icon={showPassword ? faEye : faEyeSlash} />
-          </span>
-        </div>
-
-        {/* Password strength indicator for registration */}
-        {name === "Register" && isPasswordStarted && (
+        {/* Password input field with visibility toggle */}
+        <PasswordField
+          showPassword={showPassword}
+          setShowPassword={setShowPassword}
+          password={password}
+          setPassword={setPassword}
+          setIsPasswordStarted={setIsPasswordStarted}
+        />
+        {/* Show password strength indicator for registration */}
+        {method === "register" && isPasswordStarted && (
           <PasswordStrengthIndicator password={password} />
         )}
-
         {/* "Remember me" and "Forgot password?" for login */}
-        {name === "Login" && (
+        {method === "login" && (
           <div className="options-container">
             <div className="remember-me">
               <label htmlFor="rememberMe">
@@ -190,21 +133,19 @@ function Form({ route, method }) {
             </div>
           </div>
         )}
-
-        {loading && <LoadingIndicator />}
-
-        {/* Form submit button */}
+        {loading && <LoadingIndicator />}{" "}
+        {/* Show loading indicator while waiting for API response */}
+        {/* Submit button */}
         <button className="form-button" type="submit">
           {name}
         </button>
-
-        {/* Account navigation links */}
-        {name === "Login" && (
+        {/* Links for switching between login and registration */}
+        {method === "login" && (
           <p className="links">
             Don't have an account? <Link to="/register">Sign up now</Link>
           </p>
         )}
-        {name === "Register" && (
+        {method === "register" && (
           <p className="links">
             Already have an account? <Link to="/login">Login</Link>
           </p>

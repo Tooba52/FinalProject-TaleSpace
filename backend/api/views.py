@@ -1,64 +1,125 @@
-from django.shortcuts import render
 from django.contrib.auth import get_user_model
 from rest_framework import generics
 from .serializers import UserSerializer, NoteSerializer, BookSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from .models import Note, Book
-from rest_framework import views 
 
+User = get_user_model() # Get the custom user model
 
-User = get_user_model()
-
-class NoteListCreate(generics.ListCreateAPIView):
-    serializer_class = NoteSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        user = self.request.user
-        return Note.objects.filter(author=user)
-
-    def perform_create(self, serializer):
-        if serializer.is_valid():
-            serializer.save(author=self.request.user)
-        else:
-            print(serializer.errors)
-
-
-class NoteDelete(generics.DestroyAPIView):
-    serializer_class = NoteSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        user = self.request.user
-        return Note.objects.filter(author=user)
-
-
+# ========================
+# USER MANAGEMENT VIEWS
+# ========================
 class CreateUserView(generics.CreateAPIView):
+    """
+    API endpoint that allows users to register.
+    """
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [AllowAny]  # Anyone can create an account
 
-
-# Book List & Create View
-class BookListCreate(generics.ListCreateAPIView):
-    serializer_class = BookSerializer
+# ========================
+# NOTES MANAGEMENT VIEWS
+# ========================
+class NoteListCreate(generics.ListCreateAPIView):
+    """
+    API endpoint for listing and creating notes.
+    - Only authenticated users can access.
+    - Users can only see their own notes.
+    - Users can create new notes.
+    """
+    serializer_class = NoteSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        user = self.request.user
-        return Book.objects.filter(author=user)  # Show books created by the logged-in user
+        return Note.objects.filter(author=self.request.user)  # Fetch only the logged-in user's notes
 
     def perform_create(self, serializer):
-        if serializer.is_valid():
-            serializer.save(author=self.request.user)
-        else:
-            print(serializer.errors)
+        serializer.save(author=self.request.user)  # Assign the logged-in user as the author
 
-# Book Delete View
-class BookDelete(generics.DestroyAPIView):
+class NoteDelete(generics.DestroyAPIView):
+    """
+    API endpoint for deleting a note.
+    - Only the note's author can delete it.
+    """
+    serializer_class = NoteSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Note.objects.filter(author=self.request.user)  # Ensure users can only delete their own notes
+
+# ========================
+# BOOK MANAGEMENT VIEWS
+# ========================
+class BookListCreate(generics.ListCreateAPIView):
+    """
+    API endpoint for listing and creating books.
+    - Only authenticated users can access.
+    - Users can only see their own books.
+    - Users can create new books.
+    """
     serializer_class = BookSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        user = self.request.user
-        return Book.objects.filter(author=user)
+        return Book.objects.filter(author=self.request.user)  # Fetch only the logged-in user's books
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)  # Assign the logged-in user as the author
+
+class BookDelete(generics.DestroyAPIView):
+    """
+    API endpoint for deleting a book.
+    - Only the book's author can delete it.
+    """
+    serializer_class = BookSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Book.objects.filter(author=self.request.user)  # Ensure users can only delete their own books
+
+
+# Explanation of views.py as a Whole
+# The views.py file in your Django REST Framework (DRF) application defines API endpoints that handle user authentication, notes, and book management. It follows a class-based view (CBV) approach, leveraging DRF's generic views to simplify CRUD operations.
+
+# Breakdown of Each Section
+# USER MANAGEMENT
+# CreateUserView
+
+# Allows new users to register.
+
+# Uses AllowAny, meaning authentication is not required to create an account.
+
+# Uses UserSerializer to handle user data.
+
+# NOTES MANAGEMENT
+# NoteListCreate
+
+# Lists and creates notes.
+
+# Only authenticated users can access (IsAuthenticated).
+
+# get_queryset() ensures users can only view their own notes.
+
+# perform_create() ensures newly created notes are automatically assigned to the logged-in user.
+
+# NoteDelete
+
+# Deletes a note.
+
+# Ensures that only the note’s author can delete it.
+
+# BOOK MANAGEMENT
+# BookListCreate
+
+# Lists and creates books.
+
+# Similar to notes, users can only access their own books.
+
+# New books are assigned to the logged-in user.
+
+# BookDelete
+
+# Deletes a book.
+
+# Ensures that only the book’s author can delete it.
+
