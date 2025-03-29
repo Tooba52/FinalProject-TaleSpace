@@ -22,7 +22,6 @@ function Home() {
       .then((res) => res.data) // Extract data from the response
       .then((data) => {
         setNotes(data); // Set the notes in state
-        console.log(data); // Log fetched notes to the console for debugging
       })
       .catch((err) => alert(err)); // Handle errors by showing an alert
   };

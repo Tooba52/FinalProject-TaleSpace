@@ -57,6 +57,7 @@ function Form({ route, method }) {
       if (method === "login") {
         localStorage.setItem(ACCESS_TOKEN, res.data.access); // Store the access token on successful login
         localStorage.setItem(REFRESH_TOKEN, res.data.refresh); // Store the refresh token
+
         navigate("/"); // Redirect to the home page after login
       } else {
         navigate("/login"); // Redirect to the login page after successful registration

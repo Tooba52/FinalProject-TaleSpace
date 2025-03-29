@@ -1,26 +1,46 @@
-import react from "react";
+// Import necessary modules from React Router
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+
+// Import page components
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
-import ProtectedRoute from "./components/ProtectedRoute";
 import CreateBook from "./pages/CreateBook";
+import WriteBook from "./pages/WriteBook";
 
+// Import protected route component to restrict access to authenticated users
+import ProtectedRoute from "./components/ProtectedRoute";
+
+/**
+ * Logout Component:
+ * Clears localStorage to remove authentication tokens and user data,
+ * then redirects the user to the login page.
+ */
 function Logout() {
-  localStorage.clear();
-  return <Navigate to="/login" />;
+  localStorage.clear(); // Remove user session data
+  return <Navigate to="/login" />; // Redirect to login page
 }
 
+/**
+ * RegisterAndLogout Component:
+ * Ensures that when a user visits the register page, any previous session is cleared.
+ * This prevents logged-in users from trying to re-register while still authenticated.
+ */
 function RegisterAndLogout() {
-  localStorage.clear();
-  return <Register />;
+  localStorage.clear(); // Remove any existing session data
+  return <Register />; // Render the Register component
 }
 
+/**
+ * App Component:
+ * Defines the main routing structure of the application using React Router.
+ */
 function App() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Protected Home Route: Only accessible if the user is authenticated */}
         <Route
           path="/"
           element={
@@ -29,14 +49,24 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+        {/* Public Routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/logout" element={<Logout />} />
         <Route path="/register" element={<RegisterAndLogout />} />
-        <Route path="*" element={<NotFound />}></Route>
+
+        {/* Route for Creating a Book */}
         <Route path="/create-book" element={<CreateBook />} />
+
+        {/* Route for Writing a Book, using the book ID in the URL */}
+        <Route path="/write/:id" element={<WriteBook />} />
+
+        {/* Catch-all route for undefined paths, displays a 404 Not Found page */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   );
 }
 
+// Export the App component as the main entry point of the application
 export default App;

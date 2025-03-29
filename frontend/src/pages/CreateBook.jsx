@@ -4,8 +4,11 @@ import { Link } from "react-router-dom"; // Link component for routing
 import "../styles/CreateBook.css"; // CSS styles for the component
 import logo from "../images/logo.jpeg"; // Logo for the navigation bar
 import api from "../api"; // API utility to make requests
+import { useNavigate } from "react-router-dom";
 
 function CreateBook() {
+  const navigate = useNavigate(); // Initialize navigation
+
   // State variables for managing form inputs and book creation
   const [title, setTitle] = useState(""); // For book title
   const [description, setDescription] = useState(""); // For book description
@@ -112,6 +115,8 @@ function CreateBook() {
         setMature(false);
         setCoverPhoto(null);
         setCoverFile(null);
+
+        navigate(`/write/${response.data.id}`); // Redirect to the writing page
       }
     } catch (error) {
       console.error("❌ Error creating book:", error);
