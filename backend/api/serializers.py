@@ -38,3 +38,4 @@ class BookSerializer(serializers.ModelSerializer):
         model = Book
         fields = ["id", "title", "description", "genres", "language", "mature", "cover_photo", "author", "created_at"]
         extra_kwargs = {"author": {"read_only": True}}  # Author is assigned automatically
+

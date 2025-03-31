@@ -1,68 +1,109 @@
 /* Container for the whole page */
-div {
-  font-family: Arial, sans-serif;
+body {
+  margin: 0;
+  padding: 0;
+  overflow-y: scroll;
 }
 
-/* Styles for the notes section */
-.notes-section {
-  margin-bottom: 2rem;
-}
-
-.notes-section h2 {
-  color: #333;
-  font-size: 24px;
-}
-
-/* Styles for individual notes - assuming your Note component has some container element */
-.note {
-  background-color: #f9f9f9;
-  border-left: 5px solid #007bff;
-  margin: 10px 0;
-  padding: 10px 15px;
-  border-radius: 5px;
-}
-
-/* Styles for the form section */
-form {
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  max-width: 500px;
-  margin: auto;
-}
-
-form h2 {
-  color: #333;
-  font-size: 24px;
-  margin-bottom: 20px;
-}
-
-form label {
-  font-weight: bold;
-  margin-top: 10px;
-}
-
-form input,
-form textarea {
+/* Main container styling */
+.home-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   width: 100%;
+  overflow-y: auto; /* Enable scrolling */
+}
+
+/* navbar styling */
+.navbar {
+  background-color: #e1e7f5;
+  width: 100%;
+  display: flex;
+  justify-content: space-evenly; /* Distributes items evenly */
+  align-items: center;
+  padding: 20px 20px;
+}
+
+/* Logo and Title */
+.home-logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  margin-left: 40px;
+}
+
+.home-logo img {
+  width: 40px;
+  height: 40px;
+  margin-right: 10px;
+}
+
+.home-logo span {
+  font-size: 18px; /* Match login page */
+  font-weight: bold;
+  color: #486fb6;
+}
+
+/* Search Bar */
+.search-bar {
+  flex: 2; /* Takes more space */
+  max-width: 400px; /* Limits width */
   padding: 8px;
-  margin: 8px 0 16px;
   border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
+  border-radius: 20px;
+  margin-left: 25%;
 }
 
-form input[type="submit"] {
-  background-color: #007bff;
+/* Navigation Links */
+.nav-links {
+  display: flex;
+  flex: 1; /* Ensures even spacing */
+  justify-content: space-between; /* Separates buttons */
+  align-items: center;
+  margin-left: 15%;
+}
+
+/* Start Writing Button */
+.btn-start-writing {
+  text-decoration: none;
+  background-color: #486fb6;
   color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 16px;
+  padding: 8px 15px;
+  border-radius: 10px;
+  font-weight: bold;
 }
 
-form input[type="submit"]:hover {
-  background-color: #0056b3;
+/* Profile Icon */
+.home-profile-icon {
+  text-decoration: none;
+  color: #333;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  margin-right: 40px; /* Prevent cutting off */
+}
+
+/* Allow sections to take space */
+section {
+  width: 90%;
+  max-width: 1200px;
+  margin-bottom: 30px;
+}
+
+/* Ensure book, genre, and author lists don't break layout */
+.book-list,
+.genre-list,
+.author-list {
+  display: flex;
+  overflow-x: auto; /* Enable horizontal scrolling for lists */
+  gap: 15px;
+  padding: 10px;
+  white-space: nowrap;
+}
+
+/* Ensure sections don't shrink too much */
+.top-books,
+.top-genres,
+.top-authors {
+  min-height: 200px;
 }

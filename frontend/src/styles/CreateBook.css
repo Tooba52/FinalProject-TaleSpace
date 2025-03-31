@@ -4,7 +4,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 20px;
+  padding: 20px 20px;
   background-color: #e1e7f5;
 }
 
@@ -13,6 +13,7 @@
   display: flex;
   align-items: center;
   text-decoration: none;
+  margin-left: 20px;
 }
 
 .logo img {
@@ -34,7 +35,7 @@
   text-decoration: none;
   color: #333;
   font-size: 16px; /* Match login page */
-  margin-right: 40px; /* Prevent cutting off */
+  margin-right: 60px; /* Prevent cutting off */
 }
 
 .book-container {

@@ -1,7 +1,7 @@
 # Importing necessary modules
 from django.contrib import admin  # Admin panel for managing the site
 from django.urls import path, include  # URL routing for the project
-from api.views import CreateUserView  # View for creating a user (registration)
+from api.views import CreateUserView, UserProfileView # View for creating a user (registration)
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView  # Views for handling JWT token operations
 
 # URL patterns for the project
@@ -23,6 +23,9 @@ urlpatterns = [
     
     # Including other app's URLs (API-related routes in this case)
     path("api/", include("api.urls")),  # Routes all other API-related endpoints to the 'api.urls' module
+
+    path("api/user/profile/", UserProfileView.as_view(), name="user-profile"),
+
 ]
 
 

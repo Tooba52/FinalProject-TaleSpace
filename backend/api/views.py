@@ -3,8 +3,13 @@ from rest_framework import generics
 from .serializers import UserSerializer, NoteSerializer, BookSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from .models import Note, Book
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from .serializers import UserSerializer
+
 
 User = get_user_model() # Get the custom user model
+
 
 # ========================
 # USER MANAGEMENT VIEWS
@@ -16,6 +21,18 @@ class CreateUserView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [AllowAny]  # Anyone can create an account
+
+class UserProfileView(APIView):
+    """
+    API endpoint to retrieve logged-in user details.
+    """
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        serializer = UserSerializer(user)
+        return Response(serializer.data)  # This includes first_name
+
 
 # ========================
 # NOTES MANAGEMENT VIEWS
@@ -76,6 +93,7 @@ class BookDelete(generics.DestroyAPIView):
 
     def get_queryset(self):
         return Book.objects.filter(author=self.request.user)  # Ensure users can only delete their own books
+    
 
 
 # Explanation of views.py as a Whole
