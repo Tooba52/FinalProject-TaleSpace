@@ -4,11 +4,12 @@ import logo from "../images/logo.jpeg"; // Logo for the navigation bar
 import profile from "../images/profile.png";
 import api from "../api"; // API utility to make requests
 import "../styles/profile.css";
+import Books from "../components/books"; // Import Notes component for displaying individual notes
 
 function Profile() {
   const [firstName, setFirstName] = useState(""); // Stores the first name of the logged-in user
   const [userBooks, setUserBooks] = useState([]);
-  const [allBooks, setAllBooks] = useState([]);
+  const [userId, setUserId] = useState(null);
 
   // useEffect hook to fetch
   useEffect(() => {
@@ -21,16 +22,21 @@ function Profile() {
       .get("/api/user/profile/") // Fetch user details
       .then((res) => {
         setFirstName(res.data.first_name); // Set the first name in state
+        setUserId(res.data.user_id); // Store the user ID
       })
       .catch((err) => console.error("Error fetching user profile", err)); // Handle errors
   };
 
-  const fetchUserBooks = () => {
+  const fetchUserBooks = (userId) => {
     api
       .get("/api/books/") // Adjust endpoint as needed
       .then((res) => {
-        const filteredBooks = res.data.filter((book) => book.author_id === id);
-        setUserBooks(filteredBooks);
+        console.log("Fetched Books:", res.data); // Log the raw book data
+        const filteredBooks = res.data.filter(
+          (book) => book.author_id === userId
+        );
+        console.log("Filtered Books:", filteredBooks); // Log the filtered books
+        setUserBooks(filteredBooks); // Set filtered books in state
       })
       .catch((err) => console.error("Error fetching user books", err));
   };
@@ -79,14 +85,7 @@ function Profile() {
           <h3>Your Books</h3>
           <div className="book-list">
             {userBooks.map((book) => (
-              <div key={book.id} className="book-card">
-                <img
-                  src={book.cover_photo}
-                  alt={book.title}
-                  className="book-cover"
-                />
-                <p>{book.title}</p>
-              </div>
+              <Books key={book.id || book.title} book={book} /> // Use book.id or fallback to book.title
             ))}
           </div>
           <Link to="/books" className="view-all">
@@ -99,7 +98,7 @@ function Profile() {
       <section className="favourited-books">
         <h3>Favourited Books</h3>
         <div className="book-list">
-          {[...Array(10)].map((_, index) => (
+          {[...Array(7)].map((_, index) => (
             <div key={index} className="book-card">
               <div className="book-icon">📖</div>
               <p>Book Name</p>
@@ -110,6 +109,10 @@ function Profile() {
           View All ➤
         </Link>
       </section>
+
+      <footer className="footer">
+        <p>2025 All Rights Reserved. TaleSpace Inc.</p>
+      </footer>
     </div>
   );
 }

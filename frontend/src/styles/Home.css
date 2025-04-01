@@ -14,7 +14,6 @@ body {
   flex-direction: column;
   align-items: center;
   width: 100%;
-  overflow-y: auto; /* Enable scrolling */
 }
 
 /* navbar styling */
@@ -25,6 +24,7 @@ body {
   justify-content: space-evenly; /* Distributes items evenly */
   align-items: center;
   padding: 20px 20px;
+  margin-bottom: 2%;
 }
 
 /* Logo and Title */
@@ -93,8 +93,15 @@ body {
   margin-bottom: 30px;
 }
 
+.book-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  overflow-y: auto; /* Enable scrolling */
+}
+
 /* Ensure book, genre, and author lists don't break layout */
-.book-list,
 .genre-list,
 .author-list {
   display: flex;
@@ -108,5 +115,6 @@ body {
 .top-books,
 .top-genres,
 .top-authors {
-  min-height: 200px;
+  width: 90%;
+  margin-top: 40px;
 }

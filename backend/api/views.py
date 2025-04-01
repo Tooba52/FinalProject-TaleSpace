@@ -1,8 +1,8 @@
 from django.contrib.auth import get_user_model
 from rest_framework import generics
-from .serializers import UserSerializer, NoteSerializer, BookSerializer
+from .serializers import UserSerializer, BookSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from .models import Note, Book
+from .models import Book
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .serializers import UserSerializer
@@ -33,36 +33,6 @@ class UserProfileView(APIView):
         serializer = UserSerializer(user)
         return Response(serializer.data)  # This includes first_name
 
-
-# ========================
-# NOTES MANAGEMENT VIEWS
-# ========================
-class NoteListCreate(generics.ListCreateAPIView):
-    """
-    API endpoint for listing and creating notes.
-    - Only authenticated users can access.
-    - Users can only see their own notes.
-    - Users can create new notes.
-    """
-    serializer_class = NoteSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        return Note.objects.filter(author=self.request.user)  # Fetch only the logged-in user's notes
-
-    def perform_create(self, serializer):
-        serializer.save(author=self.request.user)  # Assign the logged-in user as the author
-
-class NoteDelete(generics.DestroyAPIView):
-    """
-    API endpoint for deleting a note.
-    - Only the note's author can delete it.
-    """
-    serializer_class = NoteSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        return Note.objects.filter(author=self.request.user)  # Ensure users can only delete their own notes
 
 # ========================
 # BOOK MANAGEMENT VIEWS

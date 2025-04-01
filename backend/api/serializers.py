@@ -1,5 +1,5 @@
 from rest_framework import serializers  # Import Django REST Framework serializers
-from .models import WebsiteUser, Note, Book  # Import models
+from .models import WebsiteUser, Book  # Import models
 
 # Serializer for User model
 class UserSerializer(serializers.ModelSerializer):
@@ -18,15 +18,6 @@ class UserSerializer(serializers.ModelSerializer):
         return WebsiteUser.objects.create_user(**validated_data)  # Simplified user creation
 
 
-# Serializer for Note model
-class NoteSerializer(serializers.ModelSerializer):
-    """
-    Serializes the Note model, making the 'author' field read-only.
-    """
-    class Meta:
-        model = Note
-        fields = ["id", "title", "content", "created_at", "author"]
-        extra_kwargs = {"author": {"read_only": True}}  # Prevent author modification
 
 
 # Serializer for Book model

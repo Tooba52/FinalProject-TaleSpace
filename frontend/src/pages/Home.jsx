@@ -52,12 +52,14 @@ function Home() {
             universe today!
           </p>
         </div>
+      </div>
 
+      <div className="book-container">
         {/* Top 10 Books Section */}
         <section className="top-books">
           <h3>Top 10 Books</h3>
           <div className="book-list">
-            {[...Array(10)].map((_, index) => (
+            {[...Array(7)].map((_, index) => (
               <div key={index} className="book-card">
                 <div className="book-icon">📖</div>
                 <p>Book Name</p>

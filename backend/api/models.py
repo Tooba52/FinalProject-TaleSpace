@@ -35,15 +35,6 @@ class WebsiteUser(AbstractUser):
     def __str__(self):
         return self.email  # Return email as string representation
 
-# Model for storing user notes
-class Note(models.Model):
-    title = models.CharField(max_length=100)
-    content = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)  # Auto timestamp
-    author = models.ForeignKey(WebsiteUser, on_delete=models.CASCADE)  # Link to user
-
-    def __str__(self):
-        return self.title  # Return note title
 
 # Model for books
 class Book(models.Model):
@@ -59,3 +50,13 @@ class Book(models.Model):
 
     def __str__(self):
         return self.title  # Return book title
+
+
+class Chapter(models.Model):
+    book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name="chapters")
+    title = models.CharField(max_length=255)
+    number = models.IntegerField(default=1)  # For chapter numbering
+    content = models.TextField(blank=True)  # The actual content of the chapter
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
