@@ -60,7 +60,7 @@ function App() {
         <Route path="/create-book" element={<CreateBook />} />
 
         {/* Route for Writing a Book, using the book ID in the URL */}
-        <Route path="/write/:id" element={<WriteBook />} />
+        <Route path="/write/:book_id" element={<WriteBook />} />
 
         {/* Route for profile */}
         <Route path="/profile" element={<Profile />} />

@@ -47,6 +47,8 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=30),    # Refresh token expires in 30 days
     'ALGORITHM': 'HS256',                             # You can choose an algorithm
     'SIGNING_KEY': 'your_secret_key',                 # Secret key for signing JWTs
+    'USER_ID_FIELD': 'user_id',  # This tells simplejwt to use 'user_id' instead of 'id'
+    # other simplejwt settings
 }
 # Application definition
 

@@ -8,6 +8,7 @@ import "../styles/profile.css";
 function Profile() {
   const [firstName, setFirstName] = useState(""); // Stores the first name of the logged-in user
   const [userBooks, setUserBooks] = useState([]);
+  const [allBooks, setAllBooks] = useState([]);
 
   // useEffect hook to fetch
   useEffect(() => {
@@ -28,9 +29,7 @@ function Profile() {
     api
       .get("/api/books/") // Adjust endpoint as needed
       .then((res) => {
-        const filteredBooks = res.data.filter(
-          (book) => book.author_id === userId
-        );
+        const filteredBooks = res.data.filter((book) => book.author_id === id);
         setUserBooks(filteredBooks);
       })
       .catch((err) => console.error("Error fetching user books", err));

@@ -1,5 +1,5 @@
 // Import necessary libraries and components
-import { useState } from "react"; // useState hook to manage state in the component
+import { useState, useEffect } from "react"; // useState hook to manage state in the component
 import { Link } from "react-router-dom"; // Link component for routing
 import "../styles/CreateBook.css"; // CSS styles for the component
 import logo from "../images/logo.jpeg"; // Logo for the navigation bar
@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 
 function CreateBook() {
   const navigate = useNavigate(); // Initialize navigation
+  const [firstName, setFirstName] = useState(""); // Stores the first name of the logged-in user
 
   // State variables for managing form inputs and book creation
   const [title, setTitle] = useState(""); // For book title
@@ -45,6 +46,20 @@ function CreateBook() {
     "Post-Apocalyptic",
     "Slice of Life",
   ];
+
+  // useEffect hook to fetch
+  useEffect(() => {
+    fetchUserProfile(); // Fetch user profile to get first name
+  }, []); // Empty dependency array ensures this runs only once after the first render
+
+  const fetchUserProfile = () => {
+    api
+      .get("/api/user/profile/") // Fetch user details
+      .then((res) => {
+        setFirstName(res.data.first_name); // Set the first name in state
+      })
+      .catch((err) => console.error("Error fetching user profile", err)); // Handle errors
+  };
 
   // Handles genre selection; allows up to 3 genres to be selected
   const handleGenreClick = (genre) => {
@@ -145,8 +160,8 @@ function CreateBook() {
           <img src={logo} alt="TaleSpace Logo" /> {/* Logo image */}
           <span>TaleSpace</span>
         </Link>
-        <Link to="/profile" className="profile-icon">
-          <span>👤 Username</span> {/* Profile link */}
+        <Link to="/profile" className="home-profile-icon">
+          <span>👤 {firstName}</span> {/* Display first name  */}
         </Link>
       </div>
 

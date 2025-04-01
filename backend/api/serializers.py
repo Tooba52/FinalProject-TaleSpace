@@ -8,7 +8,7 @@ class UserSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = WebsiteUser
-        fields = ["id", "email", "password", "first_name", "last_name", "date_of_birth"]
+        fields = ["user_id", "email", "password", "first_name", "last_name", "date_of_birth"]
         extra_kwargs = {"password": {"write_only": True}}  # Hide password in responses
 
     def create(self, validated_data):
@@ -36,6 +36,6 @@ class BookSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = Book
-        fields = ["id", "title", "description", "genres", "language", "mature", "cover_photo", "author", "created_at"]
+        fields = ["book_id", "title", "description", "genres", "language", "mature", "cover_photo", "author", "created_at"]
         extra_kwargs = {"author": {"read_only": True}}  # Author is assigned automatically
 

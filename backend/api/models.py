@@ -18,6 +18,7 @@ def validate_strong_password(value):
 
 # Custom user model
 class WebsiteUser(AbstractUser):
+    user_id = models.AutoField(primary_key=True)
     email = models.EmailField(unique=True)  # Use email as the unique identifier
     username = None  # Remove default username field
     first_name = models.CharField(max_length=100)
@@ -46,6 +47,7 @@ class Note(models.Model):
 
 # Model for books
 class Book(models.Model):
+    book_id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=255)
     description = models.TextField()
     genres = models.JSONField()  # Store genres as a JSON list
