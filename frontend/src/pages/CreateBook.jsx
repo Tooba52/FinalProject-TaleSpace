@@ -140,7 +140,7 @@ function CreateBook() {
   return (
     <div className="create-book-container">
       {/* Navigation Bar */}
-      <div className="nav-bar">
+      <div className="createbook-nav-bar">
         <Link to="/" className="logo">
           <img src={logo} alt="TaleSpace Logo" /> {/* Logo image */}
           <span>TaleSpace</span>
@@ -150,9 +150,9 @@ function CreateBook() {
         </Link>
       </div>
 
-      <div className="book-container">
+      <div className="createbook-container">
         {/* Book Creation Form */}
-        <div className="book-form">
+        <div className="createbook-form">
           {/* Cover Photo Section */}
           <div className="cover-photo">
             {coverPhoto ? (
@@ -170,7 +170,7 @@ function CreateBook() {
           </div>
 
           {/* Form Fields for book details */}
-          <div className="form-fields">
+          <div className="createbook-form-fields">
             <label>Title</label>
             <input
               type="text"
@@ -185,7 +185,7 @@ function CreateBook() {
             ></textarea>
 
             <label>Select Genres (Choose up to 3)</label>
-            <div className="genres">
+            <div className="createbook-genres">
               {genres.map((genre) => (
                 <button
                   key={genre}
@@ -219,7 +219,7 @@ function CreateBook() {
             </div>
 
             <button
-              className="save-button"
+              className="createbook-save-button"
               onClick={handleSave}
               disabled={isLoading} // Disable the button while saving
               aria-live="polite" // Make sure screen readers announce the loading state

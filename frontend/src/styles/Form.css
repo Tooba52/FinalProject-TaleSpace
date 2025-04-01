@@ -1,10 +1,11 @@
 /* Form layout container */
-.form-layout {
+.loginform-layout {
   display: flex;
   width: 100%;
+  justify-content: center;
 }
 
-h1 {
+.loginform-layout h1 {
   text-align: left;
   color: #535353;
   font-size: 130%;
@@ -12,7 +13,7 @@ h1 {
 }
 
 /* Form container styling */
-.form-container {
+.loginform-container {
   flex: 1;
   max-width: 320px; /* Reduced width for a more compact look */
   display: flex;
@@ -22,13 +23,13 @@ h1 {
   box-shadow: none; /* Removes any shadow */
 }
 
-.form-label {
+.loginform-label {
   display: block;
   color: #808080;
   font-size: 0.9rem;
 }
 /* Input field styling */
-.form-input {
+.loginform-input {
   width: 100%;
   padding: 10px;
   margin-bottom: 5px;
@@ -38,7 +39,7 @@ h1 {
 }
 
 /* Button styling */
-.form-button {
+.loginform-button {
   margin-top: 5%;
   width: 100%;
   padding: 12px;
@@ -50,7 +51,7 @@ h1 {
   transition: background-color 0.2s ease-in-out;
 }
 
-.form-button:hover {
+.loginform-button:hover {
   background-color: #537bc5;
 }
 
@@ -62,8 +63,8 @@ h1 {
 
 .password-toggle {
   position: absolute;
-  right: 15px;
-  top: 70%;
+  right: -10px;
+  top: 65%;
   transform: translateY(-50%);
   cursor: pointer;
   color: #666;
@@ -75,7 +76,7 @@ h1 {
 }
 
 /* Remember me, toggle switch, and forgot password alignment */
-.options-container {
+.loginoptions-container {
   display: flex;
   justify-content: space-between;
   width: 100%;
@@ -94,20 +95,20 @@ h1 {
   color: #5f5f5f;
 }
 
-.toggle-switch {
+.logintoggle-switch {
   position: relative;
   display: inline-block;
   width: 34px;
   height: 20px;
 }
 
-.toggle-switch input {
+.logintoggle-switch input {
   opacity: 0;
   width: 0;
   height: 0;
 }
 
-.slider {
+.loginslider {
   position: absolute;
   cursor: pointer;
   top: 0;
@@ -119,7 +120,7 @@ h1 {
   transition: 0.4s;
 }
 
-.slider:before {
+.loginslider:before {
   position: absolute;
   content: "";
   height: 14px;
@@ -131,11 +132,11 @@ h1 {
   transition: 0.4s;
 }
 
-input:checked + .slider {
+input:checked + .loginslider {
   background-color: #6495ed;
 }
 
-input:checked + .slider:before {
+input:checked + .loginslider:before {
   transform: translateX(14px);
 }
 
@@ -153,7 +154,7 @@ input:checked + .slider:before {
   color: #537bc5;
 }
 
-.links {
+.login-links {
   text-align: center;
   color: #5f5f5f;
 }

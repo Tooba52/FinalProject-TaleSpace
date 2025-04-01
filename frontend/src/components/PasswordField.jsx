@@ -11,12 +11,12 @@ const PasswordField = ({
 }) => (
   <div className="password-container">
     {/* Label for the password input field */}
-    <label htmlFor="password" className="form-label">
+    <label htmlFor="password" className="loginform-label">
       Password
     </label>
     {/* Password input field */}
     <input
-      className="form-input"
+      className="loginform-input"
       type={showPassword ? "text" : "password"} // Toggle between text (visible) and password (hidden) based on showPassword state
       value={password} // Controlled input: the value of the input is tied to the state variable password
       onChange={(e) => {

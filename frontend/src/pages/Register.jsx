@@ -5,31 +5,35 @@ import "../styles/loginRegLayout.css"; // Importing the stylesheet for layout
 
 function Register() {
   return (
-    <div className="page-container">
+    <div className="loginpage-container">
       {" "}
       {/* Outer container for the registration page */}
-      <div className="content-container">
+      <div className="logincontent-container">
         {" "}
         {/* Container for the content (image and form) */}
-        <div className="image-section">
+        <div className="loginimage-section">
           {" "}
           {/* Section for the image on the left */}
-          <header className="header">
+          <header className="loginheader">
             {" "}
             {/* Header containing the logo */}
-            <div className="logo-section">
+            <div className="loginlogo-section">
               {" "}
               {/* Logo section */}
-              <img src={logo} alt="TaleSpace Logo" className="logo" />{" "}
+              <img
+                src={logo}
+                alt="TaleSpace Logo"
+                className="login-logo"
+              />{" "}
               {/* Display the TaleSpace logo */}
-              <span className="logo-text">TaleSpace</span>{" "}
+              <span className="loginlogo-text">TaleSpace</span>{" "}
               {/* Display the brand name */}
             </div>
           </header>
           <img src={womanWriting} alt="Woman Writing" className="auth-image" />{" "}
           {/* Image on the right */}
         </div>
-        <div className="form-section">
+        <div className="loginform-section">
           {" "}
           {/* Section for the registration form */}
           <Form route="/api/user/register/" method="register" />{" "}

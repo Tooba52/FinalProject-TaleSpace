@@ -17,33 +17,33 @@ const FormFields = ({
   return (
     <>
       {/* First Name Input */}
-      <label htmlFor="firstName" className="form-label">
+      <label htmlFor="firstName" className="loginform-label">
         First Name
       </label>
       <input
-        className="form-input"
+        className="loginform-input"
         type="text"
         value={firstName} // Controlled input using state value
         onChange={(e) => setFirstName(e.target.value)} // Update state with user input
       />
 
       {/* Last Name Input */}
-      <label htmlFor="lastName" className="form-label">
+      <label htmlFor="lastName" className="loginform-label">
         Last Name
       </label>
       <input
-        className="form-input"
+        className="loginform-input"
         type="text"
         value={lastName} // Controlled input using state value
         onChange={(e) => setLastName(e.target.value)} // Update state with user input
       />
 
       {/* Date of Birth Input */}
-      <label htmlFor="dob" className="form-label">
+      <label htmlFor="dob" className="loginform-label">
         Date of Birth
       </label>
       <input
-        className="form-input dob-input"
+        className="loginform-input dob-input"
         id="dob"
         type="date" // Input type set to date for date picker
         value={dateOfBirth} // Controlled input using state value

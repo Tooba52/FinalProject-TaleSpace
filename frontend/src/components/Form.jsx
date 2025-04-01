@@ -80,8 +80,8 @@ function Form({ route, method }) {
   };
 
   return (
-    <div className="form-layout">
-      <form onSubmit={handleSubmit} className="form-container">
+    <div className="loginform-layout">
+      <form onSubmit={handleSubmit} className="loginform-container">
         <h1>{formTitle}</h1>
         {/* Render additional fields for registration only */}
         <FormFields
@@ -94,11 +94,11 @@ function Form({ route, method }) {
           setDateOfBirth={setDateOfBirth}
         />
         {/* Email input field */}
-        <label htmlFor="email" className="form-label">
+        <label htmlFor="email" className="loginform-label">
           Email
         </label>
         <input
-          className="form-input"
+          className="loginform-input"
           type="text"
           value={email}
           onChange={(e) => setEmail(e.target.value)} // Update email state on change
@@ -118,13 +118,13 @@ function Form({ route, method }) {
         )}
         {/* "Remember me" and "Forgot password?" for login */}
         {method === "login" && (
-          <div className="options-container">
+          <div className="loginoptions-container">
             <div className="remember-me">
               <label htmlFor="rememberMe">
                 Remember me
-                <label className="toggle-switch">
+                <label className="logintoggle-switch">
                   <input type="checkbox" id="rememberMe" />
-                  <span className="slider"></span>
+                  <span className="loginslider"></span>
                 </label>
               </label>
             </div>
@@ -137,17 +137,17 @@ function Form({ route, method }) {
         {loading && <LoadingIndicator />}{" "}
         {/* Show loading indicator while waiting for API response */}
         {/* Submit button */}
-        <button className="form-button" type="submit">
+        <button className="loginform-button" type="submit">
           {name}
         </button>
         {/* Links for switching between login and registration */}
         {method === "login" && (
-          <p className="links">
+          <p className="login-links">
             Don't have an account? <Link to="/register">Sign up now</Link>
           </p>
         )}
         {method === "register" && (
-          <p className="links">
+          <p className="login-links">
             Already have an account? <Link to="/login">Login</Link>
           </p>
         )}

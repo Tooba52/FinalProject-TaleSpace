@@ -1,4 +1,6 @@
-html,
+.loginpage-container html,
+body,
+.register-page html,
 body {
   margin: 0;
   padding: 0;
@@ -9,42 +11,41 @@ body {
 }
 
 /* Overall page layout with header and content sections */
-.page-container {
+.loginpage-container {
   display: flex;
   flex-direction: column;
-  height: 100vh;
 }
 
 /* Header styling for logo and text */
-.header {
+.loginheader {
   position: absolute; /* Allows precise positioning */
   top: 10px;
   left: 10px;
 }
 
-.logo-section {
+.loginlogo-section {
   display: flex;
   align-items: center;
 }
 
-.logo {
+.login-logo {
   width: 60px;
   height: auto;
   margin-right: 10px;
 }
-.logo-text {
+.loginlogo-text {
   color: #486fb6;
   font-size: 1.5rem;
   font-weight: bold;
 }
 
 /* Main content layout - form and image split */
-.content-container {
+.logincontent-container {
   display: flex;
   flex: 1;
 }
 
-.image-section {
+.loginimage-section {
   flex: 2;
   display: flex;
   align-items: flex-start; /* Align content to the top */
@@ -60,15 +61,10 @@ body {
   object-fit: contain;
 }
 
-.form-section {
+.loginform-section {
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: #ffffff;
-}
-
-.form-container {
-  width: 100%;
-  max-width: 320px; /* Reduced width for a more compact look */
 }

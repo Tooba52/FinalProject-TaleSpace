@@ -1,8 +1,11 @@
-/* Container for the whole page */
+.home-page html,
 body {
   margin: 0;
   padding: 0;
   overflow-y: scroll;
+  box-sizing: border-box; /* Ensures consistent box sizing */
+  width: 100%;
+  height: 100%;
 }
 
 /* Main container styling */
@@ -15,7 +18,7 @@ body {
 }
 
 /* navbar styling */
-.navbar {
+.home-navbar {
   background-color: #e1e7f5;
   width: 100%;
   display: flex;
@@ -84,7 +87,7 @@ body {
 }
 
 /* Allow sections to take space */
-section {
+.home-container section {
   width: 90%;
   max-width: 1200px;
   margin-bottom: 30px;
