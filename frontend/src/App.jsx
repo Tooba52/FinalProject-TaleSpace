@@ -8,6 +8,7 @@ import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
 import CreateBook from "./pages/CreateBook";
 import WriteBook from "./pages/WriteBook";
+import Profile from "./pages/profile";
 
 // Import protected route component to restrict access to authenticated users
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -60,6 +61,9 @@ function App() {
 
         {/* Route for Writing a Book, using the book ID in the URL */}
         <Route path="/write/:id" element={<WriteBook />} />
+
+        {/* Route for profile */}
+        <Route path="/profile" element={<Profile />} />
 
         {/* Catch-all route for undefined paths, displays a 404 Not Found page */}
         <Route path="*" element={<NotFound />} />

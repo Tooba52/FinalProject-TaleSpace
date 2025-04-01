@@ -37,8 +37,7 @@ function Home() {
               Start Writing
             </Link>
             <Link to="/profile" className="home-profile-icon">
-              <span>👤 {firstName ? firstName : "Guest"}</span>{" "}
-              {/* Display first name or Guest if not available */}
+              <span>👤 {firstName}</span> {/* Display first name  */}
             </Link>
           </div>
         </nav>

@@ -1,0 +1,86 @@
+.profile-container html,
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  overflow: hidden; /* Optional: prevents scrolling */
+}
+
+/* Main container styling */
+.profile-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+/* navbar styling */
+.profile-navbar {
+  background-color: #e1e7f5;
+  width: 100%;
+  display: flex;
+  justify-content: space-evenly; /* Distributes items evenly */
+  align-items: center;
+  padding: 20px 20px;
+}
+
+/* Logo and Title */
+.profile-logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  margin-left: 40px;
+}
+
+.profile-logo img {
+  width: 40px;
+  height: 40px;
+  margin-right: 10px;
+}
+
+.profile-logo span {
+  font-size: 18px; /* Match login page */
+  font-weight: bold;
+  color: #486fb6;
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* Align items to the left */
+  width: 80%;
+  margin-top: 40px;
+}
+
+.profile-info {
+  display: flex;
+  align-items: center;
+}
+
+.profile-icon {
+  width: 100px; /* Adjust size as needed */
+  height: 100px;
+  border-radius: 50%;
+  margin-right: 20px; /* Space between icon and text */
+}
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-details h2 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.follow-stats {
+  display: flex;
+  gap: 20px; /* Space between Followers and Following */
+}
+
+.follow-stats p {
+  text-align: center;
+}

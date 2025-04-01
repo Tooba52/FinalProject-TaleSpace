@@ -1,5 +1,6 @@
 import axios from "axios";
 import { ACCESS_TOKEN } from "./constants";
+import { REFRESH_TOKEN } from "./constants";
 import { logout } from "./components/utils"; // Utility function to log the user out (clear tokens)
 
 // Create an Axios instance with the base API URL from environment variables
