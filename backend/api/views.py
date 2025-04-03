@@ -57,8 +57,6 @@ class BookListCreate(generics.ListCreateAPIView):
         self.create_default_chapter(book)
 
     def create_default_chapter(self, book):
-        print("Book instance:", book)  # Ensure this is a valid Book instance
-        print("Book ID:", book.book_id)  # Ensure the book_id is correct
         # Check if the book already has chapters; if not, create a default one
         default_chapter_data = {
             'chapter_number': 1,
