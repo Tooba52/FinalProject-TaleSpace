@@ -6,23 +6,12 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 # URL patterns for the project
 urlpatterns = [
-    # Admin panel URL - This allows you to access Django's built-in admin interface
-    path("admin/", admin.site.urls),  # The admin panel can be accessed via '/admin/' URL
-    
-    # URL for user registration, linked to the 'CreateUserView'
-    path("api/user/register/", CreateUserView.as_view(), name="register"),  # Handles user registration through POST request
-    
-    # URL for obtaining an authentication token using JWT
-    path("api/token/", TokenObtainPairView.as_view(), name="get_token"),  # Provides the initial access and refresh tokens for user authentication
-    
-    # URL for refreshing the authentication token (JWT refresh flow)
-    path("api/token/refresh/", TokenRefreshView.as_view(), name="refresh"),  # Handles refreshing of the JWT token to extend user session
-    
-    # URL for API authentication using DRF's browsable API (optional)
-    path("api-auth/", include("rest_framework.urls")),  # Allows the user to authenticate through DRF's built-in authentication views
-    
-    # Including other app's URLs (API-related routes in this case)
-    path("api/", include("api.urls")),  # Routes all other API-related endpoints to the 'api.urls' module
+    path("admin/", admin.site.urls),
+    path("api/user/register/", CreateUserView.as_view(), name="register"),
+    path("api/token/", TokenObtainPairView.as_view(), name="get_token"),
+    path("api/token/refresh/", TokenRefreshView.as_view(), name="refresh"),
+    path("api-auth/", include("rest_framework.urls")),
+    path('api/', include('api.urls')),
 
     path("api/user/profile/", UserProfileView.as_view(), name="user-profile"),
 

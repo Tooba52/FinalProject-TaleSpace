@@ -42,13 +42,13 @@ REST_FRAMEWORK = {
     ],
 }
 
+
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),  # Access token expires in 15 minutes
     'REFRESH_TOKEN_LIFETIME': timedelta(days=30),    # Refresh token expires in 30 days
-    'ALGORITHM': 'HS256',                             # You can choose an algorithm
-    'SIGNING_KEY': 'your_secret_key',                 # Secret key for signing JWTs
     'USER_ID_FIELD': 'user_id',  # This tells simplejwt to use 'user_id' instead of 'id'
-    # other simplejwt settings
+    'SIGNING_KEY': SECRET_KEY,
+
 }
 # Application definition
 

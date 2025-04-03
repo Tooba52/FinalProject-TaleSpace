@@ -1,5 +1,5 @@
 from rest_framework import serializers  # Import Django REST Framework serializers
-from .models import WebsiteUser, Book  # Import models
+from .models import WebsiteUser, Book, Chapter  # Import models
 
 # Serializer for User model
 class UserSerializer(serializers.ModelSerializer):
@@ -29,4 +29,16 @@ class BookSerializer(serializers.ModelSerializer):
         model = Book
         fields = ["book_id", "title", "description", "genres", "language", "mature", "cover_photo", "author", "created_at"]
         extra_kwargs = {"author": {"read_only": True}}  # Author is assigned automatically
+
+
+
+# class BookContentSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = BookContent
+#         fields = ["book", "content"]
+
+class ChapterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Chapter
+        fields = ['chapter_id', 'chapter_title', 'chapter_number', 'chapter_content', 'chapter_status', 'book']  # Include all relevant fields
 
