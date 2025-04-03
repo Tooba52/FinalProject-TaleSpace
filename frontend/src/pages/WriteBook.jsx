@@ -1,70 +1,140 @@
-// WriteBook.jsx
 import { useState, useEffect } from "react";
-import api from "../api"; // Assuming you have an API utility
-import { useParams } from "react-router-dom"; // To get the book ID from the URL
+import { useParams } from "react-router-dom";
+import api from "../api";
 
 function WriteBook() {
-  const { bookId } = useParams(); // Get the book ID from the URL
+  const { book_id } = useParams(); // Get book ID from URL
+  // const [content, setContent] = useState("");
+  const [isLoading, setLoading] = useState(true);
   const [chapters, setChapters] = useState([]);
-  const [selectedChapter, setSelectedChapter] = useState(null);
-  const [content, setContent] = useState("");
-  const [chapterTitle, setChapterTitle] = useState("");
+  const [bookHasChapters, setBookHasChapters] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    // Fetch chapters for the book
-    api
-      .get(`/api/books/${bookId}/chapters/`)
-      .then((res) => {
-        setChapters(res.data);
-        if (res.data.length > 0) {
-          // Load the first chapter content if chapters exist
-          setSelectedChapter(res.data[0]);
-          setContent(res.data[0].content);
-          setChapterTitle(res.data[0].title);
-        }
-      })
-      .catch((err) => console.error("Error fetching chapters", err));
-  }, [bookId]);
+    // fetchBookContent();
+    fetchChapters();
+  }, [book_id]);
 
-  const handleChapterClick = (chapterId) => {
-    // Fetch the content of the selected chapter
-    api
-      .get(`/api/chapters/${chapterId}/`)
-      .then((res) => {
-        setSelectedChapter(res.data);
-        setContent(res.data.content);
-        setChapterTitle(res.data.title);
-      })
-      .catch((err) => console.error("Error fetching chapter", err));
-  };
-
-  const handleContentChange = (e) => {
-    setContent(e.target.value);
-  };
-
-  const handleSave = () => {
-    if (selectedChapter) {
-      api
-        .put(`/api/chapters/${selectedChapter.id}/`, {
-          content,
-          title: chapterTitle,
-          status: "draft", // Mark as draft
-        })
-        .then(() => alert("Chapter saved as draft"))
-        .catch((err) => console.error("Error saving chapter", err));
+  const fetchChapters = async () => {
+    try {
+      const response = await api.get(`/api/books/${book_id}/chapters/`);
+      if (response.data.length === 0) {
+        setBookHasChapters(false); // No chapters available
+      } else {
+        setBookHasChapters(true); // Book has chapters
+      }
+      setChapters(response.data);
+    } catch (err) {
+      console.error("Error fetching chapters:", err);
+      setError("Failed to load chapters.");
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handlePublish = () => {
-    if (selectedChapter) {
-      api
-        .put(`/api/chapters/${selectedChapter.id}/`, {
-          content,
-          title: chapterTitle,
-          status: "published", // Mark as published
-        })
-        .then(() => alert("Chapter published"))
-        .catch((err) => console.error("Error publishing chapter", err));
+  const handleChapterClick = (chapter) => {
+    setSelectedChapter(chapter); // Store the selected chapter
+  };
+
+  const createChapter = async () => {
+    try {
+      const newChapter = {
+        chapter_number: chapters.length + 1, // New chapter number
+        chapter_title: "New Chapter", // Default title
+        chapter_content: "This is the content of the new chapter.", // Default content
+      };
+      const response = await api.post(
+        `/api/books/${book_id}/chapters/`,
+        newChapter
+      );
+      setChapters((prevChapters) => [...prevChapters, response.data]);
+    } catch (err) {
+      console.error("Error creating chapter:", err);
+      setError("Failed to create chapter.");
+    }
+  };
+
+  if (isLoading) return <p>Loading chapters...</p>;
+  if (error) return <p>{error}</p>;
+
+  // const fetchBookContent = async () => {
+  //   const token = localStorage.getItem("access"); // Retrieve access token
+  //   console.log("🔍 Fetching token:", token); // Debugging token
+
+  //   if (!token) {
+  //     alert("User not authenticated. Please log in again.");
+  //     return;
+  //   }
+
+  //   try {
+  //     const response = await api.get(`/api/books/${book_id}/content/`, {
+  //       headers: {
+  //         Authorization: `Bearer ${localStorage.getItem("access")}`, // Attach token
+  //       },
+  //     });
+
+  //     setContent(response.data.content);
+  //   } catch (error) {
+  //     console.error("❌ Error fetching book content:", error);
+  //     alert("Failed to load book content.");
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+
+  // const handleSave = async () => {
+  //   const token = localStorage.getItem("access");
+
+  //   if (!token) {
+  //     alert("User not authenticated. Please log in again.");
+  //     return;
+  //   }
+
+  //   try {
+  //     await api.post(
+  //       `/api/books/${book_id}/chapters/`, // API route to create a new chapter
+  //       {
+  //         chapter_number: 1,
+  //         chapter_title: "Introduction",
+  //         chapter_content: "This is the content of the first chapter.",
+  //         chapter_status: "draft",
+  //       }, // Replace with dynamic data
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`, // Attach token
+  //         },
+  //       }
+  //     );
+  //     alert("Chapter saved successfully!");
+  //   } catch (error) {
+  //     console.error("❌ Error saving chapter:", error);
+  //     alert("Failed to save chapter.");
+  //   }
+  // };
+
+  const handleSave = async () => {
+    const token = localStorage.getItem("access"); // Retrieve token
+
+    if (!token) {
+      alert("User not authenticated. Please log in again.");
+      return;
+    }
+
+    try {
+      await api.put(
+        `/api/books/${book_id}/content/`,
+        { content },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // Attach token
+          },
+        }
+      );
+
+      alert("Book content saved successfully!");
+    } catch (error) {
+      console.error("❌ Error saving book content:", error);
+      alert("Failed to save content.");
     }
   };
 
@@ -72,35 +142,27 @@ function WriteBook() {
     <div className="write-book-container">
       <div className="sidebar">
         <h3>Chapters</h3>
-        {chapters.map((chapter) => (
-          <div key={chapter.id} onClick={() => handleChapterClick(chapter.id)}>
-            {chapter.number}. {chapter.title}
-          </div>
-        ))}
-        <button
-          onClick={() =>
-            setChapters([
-              ...chapters,
-              { title: "New Chapter", number: chapters.length + 1 },
-            ])
-          }
-        >
-          Add New Chapter
-        </button>
+        <ul>
+          {chapters.map((chapter) => (
+            <li key={chapter.chapter_number}>
+              Chapter {chapter.chapter_number}:{" "}
+              {chapter.chapter_title || "Untitled"}
+            </li>
+          ))}
+        </ul>
+        {!bookHasChapters && (
+          <p>
+            This book currently has no chapters. A default chapter has been
+            created.
+          </p>
+        )}
+        <button onClick={createChapter}>Create New Chapter</button>
       </div>
-
-      <div className="content-area">
-        {selectedChapter && (
-          <div>
-            <h2>Edit Chapter: {selectedChapter.title}</h2>
-            <textarea
-              value={content}
-              onChange={handleContentChange}
-              placeholder="Start writing your chapter here..."
-            />
-            <button onClick={handleSave}>Save Draft</button>
-            <button onClick={handlePublish}>Publish</button>
-          </div>
+      <div className="writing-area">
+        {chapters.length === 0 ? (
+          <p>Select or create a chapter to start writing.</p>
+        ) : (
+          <p>Click on a chapter to begin editing its content.</p>
         )}
       </div>
     </div>

@@ -5,6 +5,7 @@ function Book({ book }) {
   const formattedDate = new Date(book.publication_date).toLocaleDateString(
     "en-UK"
   );
+  
 
   return (
     <div className="book-card">

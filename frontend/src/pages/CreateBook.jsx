@@ -118,7 +118,7 @@ function CreateBook() {
         },
       });
 
-      console.log("✅ Book Created Successfully:", response.data); // Success response
+      console.log("Book Created Successfully:", response.data); // Success response
 
       if (response.status === 201) {
         alert("Book created successfully!"); // Notify the user of success
@@ -131,7 +131,7 @@ function CreateBook() {
         setCoverPhoto(null);
         setCoverFile(null);
 
-        navigate(`/write/${response.data.id}`); // Redirect to the writing page
+        navigate(`/books/${response.data.book_id}/chapters/`); // Redirect to the writing page
       }
     } catch (error) {
       console.error("❌ Error creating book:", error);

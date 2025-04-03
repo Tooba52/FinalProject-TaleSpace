@@ -50,20 +50,43 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/books/:book_id/chapters"
+          element={
+            <ProtectedRoute>
+              <WriteBook />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/create-book"
+          element={
+            <ProtectedRoute>
+              <CreateBook />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/write/:book_id"
+          element={
+            <ProtectedRoute>
+              <WriteBook />
+            </ProtectedRoute>
+          }
+        />
 
         {/* Public Routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/logout" element={<Logout />} />
         <Route path="/register" element={<RegisterAndLogout />} />
-
-        {/* Route for Creating a Book */}
-        <Route path="/create-book" element={<CreateBook />} />
-
-        {/* Route for Writing a Book, using the book ID in the URL */}
-        <Route path="/write/:book_id" element={<WriteBook />} />
-
-        {/* Route for profile */}
-        <Route path="/profile" element={<Profile />} />
 
         {/* Catch-all route for undefined paths, displays a 404 Not Found page */}
         <Route path="*" element={<NotFound />} />

@@ -4,7 +4,7 @@ import logo from "../images/logo.jpeg"; // Logo for the navigation bar
 import profile from "../images/profile.png";
 import api from "../api"; // API utility to make requests
 import "../styles/profile.css";
-import Books from "../components/books"; // Import Notes component for displaying individual notes
+import Book from "../components/books"; // Import Notes component for displaying individual notes
 
 function Profile() {
   const [firstName, setFirstName] = useState(""); // Stores the first name of the logged-in user
@@ -85,12 +85,15 @@ function Profile() {
           <h3>Your Books</h3>
           <div className="book-list">
             {userBooks.map((book) => (
-              <Books key={book.id || book.title} book={book} /> // Use book.id or fallback to book.title
+              // Wrap the Book component with Link to navigate to the writing page
+              <Link to={`/write/${book.book_id}`} key={book.book_id}>
+                {" "}
+                {/* Use the book's ID in the link */}
+                <Book book={book} />{" "}
+                {/* Pass the book prop to the Book component */}
+              </Link>
             ))}
           </div>
-          <Link to="/books" className="view-all">
-            View All ➤
-          </Link>
         </section>
       )}
 
