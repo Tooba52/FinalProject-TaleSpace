@@ -60,8 +60,8 @@ class BookListCreate(generics.ListCreateAPIView):
         # Check if the book already has chapters; if not, create a default one
         default_chapter_data = {
             'chapter_number': 1,
-            'chapter_title': 'Introduction',
-            'chapter_content': 'This is the first chapter of the book.',
+            'chapter_title': ' ',
+            'chapter_content': ' ',
             'chapter_status': 'draft',
             'book': book.book_id
         }
@@ -93,6 +93,9 @@ class BookDelete(generics.DestroyAPIView):
 # CHAPTER MANAGEMENT VIEWS
 # ========================
 class ChapterListCreateView(APIView):
+    # Handles:
+    # GET /api/books/<book_id>/chapters/  - List ALL chapters in a book
+    # POST /api/books/<book_id>/chapters/ - CREATE a new chapter
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
@@ -102,7 +105,8 @@ class ChapterListCreateView(APIView):
         """
         try:
             book = Book.objects.get(book_id=book_id)
-            chapters = Chapter.objects.filter(book=book)
+            chapters = Chapter.objects.filter(book=book).order_by('chapter_number')
+
             serializer = ChapterSerializer(chapters, many=True)
             return Response(serializer.data)
 
@@ -115,9 +119,17 @@ class ChapterListCreateView(APIView):
         """
         try:
             book = Book.objects.get(book_id=book_id)
-            request.data['book'] = book.id  # Set the book_id for the new chapter
-            serializer = ChapterSerializer(data=request.data)
 
+            # Get the highest chapter_number in the book (or default to 0 if none)
+            last_chapter = Chapter.objects.filter(book=book).order_by('-chapter_number').first()
+            next_chapter_number = last_chapter.chapter_number + 1 if last_chapter else 1
+
+            # Inject book and chapter_number into request data
+            data = request.data.copy()
+            data['book'] = book.book_id
+            data['chapter_number'] = next_chapter_number
+
+            serializer = ChapterSerializer(data=data)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -125,44 +137,23 @@ class ChapterListCreateView(APIView):
 
         except Book.DoesNotExist:
             return Response({"detail": "Book not found."}, status=status.HTTP_404_NOT_FOUND)
-        
-    #This post should work, you might have to change chapter_data['book'] = book, one of them may be book.book_id or book_id
-    #  def post(self, request, book_id):
-    #     """
-    #     Create a new chapter for the specified book by book_id.
-    #     """
-    #     try:
-    #         # Fetch the book instance
-    #         book = Book.objects.get(book_id=book_id)
-            
-    #         # Prepare the chapter data and include the book instance
-    #         chapter_data = request.data.copy()  # Copy the data to avoid mutation of original request data
-    #         chapter_data['book'] = book  # Assign the book instance, not the book_id
-
-    #         # Use the serializer to validate and save the new chapter
-    #         serializer = ChapterSerializer(data=chapter_data)
-            
-    #         if serializer.is_valid():
-    #             serializer.save()  # Save the chapter
-    #             return Response(serializer.data, status=status.HTTP_201_CREATED)
-    #         else:
-    #             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    #     except Book.DoesNotExist:
-    #         return Response({"detail": "Book not found."}, status=status.HTTP_404_NOT_FOUND)
 
 
 class ChapterDetailView(APIView):
+    # Handles:
+    # GET /api/books/<book_id>/chapters/<chapter_id>/  - Get ONE chapter
+    # PUT /api/books/<book_id>/chapters/<chapter_id>/  - UPDATE a chapter
+    # DELETE /api/books/<book_id>/chapters/<chapter_id>/ - DELETE a chapter
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
-    def get(self, request, book_id, chapter_number):
+    def get(self, request, book_id, chapter_id):
         """
         Fetch a specific chapter by its book_id and chapter_number.
         """
         try:
             book = Book.objects.get(book_id=book_id)
-            chapter = Chapter.objects.get(book=book, chapter_number=chapter_number)
+            chapter = Chapter.objects.get(book=book, chapter_id=chapter_id)
             serializer = ChapterSerializer(chapter)
             return Response(serializer.data)
 
@@ -171,13 +162,15 @@ class ChapterDetailView(APIView):
         except Chapter.DoesNotExist:
             return Response({"detail": "Chapter not found."}, status=status.HTTP_404_NOT_FOUND)
 
-    def put(self, request, book_id, chapter_number):
+    def put(self, request, book_id, chapter_id):
         """
         Update a specific chapter by its book_id and chapter_number.
         """
         try:
+            print(f"Received request to update chapter: {chapter_id} of book: {book_id}")  # Debugging line
+
             book = Book.objects.get(book_id=book_id)
-            chapter = Chapter.objects.get(book=book, chapter_number=chapter_number)
+            chapter = Chapter.objects.get(book=book, chapter_id=chapter_id)
             serializer = ChapterSerializer(chapter, data=request.data, partial=True)
 
             if serializer.is_valid():
@@ -190,13 +183,13 @@ class ChapterDetailView(APIView):
         except Chapter.DoesNotExist:
             return Response({"detail": "Chapter not found."}, status=status.HTTP_404_NOT_FOUND)
 
-    def delete(self, request, book_id, chapter_number):
+    def delete(self, request, book_id, chapter_id):
         """
         Delete a specific chapter by its book_id and chapter_number.
         """
         try:
             book = Book.objects.get(book_id=book_id)
-            chapter = Chapter.objects.get(book=book, chapter_number=chapter_number)
+            chapter = Chapter.objects.get(book=book, chapter_id=chapter_id)
             chapter.delete()
             return Response({"detail": "Chapter deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
 

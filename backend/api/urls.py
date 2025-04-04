@@ -11,7 +11,7 @@ urlpatterns = [
     path('books/<int:book_id>/chapters/', views.ChapterListCreateView.as_view(), name='chapter-list-create'),
     
     # For getting, updating, or deleting a specific chapter by chapter_number
-    path('books/<int:book_id>/chapters/<int:chapter_number>/', views.ChapterDetailView.as_view(), name='chapter-detail'),
+    path('books/<int:book_id>/chapters/<int:chapter_id>/', views.ChapterDetailView.as_view(), name='chapter-detail'),
 
 # Books should call chapter, then chapter should call content. So the URL will look like this books/<int:book_id>/chapter/content
 ]

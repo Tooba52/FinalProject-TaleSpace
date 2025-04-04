@@ -62,17 +62,11 @@ class Chapter(models.Model):
     book = models.ForeignKey(Book, related_name='chapters', on_delete=models.CASCADE)  # Foreign key to the Book
 
     class Meta:
-        unique_together = ['book_id', 'chapter_number']  # Ensure no duplicate chapters for the same book
+        unique_together = ['book', 'chapter_number']  # Ensure no duplicate chapters for the same book
 
     def __str__(self):
-        return f"Chapter {self.chapter_number}: {self.chapter_title or 'Untitled'} of {self.book.title}"
+        return f"Chapter {self.chapter_number}: {self.chapter_title or ' '} of {self.book.title}"
     
 
-# class BookContent(models.Model):
-#     book = models.OneToOneField(Book, on_delete=models.CASCADE)  # Relates to a specific book
-#     content = models.TextField()  # Stores the book's content (text)
-
-#     def __str__(self):
-#         return f"Content for {self.book.title}"
 
     

@@ -32,13 +32,12 @@ class BookSerializer(serializers.ModelSerializer):
 
 
 
-# class BookContentSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = BookContent
-#         fields = ["book", "content"]
-
 class ChapterSerializer(serializers.ModelSerializer):
     class Meta:
         model = Chapter
         fields = ['chapter_id', 'chapter_title', 'chapter_number', 'chapter_content', 'chapter_status', 'book']  # Include all relevant fields
+        extra_kwargs = {
+            'chapter_title': {'allow_blank': True},  # Allow empty string
+            'chapter_content': {'allow_blank': True},  # Allow empty string 
+        }
 

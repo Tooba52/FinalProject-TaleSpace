@@ -59,6 +59,14 @@ function App() {
           }
         />
         <Route
+          path="/books/:book_id/chapters/:chapter_id"
+          element={
+            <ProtectedRoute>
+              <WriteBook />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/profile"
           element={
             <ProtectedRoute>
@@ -71,14 +79,6 @@ function App() {
           element={
             <ProtectedRoute>
               <CreateBook />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/write/:book_id"
-          element={
-            <ProtectedRoute>
-              <WriteBook />
             </ProtectedRoute>
           }
         />

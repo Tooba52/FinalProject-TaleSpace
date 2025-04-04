@@ -86,11 +86,8 @@ function Profile() {
           <div className="book-list">
             {userBooks.map((book) => (
               // Wrap the Book component with Link to navigate to the writing page
-              <Link to={`/write/${book.book_id}`} key={book.book_id}>
-                {" "}
-                {/* Use the book's ID in the link */}
-                <Book book={book} />{" "}
-                {/* Pass the book prop to the Book component */}
+              <Link to={`/books/${book.book_id}/chapters`} key={book.book_id}>
+                <Book book={book} />
               </Link>
             ))}
           </div>

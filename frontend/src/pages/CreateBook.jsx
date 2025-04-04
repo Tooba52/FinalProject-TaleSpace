@@ -131,7 +131,9 @@ function CreateBook() {
         setCoverPhoto(null);
         setCoverFile(null);
 
-        navigate(`/books/${response.data.book_id}/chapters/`); // Redirect to the writing page
+        navigate(`/books/${response.data.book_id}/chapters/`, {
+          replace: true,
+        }); // Redirect to the writing page
       }
     } catch (error) {
       console.error("❌ Error creating book:", error);
