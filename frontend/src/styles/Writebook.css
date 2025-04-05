@@ -1,0 +1,298 @@
+.write-book-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #f8f9fa;
+}
+
+.book-header {
+  padding: 15px 20px 0 20px;
+}
+
+.book-title {
+  font-size: 24px;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.published-badge {
+  background: #4caf50;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+}
+
+.chapter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.chapter-title {
+  margin: 0;
+  font-size: 20px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.chapter-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-left: auto;
+}
+
+.status-badge {
+  font-size: 12px;
+  font-weight: bold;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.status-badge.draft {
+  background: #ffeb3b;
+  color: #000;
+}
+
+.status-badge.published {
+  background: #4caf50;
+  color: white;
+}
+
+.save-time {
+  margin-left: 8px;
+  font-weight: normal;
+  color: #666;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.action-buttons button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.action-buttons button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.action-buttons button.publish-btn {
+  background: #4caf50;
+  color: white;
+}
+
+.publish-btn[title]:hover:after {
+  content: attr(title);
+  position: absolute;
+  background: #333;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 14px;
+  white-space: nowrap;
+  z-index: 100;
+  margin-top: 5px;
+}
+
+.content-area {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.chapter-sidebar {
+  width: 250px;
+  border-right: 1px solid #e0e0e0;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.chapter-header-container {
+  padding: 0 20px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.chapter-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  padding: 10px 0;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.new-chapter-btn {
+  background: #2196f3;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 10px;
+  margin: 15px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: transform 0.2s;
+}
+
+.new-chapter-btn:hover {
+  background: #0d8bf2;
+}
+
+.chapter-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.chapter-list li {
+  padding: 8px 15px 8px 15px;
+}
+
+.chapter-list li.active {
+  background-color: #e3f2fd;
+}
+
+.chapter-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.chapter-item-editing {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.chapter-item-editing input {
+  flex: 1;
+}
+
+.chapter-item:hover {
+  color: #2196f3;
+}
+
+.delete-chapter-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  color: #666;
+  font-size: 16px;
+  transition: color 0.2s;
+}
+
+.delete-chapter-btn:hover {
+  color: #ff4444;
+}
+
+.cannot-delete-message {
+  color: #999;
+  font-size: 12px;
+  margin-left: 8px;
+  font-style: italic;
+}
+
+/* Hide delete button completely for published chapters */
+.chapter-item .delete-chapter-btn,
+.chapter-item-editing .delete-chapter-btn {
+  display: none;
+}
+
+.chapter-item:not(:has(.chapter-status-published)) .delete-chapter-btn,
+.chapter-item-editing:not(:has(.chapter-status-published)) .delete-chapter-btn {
+  display: inline-block;
+}
+
+.chapter-text[data-published="true"] {
+  cursor: default;
+}
+
+.chapter-text[data-published="true"]:hover {
+  color: inherit;
+}
+
+.chapter-status-published {
+  font-size: 11px;
+  color: #4caf50;
+}
+
+.chapter-text[data-published="true"] {
+  position: relative;
+}
+
+.chapter-text[data-published="true"]:hover:after {
+  content: "Published chapters cannot be edited";
+  position: absolute;
+  background: #333;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  z-index: 100;
+  top: 100%;
+  left: 0;
+}
+
+.writing-area {
+  flex: 1;
+  padding: 20px;
+  display: flex;
+  background-color: #fff;
+}
+
+.writing-area textarea {
+  flex: 1;
+  width: 100%;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  resize: none;
+  font-family: inherit;
+  font-size: 16px;
+  line-height: 1.6;
+  min-height: 100%;
+}
+
+.writing-area textarea:focus {
+  outline: none;
+  border-color: #2196f3;
+  box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+}
+
+/* Input for editing chapter titles */
+.chapter-list input {
+  width: 100%;
+  padding: 5px;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  font-size: 14px;
+}

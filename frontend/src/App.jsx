@@ -8,7 +8,6 @@ import WriteBook from "./pages/WriteBook";
 import Profile from "./pages/profile";
 import ProtectedRoute from "./components/ProtectedRoute";
 
-
 function Logout() {
   localStorage.clear(); // Remove user session data
   return <Navigate to="/login" />; // Redirect to login page

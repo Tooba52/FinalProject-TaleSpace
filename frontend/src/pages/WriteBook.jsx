@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import api from "../api";
 import debounce from "lodash.debounce";
 import Navbar from "../components/Navbar";
+import "../styles/Writebook.css";
 
 function WriteBook() {
   const { book_id, chapter_id } = useParams();
@@ -12,13 +13,13 @@ function WriteBook() {
   const [state, setState] = useState({
     isLoading: true,
     chapters: [],
-    content: "", 
-    chapterTitle: "", 
+    content: "",
+    chapterTitle: "",
     bookTitle: "",
-    editingId: null, 
-    tempTitle: "", 
+    editingId: null,
+    tempTitle: "",
     status: "draft",
-    lastSaved: null, 
+    lastSaved: null,
     saveState: "idle",
   });
 
@@ -75,12 +76,32 @@ function WriteBook() {
         const [chaptersRes, contentRes] = await Promise.all([
           api.get(`/api/books/${book_id}/chapters/`),
           chapter_id
-            ? api.get(`/api/books/${book_id}/chapters/${chapter_id}/`)
+            ? api
+                .get(`/api/books/${book_id}/chapters/${chapter_id}/`)
+                .catch(() => null)
             : null,
         ]);
 
         // Get book title from first chapter's book reference
-        const bookTitle = chaptersRes.data[0]?.book?.title || "Untitled Book";
+        const bookTitle =
+          chaptersRes.data[0]?.book_detail?.title || "Untitled Book";
+
+        // Check if the current chapter exists
+        const currentChapterExists = chaptersRes.data.some(
+          (ch) => ch.chapter_id == chapter_id
+        );
+
+        // If we're on a chapter URL but that chapter doesn't exist, redirect
+        if (
+          chapter_id &&
+          !currentChapterExists &&
+          chaptersRes.data.length > 0
+        ) {
+          navigate(
+            `/books/${book_id}/chapters/${chaptersRes.data[0].chapter_id}`
+          );
+          return;
+        }
 
         setState((prev) => ({
           ...prev,
@@ -92,8 +113,11 @@ function WriteBook() {
           isLoading: false,
         }));
       } catch (err) {
-        setState((prev) => ({ ...prev, isLoading: false }));
         console.error("Loading failed:", err);
+        setState((prev) => ({ ...prev, isLoading: false }));
+
+        // If there's an error, redirect to book overview
+        navigate(`/books/${book_id}`);
       }
     };
 
@@ -104,13 +128,12 @@ function WriteBook() {
 
   const fetchUserProfile = () => {
     api
-      .get("/api/user/profile/") 
+      .get("/api/user/profile/")
       .then((res) => {
-        setFirstName(res.data.first_name); 
+        setFirstName(res.data.first_name);
       })
-      .catch((err) => console.error("Error fetching user profile", err)); 
+      .catch((err) => console.error("Error fetching user profile", err));
   };
-
 
   //Chapter actions
   const handleContentChange = (e) => {
@@ -146,6 +169,23 @@ function WriteBook() {
 
   const handlePublish = async () => {
     try {
+      // Find current chapter index
+      const currentChapterIndex = chapters.findIndex(
+        (ch) => ch.chapter_id == chapter_id
+      );
+
+      // Check if any previous chapters are unpublished
+      const unpublishedPreviousChapters = chapters
+        .slice(0, currentChapterIndex)
+        .some((ch) => ch.chapter_status !== "published");
+
+      if (unpublishedPreviousChapters) {
+        alert(
+          "You must publish all previous chapters before publishing this one."
+        );
+        return;
+      }
+
       setState((prev) => ({ ...prev, saveState: "saving" }));
 
       const response = await api.put(
@@ -228,6 +268,50 @@ function WriteBook() {
     }
   };
 
+  const handleDeleteChapter = async (chapterId) => {
+    // Prevent deleting first chapter (just in case)
+    const chapterIndex = chapters.findIndex(
+      (ch) => ch.chapter_id === chapterId
+    );
+    if (chapterIndex === 0) {
+      alert("The first chapter cannot be deleted");
+      return;
+    }
+
+    try {
+      await api.delete(`/api/books/${book_id}/chapters/${chapterId}/`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+        },
+      });
+
+      // Remove deleted chapter from state
+      const updatedChapters = chapters.filter(
+        (ch) => ch.chapter_id !== chapterId
+      );
+      setState((prev) => ({
+        ...prev,
+        chapters: updatedChapters,
+      }));
+
+      // Handle navigation if we're currently viewing the deleted chapter
+      if (chapter_id == chapterId) {
+        if (updatedChapters.length > 0) {
+          // Navigate to the first chapter (which can't be deleted)
+          navigate(
+            `/books/${book_id}/chapters/${updatedChapters[0].chapter_id}`
+          );
+        } else {
+          // This shouldn't happen since we can't delete the first chapter
+          navigate(`/books/${book_id}`);
+        }
+      }
+    } catch (err) {
+      console.error("Delete failed:", err);
+      alert("Failed to delete chapter");
+    }
+  };
+
   // Render
   if (isLoading) return <div className="loading">Loading...</div>;
 
@@ -238,107 +322,176 @@ function WriteBook() {
         showSearch={false}
         showWriteButton={false}
       />
-      <h1 className="book-title-header">
-        {bookTitle}
-        {status === "published" && (
-          <span className="published-badge">Published</span>
-        )}
-      </h1>
 
-      {/* CHAPTER SIDEBAR */}
-      <div className="chapter-sidebar">
-        <h3>Chapters</h3>
-        <ul>
-          {chapters.map((chapter) => (
-            <li
-              key={chapter.chapter_id}
-              style={{
-                fontWeight:
-                  chapter_id == chapter.chapter_id ? "bold" : "normal",
-              }}
-            >
-              {editingId === chapter.chapter_id ? (
-                <input
-                  type="text"
-                  value={tempTitle}
-                  onChange={(e) =>
-                    setState((prev) => ({ ...prev, tempTitle: e.target.value }))
-                  }
-                  onBlur={() => handleTitleUpdate(chapter.chapter_id)}
-                  onKeyPress={(e) =>
-                    e.key === "Enter" && handleTitleUpdate(chapter.chapter_id)
-                  }
-                  autoFocus
-                />
-              ) : (
-                <div
-                  onClick={() =>
-                    navigate(
-                      `/books/${book_id}/chapters/${chapter.chapter_id}`,
-                      { replace: true }
-                    )
-                  }
-                  onDoubleClick={(e) => {
-                    e.stopPropagation();
-                    setState((prev) => ({
-                      ...prev,
-                      editingId: chapter.chapter_id,
-                      tempTitle: chapter.chapter_title || "",
-                    }));
-                  }}
-                >
-                  {chapter.chapter_title || "Untitled"}
-                </div>
-              )}
-            </li>
-          ))}
-        </ul>
-        <button onClick={createChapter}>Create New Chapter</button>
+      {/* HEADER SECTION */}
+      <div className="book-header">
+        <h1 className="book-title">
+          Editing: {bookTitle}
+          {status === "published" && (
+            <span className="published-badge">Published</span>
+          )}
+        </h1>
       </div>
 
-      {/* WRITING AREA */}
-      <div className="writing-area">
-        <div className="status-bar">
-          <span className={`status-badge ${status}`}>
-            {status.toUpperCase()}
-            {lastSaved && status === "draft" && (
-              <span className="save-time">
-                {saveState === "saving"
-                  ? "Saving..."
-                  : `Last saved: ${lastSaved.toLocaleTimeString()}`}
-              </span>
-            )}
-          </span>
+      {/* CHAPTER HEADER WITH ACTIONS */}
+      <div className="chapter-header-container">
+        <div className="chapter-header">
+          <h2 className="chapter-title">{chapterTitle || "Untitled"}</h2>
+          <div className="chapter-actions">
+            <span className={`status-badge ${status}`}>
+              {status.toUpperCase()}
+              {lastSaved && status === "draft" && (
+                <span className="save-time">
+                  {saveState === "saving"
+                    ? "Saving..."
+                    : `Last saved: ${lastSaved.toLocaleTimeString()}`}
+                </span>
+              )}
+            </span>
+            <div className="action-buttons">
+              <button
+                onClick={handleSaveDraft}
+                disabled={saveState === "saving" || status === "published"}
+              >
+                {saveState === "saving" ? "Saving..." : "Save Draft"}
+              </button>
+              <button
+                onClick={handlePublish}
+                disabled={
+                  saveState === "saving" ||
+                  status === "published" ||
+                  chapters
+                    .slice(
+                      0,
+                      chapters.findIndex((ch) => ch.chapter_id == chapter_id)
+                    )
+                    .some((ch) => ch.chapter_status !== "published")
+                }
+                className="publish-btn"
+                title={
+                  chapters
+                    .slice(
+                      0,
+                      chapters.findIndex((ch) => ch.chapter_id == chapter_id)
+                    )
+                    .some((ch) => ch.chapter_status !== "published")
+                    ? "You must publish all previous chapters first"
+                    : ""
+                }
+              >
+                {saveState === "saving" ? "Publishing..." : "Publish Chapter"}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* MAIN CONTENT AREA */}
+      <div className="content-area">
+        {/* CHAPTER SIDEBAR */}
+        <div className="chapter-sidebar">
+          <h3>Chapters</h3>
+          <ul className="chapter-list">
+            {chapters.map((chapter, index) => (
+              <li
+                key={chapter.chapter_id}
+                className={chapter_id == chapter.chapter_id ? "active" : ""}
+                onClick={() =>
+                  navigate(`/books/${book_id}/chapters/${chapter.chapter_id}`)
+                }
+              >
+                {editingId === chapter.chapter_id &&
+                chapter.chapter_status !== "published" ? (
+                  <div
+                    className="chapter-item-editing"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <input
+                      type="text"
+                      value={tempTitle}
+                      onChange={(e) =>
+                        setState((prev) => ({
+                          ...prev,
+                          tempTitle: e.target.value,
+                        }))
+                      }
+                      onBlur={() => handleTitleUpdate(chapter.chapter_id)}
+                      onKeyPress={(e) =>
+                        e.key === "Enter" &&
+                        handleTitleUpdate(chapter.chapter_id)
+                      }
+                      autoFocus
+                    />
+                    {/* Only show delete button if not first chapter AND not published */}
+                    {index > 0 && chapter.chapter_status !== "published" && (
+                      <button
+                        onClick={() => handleDeleteChapter(chapter.chapter_id)}
+                        className="delete-chapter-btn"
+                      >
+                        🗑️
+                      </button>
+                    )}
+                  </div>
+                ) : (
+                  <div className="chapter-item">
+                    <div
+                      className="chapter-text"
+                      data-published={chapter.chapter_status === "published"}
+                      onDoubleClick={(e) => {
+                        if (chapter.chapter_status === "published") return;
+                        e.stopPropagation();
+                        setState((prev) => ({
+                          ...prev,
+                          editingId: chapter.chapter_id,
+                          tempTitle: chapter.chapter_title || "",
+                        }));
+                      }}
+                    >
+                      {chapter.chapter_title || "Untitled"}
+                      {chapter.chapter_status === "published" && (
+                        <span className="chapter-status-published">
+                          • Published
+                        </span>
+                      )}
+                    </div>
+                    {/* Only show delete button if not first chapter AND not published */}
+                    {index > 0 && chapter.chapter_status !== "published" && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteChapter(chapter.chapter_id);
+                        }}
+                        className="delete-chapter-btn"
+                      >
+                        🗑️
+                      </button>
+                    )}
+                    {/* Show explanation if published */}
+                    {chapter.chapter_status === "published" && index > 0 && (
+                      <span className="cannot-delete-message">
+                        (Cannot delete published chapter)
+                      </span>
+                    )}
+                  </div>
+                )}
+              </li>
+            ))}
+          </ul>
+          <button onClick={createChapter} className="new-chapter-btn">
+            + New Chapter
+          </button>
         </div>
 
-        <h3>{chapterTitle || "Untitled"}</h3>
-
-        <textarea
-          value={content}
-          onChange={handleContentChange}
-          readOnly={status === "published"}
-          placeholder={
-            status === "published"
-              ? "Published (read-only)"
-              : "Write your chapter content here..."
-          }
-          rows={10}
-        />
-
-        <div className="action-buttons">
-          <button
-            onClick={handleSaveDraft}
-            disabled={saveState === "saving" || status === "published"}
-          >
-            {saveState === "saving" ? "Saving..." : "Save Draft"}
-          </button>
-          <button
-            onClick={handlePublish}
-            disabled={saveState === "saving" || status === "published"}
-            className="publish-btn"
-          >
-            Publish Chapter
-          </button>
+        {/* WRITING AREA */}
+        <div className="writing-area">
+          <textarea
+            value={content}
+            onChange={handleContentChange}
+            readOnly={status === "published"}
+            placeholder={
+              status === "published" ? "Published (read-only)" : "Type here..."
+            }
+          />
         </div>
       </div>
     </div>
