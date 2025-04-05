@@ -1,17 +1,17 @@
-import { useState, useEffect } from "react"; // Import hooks to manage state and lifecycle
-import { Link } from "react-router-dom"; // Import Link for routing to different pages
-import api from "../api"; // Import API utility for making requests
-import "../styles/Home.css"; // Import styling for the home page
-import logo from "../images/logo.jpeg"; // Logo for the navigation bar
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom"; 
+import api from "../api"; 
+import "../styles/Home.css"; 
+import Navbar from "../components/Navbar";
 
 function Home() {
   // State variables
-  const [firstName, setFirstName] = useState(""); // Stores the first name of the logged-in user
+  const [firstName, setFirstName] = useState(""); 
 
   // useEffect hook to fetch
   useEffect(() => {
-    fetchUserProfile(); // Fetch user profile to get first name
-  }, []); // Empty dependency array ensures this runs only once after the first render
+    fetchUserProfile(); 
+  }, []); 
 
   const fetchUserProfile = () => {
     api
@@ -19,29 +19,13 @@ function Home() {
       .then((res) => {
         setFirstName(res.data.first_name); // Set the first name in state
       })
-      .catch((err) => console.error("Error fetching user profile", err)); // Handle errors
+      .catch((err) => console.error("Error fetching user profile", err));
   };
 
   return (
     <div className="home=page">
+      <Navbar variant="transparent" firstName={firstName} />
       <div className="home-container">
-        {/* Navigation Bar */}
-        <nav className="home-navbar">
-          <Link to="/" className="home-logo">
-            <img src={logo} alt="TaleSpace Logo" /> {/* Logo image */}
-            <span>TaleSpace</span>
-          </Link>
-          <input type="text" placeholder="Search" className="search-bar" />
-          <div className="nav-links">
-            <Link to="/create-book" className="btn-start-writing">
-              Start Writing
-            </Link>
-            <Link to="/profile" className="home-profile-icon">
-              <span>👤 {firstName}</span> {/* Display first name  */}
-            </Link>
-          </div>
-        </nav>
-
         {/* Banner Section */}
         <div className="banner">
           <h2>Welcome to TaleSpace – Where Stories Come to Life!</h2>

@@ -1,13 +1,6 @@
-// Book.jsx
-
 function Book({ book }) {
-  // Format the publication date of the book into a human-readable string
-  const formattedDate = new Date(book.publication_date).toLocaleDateString(
-    "en-UK"
-  );
-  
-
   return (
+    //visual formatting for the books including cover and title
     <div className="book-card">
       <img src={book.cover_photo} alt={book.title} className="book-cover" />
       <p>{book.title}</p>

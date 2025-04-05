@@ -1,7 +1,7 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"; // Import FontAwesomeIcon for displaying the eye icon
-import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons"; // Import specific icons (eye and eye-slash)
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons"; 
 
-// PasswordField component handles displaying the password field with toggleable visibility
+// PasswordField component
 const PasswordField = ({
   showPassword,
   setShowPassword,
@@ -17,23 +17,23 @@ const PasswordField = ({
     {/* Password input field */}
     <input
       className="loginform-input"
-      type={showPassword ? "text" : "password"} // Toggle between text (visible) and password (hidden) based on showPassword state
-      value={password} // Controlled input: the value of the input is tied to the state variable password
+      type={showPassword ? "text" : "password"} 
+      value={password} 
       onChange={(e) => {
-        setPassword(e.target.value); // Update the password state whenever the user types
-        setIsPasswordStarted(true); // Set that the user has started typing the password
+        setPassword(e.target.value); 
+        setIsPasswordStarted(true); 
       }}
-      placeholder="" // Placeholder is kept empty here (optional)
+      placeholder="" 
     />
     {/* Password visibility toggle button */}
     <span
       className="password-toggle"
-      onClick={() => setShowPassword(!showPassword)} // Toggle showPassword state when clicked
+      onClick={() => setShowPassword(!showPassword)} 
     >
-      {/* Display the appropriate icon: eye (visible password) or eye-slash (hidden password) */}
+      {/* Display the appropriate icon*/}
       <FontAwesomeIcon icon={showPassword ? faEye : faEyeSlash} />
     </span>
   </div>
 );
 
-export default PasswordField; // Export the PasswordField component to use in other parts of the app
+export default PasswordField;

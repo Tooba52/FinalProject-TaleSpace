@@ -5,37 +5,7 @@ body {
   box-sizing: border-box;
   width: 100%;
   height: 100%;
-  overflow: hidden; /* Optional: prevents scrolling */
-}
-
-/* Navigation Bar */
-.createbook-nav-bar {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0px 20px;
-  background-color: #e1e7f5;
-}
-
-/* Logo and Title */
-.logo {
-  display: flex;
-  align-items: center;
-  text-decoration: none;
-  margin-left: 20px;
-}
-
-.logo img {
-  width: 40px;
-  height: 40px;
-  margin-right: 10px;
-}
-
-.logo span {
-  font-size: 18px; /* Match login page */
-  font-weight: bold;
-  color: #486fb6;
+  overflow: hidden; 
 }
 
 /* Profile Icon */
@@ -44,13 +14,13 @@ body {
   align-items: center;
   text-decoration: none;
   color: #333;
-  font-size: 16px; /* Match login page */
-  margin-right: 60px; /* Prevent cutting off */
+  font-size: 16px;
+  margin-right: 60px; 
 }
 
 .createbook-container {
   width: 80%;
-  margin: 20px auto; /* Centers the container */
+  margin: 20px auto; 
   padding: 20px;
   background-color: #ffffff;
   border-radius: 8px;

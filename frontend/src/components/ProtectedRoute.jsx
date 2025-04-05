@@ -1,63 +1,61 @@
-// Import necessary components and functions
-import { Navigate } from "react-router-dom"; // To redirect if not authorized
-import { jwtDecode } from "jwt-decode"; // To decode JWT token and check expiration
-import api from "../api"; // API instance to make requests
-import { REFRESH_TOKEN, ACCESS_TOKEN } from "../constants"; // Constants for token keys
-import { useState, useEffect } from "react"; // React hooks for state and lifecycle management
+import { Navigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
+import api from "../api";
+import { REFRESH_TOKEN, ACCESS_TOKEN } from "../constants"; 
+import { useState, useEffect } from "react"; 
 
 function ProtectedRoute({ children }) {
-  // State to track authorization status
   const [isAuthorized, setIsAuthorized] = useState(null);
 
-  // useEffect hook to check authentication status when the component mounts
+  //check authentication status
   useEffect(() => {
     auth().catch(() => setIsAuthorized(false)); // Handle errors during auth check
   }, []);
 
   // Function to refresh the JWT token using the refresh token
   const refreshToken = async () => {
-    const refreshToken = localStorage.getItem(REFRESH_TOKEN); // Get refresh token from localStorage
+    const refreshToken = localStorage.getItem(REFRESH_TOKEN); 
     if (!refreshToken) {
-      localStorage.clear(); // Clear local storage if no refresh token
-      setIsAuthorized(false); // Set authorization status to false
+      localStorage.clear(); 
+      setIsAuthorized(false); 
       return;
     }
 
     try {
       // Try to get a new access token using the refresh token
       const res = await api.post("/api/token/refresh/", {
-        refresh: refreshToken, // Send refresh token to the server
+        refresh: refreshToken, 
       });
       if (res.status === 200) {
-        localStorage.setItem(ACCESS_TOKEN, res.data.access); // Store new access token
-        setIsAuthorized(true); // Set authorization to true
+        localStorage.setItem(ACCESS_TOKEN, res.data.access); 
+        setIsAuthorized(true); 
       } else {
-        localStorage.clear(); // Clear local storage if refresh token is invalid
-        setIsAuthorized(false); // Set authorization status to false
+        localStorage.clear(); 
+        setIsAuthorized(false);
       }
     } catch (error) {
-      console.log("Refresh token expired, logging out."); // Handle errors in refreshing token
-      localStorage.clear(); // Clear local storage if token refresh fails
-      setIsAuthorized(false); // Set authorization to false
+      console.log("Refresh token expired, logging out."); 
+      localStorage.clear(); 
+      setIsAuthorized(false); 
     }
   };
 
   // Function to check if the user is authenticated
   const auth = async () => {
-    const token = localStorage.getItem(ACCESS_TOKEN); // Get access token from localStorage
+    const token = localStorage.getItem(ACCESS_TOKEN); 
     if (!token) {
-      setIsAuthorized(false); // If no access token, user is not authorized
+      setIsAuthorized(false); 
       return;
     }
-    const decoded = jwtDecode(token); // Decode the token to extract its payload
-    const tokenExpiration = decoded.exp; // Get token expiration time
-    const now = Date.now() / 1000; // Get current time in seconds
+    const decoded = jwtDecode(token); 
+    const tokenExpiration = decoded.exp; 
+    const now = Date.now() / 1000; 
 
     // If the token is expired, try to refresh it
     if (tokenExpiration < now) {
-      await refreshToken(); // Call refresh token function
+      await refreshToken(); 
     } else {
-      setIsAuthorized(true); // If token is still valid, authorize the user
+      setIsAuthorized(true);
     }
   };
 
@@ -67,7 +65,7 @@ function ProtectedRoute({ children }) {
   }
 
   // If the user is authorized, render the protected route's children
-  return isAuthorized ? children : <Navigate to="/login" />; // Redirect to login if not authorized
+  return isAuthorized ? children : <Navigate to="/login" />;
 }
 
 export default ProtectedRoute;

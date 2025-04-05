@@ -1,25 +1,25 @@
-import { useState } from "react"; // Import React's useState hook
-import { Link, useNavigate } from "react-router-dom"; // Import Link for navigation and useNavigate for programmatic navigation
-import api from "../api"; // Import the API instance to make requests
-import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants"; // Import constants for token storage
-import "../styles/Form.css"; // Import CSS styles
-import LoadingIndicator from "./LoadingIndicator"; // Import LoadingIndicator component
-import { validatePassword } from "./utils"; // Import the password validation utility
-import PasswordStrengthIndicator from "./PasswordStrengthIndicator"; // Import PasswordStrengthIndicator component
-import PasswordField from "./PasswordField"; // Import PasswordField component
-import FormFields from "./FormFields"; // Import FormFields component to render additional user info for registration
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import api from "../api";
+import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
+import "../styles/Form.css";
+import LoadingIndicator from "./LoadingIndicator";
+import { validatePassword } from "./utils";
+import PasswordStrengthIndicator from "./PasswordStrengthIndicator";
+import PasswordField from "./PasswordField";
+import FormFields from "./FormFields";
 
 function Form({ route, method }) {
-  // State variables to manage form inputs
-  const [email, setEmail] = useState(""); // For email input field
-  const [password, setPassword] = useState(""); // For password input field
-  const [showPassword, setShowPassword] = useState(false); // Toggle for password visibility
-  const [firstName, setFirstName] = useState(""); // For first name input (only for registration)
-  const [lastName, setLastName] = useState(""); // For last name input (only for registration)
-  const [dateOfBirth, setDateOfBirth] = useState(""); // For date of birth input (only for registration)
-  const [loading, setLoading] = useState(false); // Loading state for API requests
-  const [isPasswordStarted, setIsPasswordStarted] = useState(false); // To track if password field has been modified
-  const navigate = useNavigate(); // Hook to programmatically navigate to different routes
+  // Form state
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [dateOfBirth, setDateOfBirth] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [isPasswordStarted, setIsPasswordStarted] = useState(false);
+  const navigate = useNavigate();
 
   // Determine form title based on method (login or register)
   const name = method === "login" ? "Login" : "Register";
@@ -28,8 +28,8 @@ function Form({ route, method }) {
 
   // Handle form submission
   const handleSubmit = async (e) => {
-    setLoading(true); // Set loading to true when the form is submitted
-    e.preventDefault(); // Prevent default form submission behavior
+    setLoading(true); //
+    e.preventDefault();
 
     // Password validation check using the imported utility function
     if (!validatePassword(password)) {
@@ -51,25 +51,23 @@ function Form({ route, method }) {
             date_of_birth: dateOfBirth,
           };
 
-    // Make the API request
     try {
-      const res = await api.post(route, payload); // Send request with appropriate payload
+      const res = await api.post(route, payload);
       if (method === "login") {
-        localStorage.setItem(ACCESS_TOKEN, res.data.access); // Store the access token on successful login
-        localStorage.setItem(REFRESH_TOKEN, res.data.refresh); // Store the refresh token
+        localStorage.setItem(ACCESS_TOKEN, res.data.access);
+        localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
 
         navigate("/"); // Redirect to the home page after login
       } else {
         navigate("/login"); // Redirect to the login page after successful registration
       }
     } catch (error) {
-      // Handle error if API request fails
       if (error.response) {
         const errorData = error.response.data;
         if (errorData.email) {
-          alert(errorData.email[0]); // If email already exists, display the error message
+          alert(errorData.email[0]);
         } else if (errorData.detail) {
-          alert(errorData.detail); // For general API error messages
+          alert(errorData.detail);
         } else {
           alert("An unknown error occurred. Please try again.");
         }
@@ -83,7 +81,7 @@ function Form({ route, method }) {
     <div className="loginform-layout">
       <form onSubmit={handleSubmit} className="loginform-container">
         <h1>{formTitle}</h1>
-        {/* Render additional fields for registration only */}
+        {/* Registration fields (only shown for register) */}
         <FormFields
           method={method}
           firstName={firstName}
@@ -93,7 +91,7 @@ function Form({ route, method }) {
           dateOfBirth={dateOfBirth}
           setDateOfBirth={setDateOfBirth}
         />
-        {/* Email input field */}
+        {/* Email field */}
         <label htmlFor="email" className="loginform-label">
           Email
         </label>
@@ -101,10 +99,10 @@ function Form({ route, method }) {
           className="loginform-input"
           type="text"
           value={email}
-          onChange={(e) => setEmail(e.target.value)} // Update email state on change
+          onChange={(e) => setEmail(e.target.value)}
           placeholder=""
         />
-        {/* Password input field with visibility toggle */}
+        {/* Password field */}
         <PasswordField
           showPassword={showPassword}
           setShowPassword={setShowPassword}
@@ -112,11 +110,11 @@ function Form({ route, method }) {
           setPassword={setPassword}
           setIsPasswordStarted={setIsPasswordStarted}
         />
-        {/* Show password strength indicator for registration */}
+        {/* Password strength indicator */}
         {method === "register" && isPasswordStarted && (
           <PasswordStrengthIndicator password={password} />
         )}
-        {/* "Remember me" and "Forgot password?" for login */}
+        {/* Login options */}
         {method === "login" && (
           <div className="loginoptions-container">
             <div className="remember-me">
@@ -134,13 +132,12 @@ function Form({ route, method }) {
             </div>
           </div>
         )}
-        {loading && <LoadingIndicator />}{" "}
-        {/* Show loading indicator while waiting for API response */}
         {/* Submit button */}
         <button className="loginform-button" type="submit">
           {name}
         </button>
-        {/* Links for switching between login and registration */}
+        {loading && <LoadingIndicator />}
+        {/* Form footer links */}
         {method === "login" && (
           <p className="login-links">
             Don't have an account? <Link to="/register">Sign up now</Link>

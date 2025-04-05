@@ -3,7 +3,7 @@ body {
   margin: 0;
   padding: 0;
   overflow-y: scroll;
-  box-sizing: border-box; /* Ensures consistent box sizing */
+  box-sizing: border-box;
   width: 100%;
   height: 100%;
 }
@@ -14,76 +14,6 @@ body {
   flex-direction: column;
   align-items: center;
   width: 100%;
-}
-
-/* navbar styling */
-.home-navbar {
-  background-color: #e1e7f5;
-  width: 100%;
-  display: flex;
-  justify-content: space-evenly; /* Distributes items evenly */
-  align-items: center;
-  padding: 20px 20px;
-  margin-bottom: 2%;
-}
-
-/* Logo and Title */
-.home-logo {
-  display: flex;
-  align-items: center;
-  text-decoration: none;
-  margin-left: 40px;
-}
-
-.home-logo img {
-  width: 40px;
-  height: 40px;
-  margin-right: 10px;
-}
-
-.home-logo span {
-  font-size: 18px; /* Match login page */
-  font-weight: bold;
-  color: #486fb6;
-}
-
-/* Search Bar */
-.search-bar {
-  flex: 2; /* Takes more space */
-  max-width: 400px; /* Limits width */
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 20px;
-  margin-left: 25%;
-}
-
-/* Navigation Links */
-.nav-links {
-  display: flex;
-  flex: 1; /* Ensures even spacing */
-  justify-content: space-between; /* Separates buttons */
-  align-items: center;
-  margin-left: 15%;
-}
-
-/* Start Writing Button */
-.btn-start-writing {
-  text-decoration: none;
-  background-color: #486fb6;
-  color: white;
-  padding: 8px 15px;
-  border-radius: 10px;
-  font-weight: bold;
-}
-
-/* Profile Icon */
-.home-profile-icon {
-  text-decoration: none;
-  color: #333;
-  font-size: 16px;
-  display: flex;
-  align-items: center;
-  margin-right: 40px; /* Prevent cutting off */
 }
 
 /* Allow sections to take space */
@@ -98,14 +28,14 @@ body {
   flex-direction: column;
   align-items: center;
   width: 100%;
-  overflow-y: auto; /* Enable scrolling */
+  overflow-y: auto; 
 }
 
 /* Ensure book, genre, and author lists don't break layout */
 .genre-list,
 .author-list {
   display: flex;
-  overflow-x: auto; /* Enable horizontal scrolling for lists */
+  overflow-x: auto;
   gap: 15px;
   padding: 10px;
   white-space: nowrap;

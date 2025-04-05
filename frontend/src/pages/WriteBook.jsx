@@ -1,168 +1,251 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../api";
-import ChapterList from "../components/ChapterList";
+import debounce from "lodash.debounce";
+import Navbar from "../components/Navbar";
 
 function WriteBook() {
-  const { book_id, chapter_id } = useParams(); // Get book ID from URL
-  const [isLoading, setLoading] = useState(true);
-  const [chapters, setChapters] = useState([]);
-  const [chapterContent, setChapterContent] = useState("");
-  const [chapterTitle, setChapterTitle] = useState("");
-  const [editingChapterId, setEditingChapterId] = useState(null);
-  const [tempChapterTitle, setTempChapterTitle] = useState("");
-  const [error, setError] = useState("");
+  const { book_id, chapter_id } = useParams();
+  const [firstName, setFirstName] = useState("");
   const navigate = useNavigate();
 
-  useEffect(() => {
-    fetchChapters();
-    setChapterContent("");
-    setChapterTitle("");
-    if (chapter_id) {
-      fetchChapterContent(chapter_id);
-    }
-  }, [chapter_id, book_id]);
+  const [state, setState] = useState({
+    isLoading: true,
+    chapters: [],
+    content: "", 
+    chapterTitle: "", 
+    bookTitle: "",
+    editingId: null, 
+    tempTitle: "", 
+    status: "draft",
+    lastSaved: null, 
+    saveState: "idle",
+  });
 
-  const fetchChapters = async () => {
-    try {
-      const response = await api.get(`/api/books/${book_id}/chapters/`);
-      setChapters(response.data);
-      setLoading(false);
-    } catch (err) {
-      console.error("Error fetching chapters:", err);
-      setError("Failed to load chapters.");
-      setLoading(false);
-    }
+  // Destructure for cleaner access
+  const {
+    isLoading,
+    chapters,
+    content,
+    chapterTitle,
+    bookTitle,
+    editingId,
+    tempTitle,
+    status,
+    lastSaved,
+    saveState,
+  } = state;
+
+  // API Operations
+  const autoSave = useCallback(
+    debounce(async (content) => {
+      if (!chapter_id || !content.trim() || status === "published") return;
+
+      try {
+        setState((prev) => ({ ...prev, saveState: "saving" }));
+
+        await api.put(
+          `/api/books/${book_id}/chapters/${chapter_id}/`,
+          { chapter_content: content, chapter_status: "draft" },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+            },
+          }
+        );
+
+        setState((prev) => ({
+          ...prev,
+          saveState: "saved",
+          lastSaved: new Date(),
+          status: "draft",
+        }));
+      } catch (err) {
+        setState((prev) => ({ ...prev, saveState: "error" }));
+        console.error("Auto-save failed:", err);
+      }
+    }, 5000),
+    [book_id, chapter_id, status]
+  );
+
+  // Fetch initial data
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [chaptersRes, contentRes] = await Promise.all([
+          api.get(`/api/books/${book_id}/chapters/`),
+          chapter_id
+            ? api.get(`/api/books/${book_id}/chapters/${chapter_id}/`)
+            : null,
+        ]);
+
+        // Get book title from first chapter's book reference
+        const bookTitle = chaptersRes.data[0]?.book?.title || "Untitled Book";
+
+        setState((prev) => ({
+          ...prev,
+          bookTitle,
+          chapters: chaptersRes.data,
+          content: contentRes?.data?.chapter_content || "",
+          chapterTitle: contentRes?.data?.chapter_title || "",
+          status: contentRes?.data?.chapter_status || "draft",
+          isLoading: false,
+        }));
+      } catch (err) {
+        setState((prev) => ({ ...prev, isLoading: false }));
+        console.error("Loading failed:", err);
+      }
+    };
+
+    fetchUserProfile();
+    fetchData();
+    return () => autoSave.cancel();
+  }, [book_id, chapter_id, autoSave]);
+
+  const fetchUserProfile = () => {
+    api
+      .get("/api/user/profile/") 
+      .then((res) => {
+        setFirstName(res.data.first_name); 
+      })
+      .catch((err) => console.error("Error fetching user profile", err)); 
   };
 
-  // Fetch content for the specific chapter
-  const fetchChapterContent = async (chapterId) => {
-    try {
-      const response = await api.get(
-        `/api/books/${book_id}/chapters/${chapterId}/`
-      );
-      setChapterTitle(response.data.chapter_title);
-      setChapterContent(response.data.chapter_content);
-    } catch (err) {
-      console.error("Error fetching chapter content:", err);
-      setError("Failed to load chapter content.");
-    }
+
+  //Chapter actions
+  const handleContentChange = (e) => {
+    const newContent = e.target.value;
+    setState((prev) => ({ ...prev, content: newContent }));
+    autoSave(newContent);
   };
 
   const handleSaveDraft = async () => {
     try {
-      const updatedChapter = {
-        chapter_content: chapterContent, // Updated content
-      };
+      setState((prev) => ({ ...prev, saveState: "saving" }));
 
-      // Get the JWT token from localStorage or wherever you're storing it
-      const token = localStorage.getItem("auth_token"); // Adjust according to your storage method
+      await api.put(
+        `/api/books/${book_id}/chapters/${chapter_id}/`,
+        { chapter_content: content },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+          },
+        }
+      );
 
-      console.log("Token:", token);
+      setState((prev) => ({
+        ...prev,
+        saveState: "saved",
+        lastSaved: new Date(),
+      }));
+    } catch (err) {
+      setState((prev) => ({ ...prev, saveState: "error" }));
+      console.error("Save failed:", err);
+    }
+  };
+
+  const handlePublish = async () => {
+    try {
+      setState((prev) => ({ ...prev, saveState: "saving" }));
 
       const response = await api.put(
         `/api/books/${book_id}/chapters/${chapter_id}/`,
-        updatedChapter,
+        { chapter_content: content, chapter_status: "published" },
         {
           headers: {
-            Authorization: `Bearer ${token}`, // Add the token to the Authorization header
+            Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
           },
         }
       );
-      console.log("Chapter updated:", response.data);
+
+      setState((prev) => ({
+        ...prev,
+        saveState: "published",
+        status: "published",
+        chapters: prev.chapters.map((ch) =>
+          ch.chapter_id === chapter_id
+            ? { ...ch, chapter_status: "published" }
+            : ch
+        ),
+      }));
     } catch (err) {
-      console.error("Error saving draft:", err);
+      setState((prev) => ({ ...prev, saveState: "error" }));
+      console.error("Publish failed:", err);
     }
   };
 
-  // Title editing functions
-  const handleTitleDoubleClick = (chapter, e) => {
-    e.stopPropagation();
-    setEditingChapterId(chapter.chapter_id);
-    setTempChapterTitle(chapter.chapter_title || "");
-  };
-
-  const handleTitleChange = (e) => {
-    setTempChapterTitle(e.target.value);
-  };
-
-  const saveChapterTitle = async (chapterId) => {
+  const handleTitleUpdate = async (chapterId) => {
     try {
-      const updatedChapter = {
-        chapter_title: tempChapterTitle,
-      };
-
-      const token = localStorage.getItem("auth_token");
       await api.put(
         `/api/books/${book_id}/chapters/${chapterId}/`,
-        updatedChapter,
+        { chapter_title: tempTitle },
         {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
           },
         }
       );
 
-      setChapters(
-        chapters.map((chapter) =>
-          chapter.chapter_id === chapterId
-            ? { ...chapter, chapter_title: tempChapterTitle }
-            : chapter
-        )
-      );
-      setEditingChapterId(null);
+      setState((prev) => ({
+        ...prev,
+        chapters: prev.chapters.map((ch) =>
+          ch.chapter_id === chapterId ? { ...ch, chapter_title: tempTitle } : ch
+        ),
+        editingId: null,
+      }));
     } catch (err) {
-      console.error("Error updating chapter title:", err);
+      console.error("Title update failed:", err);
     }
   };
-
-  if (isLoading) {
-    return <div>Loading...</div>; // Show loading indicator while fetching
-  }
 
   const createChapter = async () => {
     try {
-      const newChapter = {
-        chapter_title: "Untitled",
-        chapter_content: "",
-        chapter_status: "draft",
-        book: book_id, // Include the book reference
-      };
-
-      // Include auth token
-      const token = localStorage.getItem("auth_token");
       const response = await api.post(
         `/api/books/${book_id}/chapters/`,
-        newChapter,
+        {
+          chapter_title: "Untitled",
+          chapter_content: "",
+          chapter_status: "draft",
+          book: book_id,
+        },
         {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
           },
         }
       );
 
-      setChapters((prevChapters) => [...prevChapters, response.data]);
+      setState((prev) => ({
+        ...prev,
+        chapters: [...prev.chapters, response.data],
+      }));
+
       navigate(`/books/${book_id}/chapters/${response.data.chapter_id}`, {
         replace: true,
       });
     } catch (err) {
-      console.error("Error creating chapter:", err);
-      setError("Failed to create chapter.");
+      console.error("Chapter creation failed:", err);
     }
   };
 
-  // Handle chapter click to change URL and fetch new chapter content
-  const handleChapterClick = (clickedChapterId) => {
-    navigate(`/books/${book_id}/chapters/${clickedChapterId}`, {
-      replace: true,
-    });
-  };
-
-  if (isLoading) return <p>Loading chapters...</p>;
-  if (error) return <p>{error}</p>;
+  // Render
+  if (isLoading) return <div className="loading">Loading...</div>;
 
   return (
     <div className="write-book-container">
+      <Navbar
+        firstName={firstName}
+        showSearch={false}
+        showWriteButton={false}
+      />
+      <h1 className="book-title-header">
+        {bookTitle}
+        {status === "published" && (
+          <span className="published-badge">Published</span>
+        )}
+      </h1>
+
+      {/* CHAPTER SIDEBAR */}
       <div className="chapter-sidebar">
         <h3>Chapters</h3>
         <ul>
@@ -170,34 +253,39 @@ function WriteBook() {
             <li
               key={chapter.chapter_id}
               style={{
-                cursor: "pointer",
                 fontWeight:
                   chapter_id == chapter.chapter_id ? "bold" : "normal",
               }}
             >
-              {editingChapterId === chapter.chapter_id ? (
+              {editingId === chapter.chapter_id ? (
                 <input
                   type="text"
-                  className="chapter-title-input"
-                  value={tempChapterTitle}
-                  onChange={handleTitleChange}
-                  onBlur={() => saveChapterTitle(chapter.chapter_id)}
-                  onKeyPress={(e) => {
-                    if (e.key === "Enter") {
-                      saveChapterTitle(chapter.chapter_id);
-                    }
-                  }}
+                  value={tempTitle}
+                  onChange={(e) =>
+                    setState((prev) => ({ ...prev, tempTitle: e.target.value }))
+                  }
+                  onBlur={() => handleTitleUpdate(chapter.chapter_id)}
+                  onKeyPress={(e) =>
+                    e.key === "Enter" && handleTitleUpdate(chapter.chapter_id)
+                  }
                   autoFocus
-                  onClick={(e) => e.stopPropagation()}
                 />
               ) : (
                 <div
-                  onClick={() => handleChapterClick(chapter.chapter_id)}
+                  onClick={() =>
+                    navigate(
+                      `/books/${book_id}/chapters/${chapter.chapter_id}`,
+                      { replace: true }
+                    )
+                  }
                   onDoubleClick={(e) => {
                     e.stopPropagation();
-                    handleTitleDoubleClick(chapter, e);
+                    setState((prev) => ({
+                      ...prev,
+                      editingId: chapter.chapter_id,
+                      tempTitle: chapter.chapter_title || "",
+                    }));
                   }}
-                  style={{ textDecoration: "underline" }}
                 >
                   {chapter.chapter_title || "Untitled"}
                 </div>
@@ -207,16 +295,51 @@ function WriteBook() {
         </ul>
         <button onClick={createChapter}>Create New Chapter</button>
       </div>
+
+      {/* WRITING AREA */}
       <div className="writing-area">
+        <div className="status-bar">
+          <span className={`status-badge ${status}`}>
+            {status.toUpperCase()}
+            {lastSaved && status === "draft" && (
+              <span className="save-time">
+                {saveState === "saving"
+                  ? "Saving..."
+                  : `Last saved: ${lastSaved.toLocaleTimeString()}`}
+              </span>
+            )}
+          </span>
+        </div>
+
         <h3>{chapterTitle || "Untitled"}</h3>
+
         <textarea
-          placeholder="Write your chapter content here..."
-          value={chapterContent}
-          onChange={(e) => setChapterContent(e.target.value)}
-          rows="10"
-          cols="50"
+          value={content}
+          onChange={handleContentChange}
+          readOnly={status === "published"}
+          placeholder={
+            status === "published"
+              ? "Published (read-only)"
+              : "Write your chapter content here..."
+          }
+          rows={10}
         />
-        <button onClick={handleSaveDraft}>Save as Draft</button>
+
+        <div className="action-buttons">
+          <button
+            onClick={handleSaveDraft}
+            disabled={saveState === "saving" || status === "published"}
+          >
+            {saveState === "saving" ? "Saving..." : "Save Draft"}
+          </button>
+          <button
+            onClick={handlePublish}
+            disabled={saveState === "saving" || status === "published"}
+            className="publish-btn"
+          >
+            Publish Chapter
+          </button>
+        </div>
       </div>
     </div>
   );

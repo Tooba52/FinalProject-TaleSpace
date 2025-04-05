@@ -1,4 +1,4 @@
-// Functional component for form fields, accepts props for managing input values and method type
+// Form fields
 const FormFields = ({
   method,
   firstName,
@@ -8,12 +8,12 @@ const FormFields = ({
   dateOfBirth,
   setDateOfBirth,
 }) => {
-  // If the method is "login", return null, as no extra fields are needed for login
+  // If the method is "login", return null
   if (method === "login") {
-    return null; // No extra fields for login
+    return null; 
   }
 
-  // If the method is "register", return the fields for first name, last name, and date of birth
+  // If the method is "register", return  fields for first name, last name, and date of birth
   return (
     <>
       {/* First Name Input */}
@@ -23,8 +23,8 @@ const FormFields = ({
       <input
         className="loginform-input"
         type="text"
-        value={firstName} // Controlled input using state value
-        onChange={(e) => setFirstName(e.target.value)} // Update state with user input
+        value={firstName} 
+        onChange={(e) => setFirstName(e.target.value)}
       />
 
       {/* Last Name Input */}
@@ -34,8 +34,8 @@ const FormFields = ({
       <input
         className="loginform-input"
         type="text"
-        value={lastName} // Controlled input using state value
-        onChange={(e) => setLastName(e.target.value)} // Update state with user input
+        value={lastName} 
+        onChange={(e) => setLastName(e.target.value)} 
       />
 
       {/* Date of Birth Input */}
@@ -45,12 +45,12 @@ const FormFields = ({
       <input
         className="loginform-input dob-input"
         id="dob"
-        type="date" // Input type set to date for date picker
-        value={dateOfBirth} // Controlled input using state value
-        onChange={(e) => setDateOfBirth(e.target.value)} // Update state with user input
+        type="date"
+        value={dateOfBirth} 
+        onChange={(e) => setDateOfBirth(e.target.value)} 
       />
     </>
   );
 };
 
-export default FormFields; // Export the component for use in other parts of the app
+export default FormFields;

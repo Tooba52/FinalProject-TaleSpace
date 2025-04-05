@@ -1,24 +1,22 @@
-// Import necessary libraries and components
-import { useState, useEffect } from "react"; // useState hook to manage state in the component
-import { Link } from "react-router-dom"; // Link component for routing
-import "../styles/CreateBook.css"; // CSS styles for the component
-import logo from "../images/logo.jpeg"; // Logo for the navigation bar
-import api from "../api"; // API utility to make requests
+import { useState, useEffect } from "react";
+import "../styles/CreateBook.css";
+import api from "../api";
 import { useNavigate } from "react-router-dom";
+import Navbar from "../components/Navbar";
 
 function CreateBook() {
-  const navigate = useNavigate(); // Initialize navigation
-  const [firstName, setFirstName] = useState(""); // Stores the first name of the logged-in user
+  const navigate = useNavigate();
+  const [firstName, setFirstName] = useState("");
 
   // State variables for managing form inputs and book creation
-  const [title, setTitle] = useState(""); // For book title
-  const [description, setDescription] = useState(""); // For book description
-  const [selectedGenres, setSelectedGenres] = useState([]); // For selected genres (up to 3)
-  const [language, setLanguage] = useState(""); // For book language selection
-  const [mature, setMature] = useState(false); // For the mature rating checkbox
-  const [coverPhoto, setCoverPhoto] = useState(null); // For cover photo preview
-  const [coverFile, setCoverFile] = useState(null); // For storing the file object
-  const [isLoading, setIsLoading] = useState(false); // Loading state while saving the book
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [selectedGenres, setSelectedGenres] = useState([]);
+  const [language, setLanguage] = useState("");
+  const [mature, setMature] = useState(false);
+  const [coverPhoto, setCoverPhoto] = useState(null);
+  const [coverFile, setCoverFile] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Predefined genres for selection
   const genres = [
@@ -49,8 +47,8 @@ function CreateBook() {
 
   // useEffect hook to fetch
   useEffect(() => {
-    fetchUserProfile(); // Fetch user profile to get first name
-  }, []); // Empty dependency array ensures this runs only once after the first render
+    fetchUserProfile();
+  }, []);
 
   const fetchUserProfile = () => {
     api
@@ -58,15 +56,15 @@ function CreateBook() {
       .then((res) => {
         setFirstName(res.data.first_name); // Set the first name in state
       })
-      .catch((err) => console.error("Error fetching user profile", err)); // Handle errors
+      .catch((err) => console.error("Error fetching user profile", err));
   };
 
-  // Handles genre selection; allows up to 3 genres to be selected
+  //allows up to 3 genres to be selected
   const handleGenreClick = (genre) => {
     if (selectedGenres.includes(genre)) {
-      setSelectedGenres(selectedGenres.filter((g) => g !== genre)); // Deselect genre
+      setSelectedGenres(selectedGenres.filter((g) => g !== genre));
     } else if (selectedGenres.length < 3) {
-      setSelectedGenres([...selectedGenres, genre]); // Add genre if not already selected
+      setSelectedGenres([...selectedGenres, genre]);
     }
   };
 
@@ -75,13 +73,13 @@ function CreateBook() {
     const file = e.target.files[0];
     if (
       file &&
-      file.size <= 5 * 1024 * 1024 && // Check file size (limit to 5MB)
-      (file.type === "image/jpeg" || file.type === "image/png") // Check file type (JPEG/PNG)
+      file.size <= 5 * 1024 * 1024 &&
+      (file.type === "image/jpeg" || file.type === "image/png")
     ) {
-      setCoverPhoto(URL.createObjectURL(file)); // Display preview of selected image
-      setCoverFile(file); // Store the actual file for uploading
+      setCoverPhoto(URL.createObjectURL(file));
+      setCoverFile(file);
     } else {
-      alert("Please upload a valid image (JPEG or PNG) under 5MB."); // Alert user for invalid file
+      alert("Please upload a valid image (JPEG or PNG) under 5MB.");
     }
   };
 
@@ -89,39 +87,39 @@ function CreateBook() {
   const handleSave = async () => {
     // Ensure required fields are filled out
     if (!title || !description || selectedGenres.length === 0 || !language) {
-      alert("Please fill in all required fields."); // Alert if any required field is missing
+      alert("Please fill in all required fields.");
       return;
     }
 
-    setIsLoading(true); // Set loading state to true when saving the book
+    setIsLoading(true);
 
-    // Prepare form data to send in the API request
+    // Prepare form data
     const formData = new FormData();
-    formData.append("title", title); // Append title
-    formData.append("description", description); // Append description
-    formData.append("genres", JSON.stringify(selectedGenres)); // Append selected genres as JSON
-    formData.append("language", language); // Append language
-    formData.append("mature", mature); // Append mature rating status
+    formData.append("title", title);
+    formData.append("description", description);
+    formData.append("genres", JSON.stringify(selectedGenres));
+    formData.append("language", language);
+    formData.append("mature", mature);
     if (coverFile) {
-      formData.append("cover_photo", coverFile); // Append the cover photo file
+      formData.append("cover_photo", coverFile);
     }
 
-    const token = localStorage.getItem("access"); // Get the access token from localStorage
-    console.log("🔍 Sending token:", token); // Debugging: logging token to ensure it's being sent
+    const token = localStorage.getItem("access");
+    console.log("🔍 Sending token:", token);
 
     try {
       // API request to create the book
       const response = await api.post("/api/books/", formData, {
         headers: {
-          "Content-Type": "multipart/form-data", // Set content type for file upload
-          Authorization: `Bearer ${token}`, // Attach the token to the request headers
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
         },
       });
 
-      console.log("Book Created Successfully:", response.data); // Success response
+      console.log("Book Created Successfully:", response.data);
 
       if (response.status === 201) {
-        alert("Book created successfully!"); // Notify the user of success
+        alert("Book created successfully!");
         // Reset form fields after successful submission
         setTitle("");
         setDescription("");
@@ -138,34 +136,30 @@ function CreateBook() {
     } catch (error) {
       console.error("❌ Error creating book:", error);
 
-      // Handle different types of errors more specifically
       if (error.response) {
-        console.log("🔍 Error Response:", error.response.data);
-        alert(
-          `Failed to create book: ${
-            error.response.data.detail || "An unknown error occurred."
-          }`
-        ); // Display detailed error message
+        console.log("🔍 Status Code:", error.response.status);
+        console.log("🔍 Response Data:", error.response.data);
+        console.log("🔍 Headers:", error.response.headers);
+
+        alert(`Failed to create book: ${JSON.stringify(error.response.data)}`);
+      } else if (error.request) {
+        console.log("🔍 Request:", error.request);
+        alert("No response received from server");
       } else {
-        alert("Failed to create book. Please try again."); // Generic error message
+        console.log("🔍 Error Message:", error.message);
+        alert("Error setting up request: " + error.message);
       }
-    } finally {
-      setIsLoading(false); // Reset loading state
     }
   };
 
   return (
     <div className="create-book-container">
       {/* Navigation Bar */}
-      <div className="createbook-nav-bar">
-        <Link to="/" className="logo">
-          <img src={logo} alt="TaleSpace Logo" /> {/* Logo image */}
-          <span>TaleSpace</span>
-        </Link>
-        <Link to="/profile" className="home-profile-icon">
-          <span>👤 {firstName}</span> {/* Display first name  */}
-        </Link>
-      </div>
+      <Navbar
+        firstName={firstName}
+        showSearch={false}
+        showWriteButton={false}
+      />
 
       <div className="createbook-container">
         {/* Book Creation Form */}
@@ -173,7 +167,7 @@ function CreateBook() {
           {/* Cover Photo Section */}
           <div className="cover-photo">
             {coverPhoto ? (
-              <img src={coverPhoto} alt="Cover Preview" /> // Display cover photo if selected
+              <img src={coverPhoto} alt="Cover Preview" />
             ) : (
               <label className="upload-placeholder">
                 <input
@@ -181,7 +175,7 @@ function CreateBook() {
                   accept="image/*"
                   onChange={handleCoverPhotoChange}
                 />
-                Choose Cover Photo {/* Prompt to upload a photo */}
+                Choose Cover Photo
               </label>
             )}
           </div>
@@ -192,57 +186,56 @@ function CreateBook() {
             <input
               type="text"
               value={title}
-              onChange={(e) => setTitle(e.target.value)} // Handle title input
+              onChange={(e) => setTitle(e.target.value)}
             />
-
+            {/* Description */}
             <label>Description</label>
             <textarea
               value={description}
-              onChange={(e) => setDescription(e.target.value)} // Handle description input
+              onChange={(e) => setDescription(e.target.value)}
             ></textarea>
-
+            {/* Select Genres */}
             <label>Select Genres (Choose up to 3)</label>
             <div className="createbook-genres">
               {genres.map((genre) => (
                 <button
                   key={genre}
-                  className={selectedGenres.includes(genre) ? "selected" : ""} // Highlight selected genres
-                  onClick={() => handleGenreClick(genre)} // Handle genre selection
+                  className={selectedGenres.includes(genre) ? "selected" : ""}
+                  onClick={() => handleGenreClick(genre)}
                 >
                   {genre}
                 </button>
               ))}
             </div>
-
+            {/* Language */}
             <label>Language</label>
             <select
               value={language}
-              onChange={(e) => setLanguage(e.target.value)} // Handle language selection
+              onChange={(e) => setLanguage(e.target.value)} 
             >
               <option value="">Select a language</option>
               <option value="English">English</option>
               <option value="Spanish">Spanish</option>
               <option value="French">French</option>
             </select>
-
+            {/* Rating */}
             <label>Rating</label>
             <div className="mature-rating">
               <span>Mature</span>
               <input
                 type="checkbox"
                 checked={mature}
-                onChange={() => setMature(!mature)} // Handle mature rating toggle
+                onChange={() => setMature(!mature)} 
               />
             </div>
 
             <button
               className="createbook-save-button"
               onClick={handleSave}
-              disabled={isLoading} // Disable the button while saving
-              aria-live="polite" // Make sure screen readers announce the loading state
+              disabled={isLoading}
+              aria-live="polite" 
             >
               {isLoading ? "Saving..." : "Save"}{" "}
-              {/* Show loading text while saving */}
             </button>
           </div>
         </div>

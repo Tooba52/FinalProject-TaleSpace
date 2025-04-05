@@ -4,10 +4,10 @@ body,
 body {
   margin: 0;
   padding: 0;
-  box-sizing: border-box; /* Ensures consistent box sizing */
+  box-sizing: border-box; 
   width: 100%;
   height: 100%;
-  overflow: hidden; /* Optional: Prevents accidental scrollbars */
+  overflow: hidden; 
 }
 
 /* Overall page layout with header and content sections */
@@ -18,7 +18,7 @@ body {
 
 /* Header styling for logo and text */
 .loginheader {
-  position: absolute; /* Allows precise positioning */
+  position: absolute;
   top: 10px;
   left: 10px;
 }
@@ -48,9 +48,9 @@ body {
 .loginimage-section {
   flex: 2;
   display: flex;
-  align-items: flex-start; /* Align content to the top */
+  align-items: flex-start; 
   justify-content: flex-start;
-  padding: 40px 20px 20px; /* Increased top padding */
+  padding: 40px 20px 20px; 
   background-color: #e1e7f5;
   position: relative;
 }

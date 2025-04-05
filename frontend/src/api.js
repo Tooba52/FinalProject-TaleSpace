@@ -8,11 +8,6 @@ const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
 });
 
-/**
- * Request Interceptor:
- * - This function runs before every request is sent.
- * - It retrieves the access token from local storage and adds it to the request headers.
- */
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem(ACCESS_TOKEN);
@@ -21,7 +16,7 @@ api.interceptors.request.use(
     }
     return config;
   },
-  (error) => Promise.reject(error) // Forward any request errors
+  (error) => Promise.reject(error) 
 );
 
 // Handle token refresh on 401 errors
@@ -32,7 +27,7 @@ api.interceptors.response.use(
 
     // Check if error is related to expired token (401 Unauthorized)
     if (error.response.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true; // Avoid infinite loop
+      originalRequest._retry = true; 
 
       // Attempt to refresh the token
       const refreshToken = localStorage.getItem(REFRESH_TOKEN);
@@ -49,7 +44,7 @@ api.interceptors.response.use(
 
           // Retry the original request with the new access token
           originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
-          return axios(originalRequest); // Retry the original request
+          return axios(originalRequest);
         } catch (refreshError) {
           // If refresh fails, log the user out
           logout();

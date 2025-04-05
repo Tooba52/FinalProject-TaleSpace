@@ -15,12 +15,12 @@
 /* Form container styling */
 .loginform-container {
   flex: 1;
-  max-width: 320px; /* Reduced width for a more compact look */
+  max-width: 320px;
   display: flex;
   flex-direction: column;
-  padding-top: 10px; /* Reduced padding at the top */
-  padding-bottom: 10px; /* Reduced padding at the bottom */
-  box-shadow: none; /* Removes any shadow */
+  padding-top: 10px; 
+  padding-bottom: 10px; 
+  box-shadow: none; 
 }
 
 .loginform-label {
@@ -80,7 +80,7 @@
   display: flex;
   justify-content: space-between;
   width: 100%;
-  align-items: center; /* Ensures everything aligns vertically */
+  align-items: center;
   margin-bottom: 15px;
 }
 
@@ -90,7 +90,7 @@
   gap: 10px;
   text-align: left;
   white-space: nowrap;
-  font-weight: normal; /* Remove bold styling */
+  font-weight: normal; 
   font-size: 90%;
   color: #5f5f5f;
 }
@@ -160,8 +160,8 @@ input:checked + .loginslider:before {
 }
 
 .dob-input {
-  color: #5f5f5f; /* Softer text color */
-  cursor: pointer; /* Emphasizes it's clickable */
+  color: #5f5f5f; 
+  cursor: pointer; 
 }
 
 .dob-input::-webkit-calendar-picker-indicator {
