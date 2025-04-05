@@ -17,13 +17,6 @@
   gap: 10px;
 }
 
-.published-badge {
-  background: #4caf50;
-  color: white;
-  padding: 2px 8px;
-  border-radius: 12px;
-  font-size: 12px;
-}
 
 .chapter-header {
   display: flex;
@@ -242,24 +235,6 @@
 .chapter-status-published {
   font-size: 11px;
   color: #4caf50;
-}
-
-.chapter-text[data-published="true"] {
-  position: relative;
-}
-
-.chapter-text[data-published="true"]:hover:after {
-  content: "Published chapters cannot be edited";
-  position: absolute;
-  background: #333;
-  color: white;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  white-space: nowrap;
-  z-index: 100;
-  top: 100%;
-  left: 0;
 }
 
 .writing-area {

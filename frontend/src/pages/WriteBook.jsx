@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import api from "../api";
 import debounce from "lodash.debounce";
 import Navbar from "../components/Navbar";
+import { ConfirmationModal } from "../components/ConfirmationModal";
 import "../styles/Writebook.css";
 
 function WriteBook() {
@@ -21,6 +22,10 @@ function WriteBook() {
     status: "draft",
     lastSaved: null,
     saveState: "idle",
+    deleteConfirmation: {
+      isOpen: false,
+      chapterId: null,
+    },
   });
 
   // Destructure for cleaner access
@@ -269,13 +274,29 @@ function WriteBook() {
   };
 
   const handleDeleteChapter = async (chapterId) => {
-    // Prevent deleting first chapter (just in case)
+    // Prevent deleting first chapter
     const chapterIndex = chapters.findIndex(
       (ch) => ch.chapter_id === chapterId
     );
     if (chapterIndex === 0) {
       alert("The first chapter cannot be deleted");
       return;
+    }
+
+    // Prevent deleting published chapters
+    const chapterToDelete = chapters.find((ch) => ch.chapter_id === chapterId);
+    if (chapterToDelete?.chapter_status === "published") {
+      alert("Published chapters cannot be deleted");
+      return;
+    }
+
+    // Show confirmation dialog
+    const isConfirmed = window.confirm(
+      "You are about to delete this chapter. This action cannot be undone.\n\nAre you sure you want to delete this chapter?"
+    );
+
+    if (!isConfirmed) {
+      return; // User cancelled the deletion
     }
 
     try {
@@ -297,12 +318,10 @@ function WriteBook() {
       // Handle navigation if we're currently viewing the deleted chapter
       if (chapter_id == chapterId) {
         if (updatedChapters.length > 0) {
-          // Navigate to the first chapter (which can't be deleted)
           navigate(
             `/books/${book_id}/chapters/${updatedChapters[0].chapter_id}`
           );
         } else {
-          // This shouldn't happen since we can't delete the first chapter
           navigate(`/books/${book_id}`);
         }
       }
@@ -310,6 +329,39 @@ function WriteBook() {
       console.error("Delete failed:", err);
       alert("Failed to delete chapter");
     }
+  };
+
+  const showDeleteConfirmation = (chapterId) => {
+    setState((prev) => ({
+      ...prev,
+      deleteConfirmation: {
+        isOpen: true,
+        chapterId,
+      },
+    }));
+  };
+
+  const handleDeleteConfirm = async () => {
+    const { chapterId } = state.deleteConfirmation;
+    // ... rest of the delete logic from earlier ...
+    // Don't forget to close the modal after deletion
+    setState((prev) => ({
+      ...prev,
+      deleteConfirmation: {
+        isOpen: false,
+        chapterId: null,
+      },
+    }));
+  };
+
+  const handleDeleteCancel = () => {
+    setState((prev) => ({
+      ...prev,
+      deleteConfirmation: {
+        isOpen: false,
+        chapterId: null,
+      },
+    }));
   };
 
   // Render
@@ -325,12 +377,7 @@ function WriteBook() {
 
       {/* HEADER SECTION */}
       <div className="book-header">
-        <h1 className="book-title">
-          Editing: {bookTitle}
-          {status === "published" && (
-            <span className="published-badge">Published</span>
-          )}
-        </h1>
+        <h1 className="book-title">Editing: {bookTitle}</h1>
       </div>
 
       {/* CHAPTER HEADER WITH ACTIONS */}
@@ -425,7 +472,10 @@ function WriteBook() {
                     {/* Only show delete button if not first chapter AND not published */}
                     {index > 0 && chapter.chapter_status !== "published" && (
                       <button
-                        onClick={() => handleDeleteChapter(chapter.chapter_id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          showDeleteConfirmation(chapter.chapter_id);
+                        }}
                         className="delete-chapter-btn"
                       >
                         🗑️
@@ -469,7 +519,7 @@ function WriteBook() {
                     {/* Show explanation if published */}
                     {chapter.chapter_status === "published" && index > 0 && (
                       <span className="cannot-delete-message">
-                        (Cannot delete published chapter)
+                        (Cannot be edited)
                       </span>
                     )}
                   </div>
@@ -494,6 +544,14 @@ function WriteBook() {
           />
         </div>
       </div>
+
+      {/* ADD THE MODAL HERE - STEP 6 */}
+      <ConfirmationModal
+        isOpen={state.deleteConfirmation.isOpen}
+        onConfirm={handleDeleteConfirm}
+        onCancel={handleDeleteCancel}
+        message="You are about to delete this chapter. This action cannot be undone. Are you sure you want to delete this chapter?"
+      />
     </div>
   );
 }
