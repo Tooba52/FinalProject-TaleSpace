@@ -6,6 +6,7 @@ import NotFound from "./pages/NotFound";
 import CreateBook from "./pages/CreateBook";
 import WriteBook from "./pages/WriteBook";
 import Profile from "./pages/profile";
+import Settings from "./pages/Settings";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function Logout() {
@@ -52,6 +53,14 @@ function App() {
           element={
             <ProtectedRoute>
               <Profile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            <ProtectedRoute>
+              <Settings />
             </ProtectedRoute>
           }
         />
