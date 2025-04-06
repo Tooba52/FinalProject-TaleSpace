@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import api from "../api";
 import debounce from "lodash.debounce";
 import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 import { ConfirmationModal } from "../components/ConfirmationModal";
 import "../styles/Writebook.css";
 
@@ -22,10 +23,13 @@ function WriteBook() {
     status: "draft",
     lastSaved: null,
     saveState: "idle",
-    deleteConfirmation: {
-      isOpen: false,
-      chapterId: null,
-    },
+  });
+
+  const [modalState, setModalState] = useState({
+    isOpen: false,
+    action: null, // 'delete' or 'publish'
+    chapterId: null,
+    chapterTitle: null,
   });
 
   // Destructure for cleaner access
@@ -103,7 +107,8 @@ function WriteBook() {
           chaptersRes.data.length > 0
         ) {
           navigate(
-            `/books/${book_id}/chapters/${chaptersRes.data[0].chapter_id}`
+            `/books/${book_id}/chapters/${chaptersRes.data[0].chapter_id}`,
+            { replace: true }
           );
           return;
         }
@@ -219,6 +224,16 @@ function WriteBook() {
     }
   };
 
+  const showPublishConfirmation = () => {
+    const chapter = chapters.find((ch) => ch.chapter_id == chapter_id);
+    setModalState({
+      isOpen: true,
+      action: "publish",
+      chapterId: chapter_id,
+      chapterTitle: chapter?.chapter_title || "Untitled Chapter",
+    });
+  };
+
   const handleTitleUpdate = async (chapterId) => {
     try {
       await api.put(
@@ -273,6 +288,16 @@ function WriteBook() {
     }
   };
 
+  const showDeleteConfirmation = (chapterId) => {
+    const chapter = chapters.find((ch) => ch.chapter_id === chapterId);
+    setModalState({
+      isOpen: true,
+      action: "delete",
+      chapterId,
+      chapterTitle: chapter?.chapter_title || "Untitled Chapter",
+    });
+  };
+
   const handleDeleteChapter = async (chapterId) => {
     // Prevent deleting first chapter
     const chapterIndex = chapters.findIndex(
@@ -288,15 +313,6 @@ function WriteBook() {
     if (chapterToDelete?.chapter_status === "published") {
       alert("Published chapters cannot be deleted");
       return;
-    }
-
-    // Show confirmation dialog
-    const isConfirmed = window.confirm(
-      "You are about to delete this chapter. This action cannot be undone.\n\nAre you sure you want to delete this chapter?"
-    );
-
-    if (!isConfirmed) {
-      return; // User cancelled the deletion
     }
 
     try {
@@ -319,7 +335,8 @@ function WriteBook() {
       if (chapter_id == chapterId) {
         if (updatedChapters.length > 0) {
           navigate(
-            `/books/${book_id}/chapters/${updatedChapters[0].chapter_id}`
+            `/books/${book_id}/chapters/${updatedChapters[0].chapter_id}`,
+            { replace: true }
           );
         } else {
           navigate(`/books/${book_id}`);
@@ -331,37 +348,27 @@ function WriteBook() {
     }
   };
 
-  const showDeleteConfirmation = (chapterId) => {
-    setState((prev) => ({
-      ...prev,
-      deleteConfirmation: {
-        isOpen: true,
-        chapterId,
-      },
-    }));
+  const handleConfirmAction = async () => {
+    if (modalState.action === "delete") {
+      await handleDeleteChapter(modalState.chapterId);
+    } else if (modalState.action === "publish") {
+      await handlePublish();
+    }
+    setModalState({
+      isOpen: false,
+      action: null,
+      chapterId: null,
+      chapterTitle: null,
+    });
   };
 
-  const handleDeleteConfirm = async () => {
-    const { chapterId } = state.deleteConfirmation;
-    // ... rest of the delete logic from earlier ...
-    // Don't forget to close the modal after deletion
-    setState((prev) => ({
-      ...prev,
-      deleteConfirmation: {
-        isOpen: false,
-        chapterId: null,
-      },
-    }));
-  };
-
-  const handleDeleteCancel = () => {
-    setState((prev) => ({
-      ...prev,
-      deleteConfirmation: {
-        isOpen: false,
-        chapterId: null,
-      },
-    }));
+  const handleCancelAction = () => {
+    setModalState({
+      isOpen: false,
+      action: null,
+      chapterId: null,
+      chapterTitle: null,
+    });
   };
 
   // Render
@@ -403,7 +410,7 @@ function WriteBook() {
                 {saveState === "saving" ? "Saving..." : "Save Draft"}
               </button>
               <button
-                onClick={handlePublish}
+                onClick={showPublishConfirmation}
                 disabled={
                   saveState === "saving" ||
                   status === "published" ||
@@ -444,7 +451,9 @@ function WriteBook() {
                 key={chapter.chapter_id}
                 className={chapter_id == chapter.chapter_id ? "active" : ""}
                 onClick={() =>
-                  navigate(`/books/${book_id}/chapters/${chapter.chapter_id}`)
+                  navigate(`/books/${book_id}/chapters/${chapter.chapter_id}`, {
+                    replace: true,
+                  })
                 }
               >
                 {editingId === chapter.chapter_id &&
@@ -498,10 +507,12 @@ function WriteBook() {
                       }}
                     >
                       {chapter.chapter_title || "Untitled"}
-                      {chapter.chapter_status === "published" && (
+                      {chapter.chapter_status === "published" ? (
                         <span className="chapter-status-published">
                           • Published
                         </span>
+                      ) : (
+                        <span className="chapter-status-draft">• Draft</span>
                       )}
                     </div>
                     {/* Only show delete button if not first chapter AND not published */}
@@ -509,7 +520,7 @@ function WriteBook() {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleDeleteChapter(chapter.chapter_id);
+                          showDeleteConfirmation(chapter.chapter_id);
                         }}
                         className="delete-chapter-btn"
                       >
@@ -545,13 +556,47 @@ function WriteBook() {
         </div>
       </div>
 
-      {/* ADD THE MODAL HERE - STEP 6 */}
+      {/* Footer */}
+      <Footer />
+
+      {/* CONFIRMATION MODAL */}
       <ConfirmationModal
-        isOpen={state.deleteConfirmation.isOpen}
-        onConfirm={handleDeleteConfirm}
-        onCancel={handleDeleteCancel}
-        message="You are about to delete this chapter. This action cannot be undone. Are you sure you want to delete this chapter?"
-      />
+        isOpen={modalState.isOpen}
+        onCancel={handleCancelAction}
+        onConfirm={handleConfirmAction}
+        title={`Confirm ${
+          modalState.action === "delete" ? "Deletion" : "Publishing"
+        }`}
+        confirmText={modalState.action === "delete" ? "Delete" : "Publish"}
+      >
+        {modalState.action === "delete" ? (
+          <>
+            <p>
+              Are you sure you want to delete the chapter "
+              {modalState.chapterTitle}"?
+            </p>
+            <p>
+              <strong>This action cannot be undone.</strong>
+            </p>
+          </>
+        ) : (
+          <>
+            <p>
+              Are you sure you want to publish the chapter "
+              {modalState.chapterTitle}"?
+            </p>
+            <p>
+              <strong>Once published:</strong>
+            </p>
+            <ul>
+              <li>This chapter cannot be deleted</li>
+              <li>The content cannot be edited</li>
+              <li>The title cannot be changed</li>
+            </ul>
+            <strong>This action cannot be undone.</strong>
+          </>
+        )}
+      </ConfirmationModal>
     </div>
   );
 }

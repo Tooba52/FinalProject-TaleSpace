@@ -1,12 +1,12 @@
 .write-book-container {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  min-height: 100vh; /* Changed from height to min-height */
   background-color: #f8f9fa;
 }
 
 .book-header {
-  padding: 15px 20px 0 20px;
+  padding: 20px 40px 10px 40px; /* More padding */
 }
 
 .book-title {
@@ -16,7 +16,6 @@
   align-items: center;
   gap: 10px;
 }
-
 
 .chapter-header {
   display: flex;
@@ -103,21 +102,26 @@
 .content-area {
   display: flex;
   flex: 1;
-  overflow: hidden;
+  gap: 20px;
+  padding: 0 40px 20px 40px;
+  min-height: 80vh; /* Minimum content height */
 }
 
 .chapter-sidebar {
-  width: 250px;
-  border-right: 1px solid #e0e0e0;
+  width: 280px;
   background-color: #fff;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  padding: 15px;
   display: flex;
   flex-direction: column;
-  height: 100%;
+  /* Allow natural growth up to 80vh, then scroll */
+  max-height: 100vh;
+  overflow-y: hidden; /* Hide scrollbar by default */
 }
 
 .chapter-header-container {
-  padding: 0 20px;
-  border-bottom: 1px solid #e0e0e0;
+  padding: 0 40px; /* Align with content */
 }
 
 .chapter-header {
@@ -155,15 +159,14 @@
 }
 
 .chapter-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  overflow-y: auto;
-  flex: 1;
+  padding-left: 10px; /* Slight left padding for list */
+  padding-right: 5px; /* Minimal right padding */
 }
 
 .chapter-list li {
-  padding: 8px 15px 8px 15px;
+  min-height: 48px; /* Adjust based on your item height */
+  display: flex;
+  align-items: center;
 }
 
 .chapter-list li.active {
@@ -237,30 +240,31 @@
   color: #4caf50;
 }
 
+.chapter-status-draft {
+  font-size: 11px;
+  color: #af9d4c;
+}
+
 .writing-area {
   flex: 1;
+  min-height: 70vh; /* Minimum writing area height */
+  background-color: #fff;
+  border-radius: 8px;
   padding: 20px;
   display: flex;
-  background-color: #fff;
 }
 
 .writing-area textarea {
+  border: none; /* Remove all borders */
+  padding: 20px; /* More padding for cleaner look */
+  background-color: #fff; /* Pure white background */
   flex: 1;
-  width: 100%;
-  padding: 15px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  resize: none;
-  font-family: inherit;
-  font-size: 16px;
-  line-height: 1.6;
-  min-height: 100%;
+  min-height: 65vh; /* Large minimum height */
 }
 
 .writing-area textarea:focus {
   outline: none;
-  border-color: #2196f3;
-  box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
 }
 
 /* Input for editing chapter titles */

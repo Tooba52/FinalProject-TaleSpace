@@ -1,13 +1,14 @@
-import { useState, useEffect } from "react"; 
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import profile from "../images/profile.png";
-import api from "../api"; 
+import api from "../api";
 import "../styles/profile.css";
 import Book from "../components/books";
 import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 
 function Profile() {
-  const [firstName, setFirstName] = useState(""); 
+  const [firstName, setFirstName] = useState("");
   const [userBooks, setUserBooks] = useState([]);
   const [userId, setUserId] = useState(null);
 
@@ -29,14 +30,14 @@ function Profile() {
 
   const fetchUserBooks = (userId) => {
     api
-      .get("/api/books/") 
+      .get("/api/books/")
       .then((res) => {
-        console.log("Fetched Books:", res.data); 
+        console.log("Fetched Books:", res.data);
         const filteredBooks = res.data.filter(
           (book) => book.author_id === userId
         );
-        console.log("Filtered Books:", filteredBooks); 
-        setUserBooks(filteredBooks); 
+        console.log("Filtered Books:", filteredBooks);
+        setUserBooks(filteredBooks);
       })
       .catch((err) => console.error("Error fetching user books", err));
   };
@@ -95,9 +96,7 @@ function Profile() {
           </Link>
         </section>
 
-        <footer className="footer">
-          <p>2025 All Rights Reserved. TaleSpace Inc.</p>
-        </footer>
+        <Footer />
       </div>
     </div>
   );

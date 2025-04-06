@@ -1,17 +1,18 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom"; 
-import api from "../api"; 
-import "../styles/Home.css"; 
+import { Link } from "react-router-dom";
+import api from "../api";
+import "../styles/Home.css";
 import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 
 function Home() {
   // State variables
-  const [firstName, setFirstName] = useState(""); 
+  const [firstName, setFirstName] = useState("");
 
   // useEffect hook to fetch
   useEffect(() => {
-    fetchUserProfile(); 
-  }, []); 
+    fetchUserProfile();
+  }, []);
 
   const fetchUserProfile = () => {
     api
@@ -96,9 +97,7 @@ function Home() {
         </section>
 
         {/* Footer */}
-        <footer className="footer">
-          <p>2025 All Rights Reserved. TaleSpace Inc.</p>
-        </footer>
+        <Footer />
       </div>
     </div>
   );

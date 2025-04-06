@@ -3,6 +3,7 @@ import "../styles/CreateBook.css";
 import api from "../api";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import Footer from '../components/Footer';
 
 function CreateBook() {
   const navigate = useNavigate();
@@ -211,7 +212,7 @@ function CreateBook() {
             <label>Language</label>
             <select
               value={language}
-              onChange={(e) => setLanguage(e.target.value)} 
+              onChange={(e) => setLanguage(e.target.value)}
             >
               <option value="">Select a language</option>
               <option value="English">English</option>
@@ -225,7 +226,7 @@ function CreateBook() {
               <input
                 type="checkbox"
                 checked={mature}
-                onChange={() => setMature(!mature)} 
+                onChange={() => setMature(!mature)}
               />
             </div>
 
@@ -233,13 +234,14 @@ function CreateBook() {
               className="createbook-save-button"
               onClick={handleSave}
               disabled={isLoading}
-              aria-live="polite" 
+              aria-live="polite"
             >
               {isLoading ? "Saving..." : "Save"}{" "}
             </button>
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }
