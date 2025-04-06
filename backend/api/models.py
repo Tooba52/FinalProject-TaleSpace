@@ -49,6 +49,14 @@ class WebsiteUser(AbstractUser):
 # ========================
 class Book(models.Model):
     """Model representing a book"""
+
+    PUBLIC = 'public'
+    PRIVATE = 'private'
+    STATUS_CHOICES = [
+        (PUBLIC, 'Public'),
+        (PRIVATE, 'Private'),
+    ]
+    
     book_id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=255)
     description = models.TextField()
@@ -58,6 +66,8 @@ class Book(models.Model):
     cover_photo = models.ImageField(upload_to='book_covers/', null=True, blank=True)  
     author = models.ForeignKey(WebsiteUser, on_delete=models.CASCADE) 
     created_at = models.DateTimeField(auto_now_add=True) 
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default=PRIVATE)
+
 
     def Book(self):
         return self  # Return book title

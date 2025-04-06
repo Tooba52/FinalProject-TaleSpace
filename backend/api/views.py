@@ -4,9 +4,12 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.generics import (ListCreateAPIView, RetrieveUpdateAPIView, DestroyAPIView)
+from rest_framework.permissions import IsAuthenticated
+from .models import Book
+from .serializers import BookSerializer
 from .serializers import UserSerializer, BookSerializer, ChapterSerializer
 from .models import Book, Chapter
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from django.core.paginator import Paginator
 from django.db.models import Q
 
@@ -39,7 +42,7 @@ class UserProfileView(APIView):
 class BookListCreate(generics.ListCreateAPIView):
     """List and create books (user-specific)"""
     serializer_class = BookSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
     queryset = Book.objects.all()  # Base queryset required for ListCreateAPIView
 
     def get_filtered_queryset(self, request):
@@ -120,6 +123,21 @@ class BookListCreate(generics.ListCreateAPIView):
         else:
             raise Exception("Error creating default chapter: " + str(default_chapter_serializer.errors))
             
+
+
+class BookRetrieveUpdate(RetrieveUpdateAPIView):
+    """
+    Retrieve or update a book instance.
+    """
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        # This ensures users can only see their own books in detail view
+        return Book.objects.filter(author=self.request.user)
+    
+
 
 class BookDelete(generics.DestroyAPIView):
     """Delete books (author-only)"""

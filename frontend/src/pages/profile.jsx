@@ -77,7 +77,7 @@ function Profile() {
             <h3>Your Books</h3>
             <div className="book-list">
               {userBooks.map((book) => (
-                <Link to={`/books/${book.book_id}/chapters`} key={book.book_id}>
+                <Link to={`/books/${book.book_id}`} key={book.book_id}>
                   <Book book={book} />
                 </Link>
               ))}

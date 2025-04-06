@@ -18,7 +18,7 @@ function Book({ book }) {
           e.target.src = defaultCover;
         }}
       />
-      <p className="book-title">{book.title}</p>
+      <p className="bookcard-title">{book.title}</p>
     </div>
   );
 }

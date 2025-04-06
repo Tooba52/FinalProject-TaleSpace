@@ -27,7 +27,7 @@ class BookSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Book
-        fields = ["book_id", "title", "description", "genres", "language", "mature", "cover_photo", "cover_url", "author", "created_at"]
+        fields = ["book_id", "title", "description", "genres", "language", "mature", "cover_photo", "cover_url", "author", "created_at", "status"]
         extra_kwargs = {"author": {"read_only": True}}  # Author is assigned automatically
 
     def get_cover_url(self, obj):

@@ -1,4 +1,4 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import api from "../api";
 import BookCard from "../components/books";
@@ -15,6 +15,7 @@ function BrowseGenre() {
   const [userId, setUserId] = useState(null);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
+  const navigate = useNavigate(); // Add this line
 
   useEffect(() => {
     fetchUserProfile();
@@ -35,6 +36,7 @@ function BrowseGenre() {
       console.log("API Response:", response.data); // Debug log
       setBooks(response.data.results);
       setTotalPages(response.data.total_pages);
+      setLoading(false);
     } catch (error) {
       console.error("Error:", error.response); // More detailed error
     }
@@ -50,9 +52,8 @@ function BrowseGenre() {
       .catch((err) => console.error("Error fetching user profile", err));
   };
 
-  const handlePageClick = (newPage) => {
-    setPage(newPage);
-    window.scrollTo(0, 0); // Optional: scroll to top on page change
+  const handleBookClick = (bookId) => {
+    navigate(`/read/${bookId}`); // This will navigate to the read page
   };
 
   if (loading) return <div className="loading-spinner">Loading...</div>;
@@ -71,7 +72,15 @@ function BrowseGenre() {
         <div className="book-grid-container">
           <div className="book-grid">
             {books.length > 0 ? (
-              books.map((book) => <BookCard key={book.book_id} book={book} />)
+              books.map((book) => (
+                <div
+                  key={book.book_id}
+                  onClick={() => handleBookClick(book.book_id)}
+                  className="book-card-wrapper"
+                >
+                  <BookCard book={book} />
+                </div>
+              ))
             ) : (
               <div className="no-books-message">
                 No books found in this genre.

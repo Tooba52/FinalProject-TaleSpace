@@ -9,6 +9,8 @@ import Profile from "./pages/profile";
 import Settings from "./pages/Settings";
 import BrowseGenre from "./pages/BrowseGenre";
 import ProtectedRoute from "./components/ProtectedRoute";
+import ReadBook from "./pages/ReadBook";
+import BookSettings from "./pages/BookSettings";
 
 function Logout() {
   localStorage.clear(); // Remove user session data
@@ -81,7 +83,30 @@ function App() {
             </ProtectedRoute>
           }
         />
-
+        <Route
+          path="/read/:book_id"
+          element={
+            <ProtectedRoute>
+              <ReadBook />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/read/:book_id/chapters/:chapter_id"
+          element={
+            <ProtectedRoute>
+              <ReadBook />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/books/:book_id"
+          element={
+            <ProtectedRoute>
+              <BookSettings />
+            </ProtectedRoute>
+          }
+        />
         {/* Public Routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/logout" element={<Logout />} />
