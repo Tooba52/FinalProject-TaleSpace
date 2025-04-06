@@ -61,8 +61,8 @@ class Book(models.Model):
 
     def Book(self):
         return self  # Return book title
-
-
+    
+    
 # ========================
 # Chapter Model
 # ========================

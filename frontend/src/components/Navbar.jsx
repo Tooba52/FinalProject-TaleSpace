@@ -10,7 +10,36 @@ const Navbar = ({
   showWriteButton = true,
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isGenreDropdownOpen, setIsGenreDropdownOpen] = useState(false);
   const navigate = useNavigate();
+
+  // Sample genres - replace with your actual genres or fetch from API
+  const genres = [
+    "Thriller",
+    "Romance",
+    "Action",
+    "Mystery",
+    "Fantasy",
+    "Adventure",
+    "Horror",
+    "Sci-Fi",
+    "Comedy",
+    "Historical",
+    "Drama",
+    "Dystopian",
+    "Supernatural",
+    "Paranormal",
+    "Crime",
+    "Suspense",
+    "Cyberpunk",
+    "Steampunk",
+    "Fairy Tale",
+    "Mythology",
+    "Gothic",
+    "Post-Apocalyptic",
+    "Slice of Life",
+    "Fiction",
+  ];
 
   const handleLogout = () => {
     localStorage.clear();
@@ -24,6 +53,32 @@ const Navbar = ({
         <span>TaleSpace</span>
       </Link>
 
+      {/* Updated Genre Dropdown with correct links */}
+      <div
+        className="navbar__genre-dropdown"
+        onMouseEnter={() => setIsGenreDropdownOpen(true)}
+        onMouseLeave={() => setIsGenreDropdownOpen(false)}
+      >
+        <button className="navbar__genre-button">
+          Browse <span>▼</span>
+        </button>
+
+        {isGenreDropdownOpen && (
+          <div className="navbar__genre-menu">
+            {genres.map((genre) => (
+              <Link
+                key={genre}
+                to={`/browse/${genre.toLowerCase().replace(/\s+/g, "-")}`} // Updated to use /browse/:genreName
+                className="navbar__genre-item"
+                onClick={() => setIsGenreDropdownOpen(false)} // Close dropdown when a genre is selected
+              >
+                {genre}
+              </Link>
+            ))}
+          </div>
+        )}
+      </div>
+
       {showSearch && (
         <input type="text" placeholder="Search" className="navbar__search" />
       )}
@@ -35,7 +90,7 @@ const Navbar = ({
           </Link>
         )}
 
-        {/* Account dropdown container */}
+        {/* Existing Account dropdown */}
         <div
           className="navbar__dropdown-container"
           onMouseEnter={() => setIsDropdownOpen(true)}
@@ -46,13 +101,20 @@ const Navbar = ({
             <span className="navbar__name">{firstName}</span>
           </div>
 
-          {/* Dropdown menu */}
           {isDropdownOpen && (
             <div className="navbar__dropdown-menu">
-              <Link to="/profile" className="navbar__dropdown-item">
+              <Link
+                to="/profile"
+                className="navbar__dropdown-item"
+                onClick={() => setIsDropdownOpen(false)}
+              >
                 View Account
               </Link>
-              <Link to="/settings" className="navbar__dropdown-item">
+              <Link
+                to="/settings"
+                className="navbar__dropdown-item"
+                onClick={() => setIsDropdownOpen(false)}
+              >
                 View Settings
               </Link>
               <button

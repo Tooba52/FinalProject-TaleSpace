@@ -23,10 +23,21 @@ class UserSerializer(serializers.ModelSerializer):
 # ========================
 class BookSerializer(serializers.ModelSerializer):
     """Handles book data serialization"""
+    cover_url = serializers.SerializerMethodField()
+
     class Meta:
         model = Book
-        fields = ["book_id", "title", "description", "genres", "language", "mature", "cover_photo", "author", "created_at"]
+        fields = ["book_id", "title", "description", "genres", "language", "mature", "cover_photo", "cover_url", "author", "created_at"]
         extra_kwargs = {"author": {"read_only": True}}  # Author is assigned automatically
+
+    def get_cover_url(self, obj):
+        if obj.cover_photo:
+            if 'request' in self.context:
+                # Now uses /book_covers/ instead of /media/
+                return self.context['request'].build_absolute_uri(f'/book_covers/{obj.cover_photo}')
+            return f'/book_covers/{obj.cover_photo}'
+        return None
+
 
 
 

@@ -142,3 +142,84 @@
 .navbar__dropdown-item--logout:hover {
   color: #ff4444;
 }
+
+/* Genre Dropdown Styles */
+.navbar__genre-dropdown {
+  position: relative;
+  margin-right: auto;
+  margin-left: 2rem;
+}
+
+.navbar__genre-button {
+  background: none;
+  border: none;
+  color: inherit;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.navbar__genre-button span {
+  font-size: 0.7rem;
+}
+.navbar__genre-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: white;
+  min-width: 180px; /* Reduced from 200px */
+  max-width: 300px; /* Added max-width for better control */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  z-index: 1000;
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(120px, 1fr)
+  ); /* Narrower columns */
+  gap: 0.3rem; /* Reduced gap */
+  padding: 0.5rem; /* Reduced padding */
+  max-height: 60vh; /* Prevent menu from being too tall */
+  overflow-y: auto; /* Add scroll if too many genres */
+}
+
+.navbar__genre-item {
+  padding: 0.3rem 0.5rem; /* Tighter padding */
+  color: #333;
+  text-decoration: none;
+  border-radius: 3px;
+  transition: background 0.2s;
+  font-size: 0.9rem; /* Slightly smaller font */
+  white-space: nowrap; /* Prevent text wrapping */
+  overflow: hidden;
+  text-overflow: ellipsis; /* Add ellipsis if text too long */
+}
+
+.navbar__genre-item:hover {
+  background: #f0f0f0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .navbar__genre-menu {
+    grid-template-columns: repeat(2, 1fr); /* Two columns on mobile */
+    min-width: 200px; /* Wider on mobile for touch targets */
+    gap: 0.25rem;
+    padding: 0.5rem;
+  }
+
+  .navbar__genre-item {
+    padding: 0.4rem 0.5rem; /* Slightly larger for mobile touch */
+  }
+}
+
+/* For very small screens */
+@media (max-width: 480px) {
+  .navbar__genre-menu {
+    grid-template-columns: 1fr; /* Single column */
+    min-width: 160px;
+  }
+}

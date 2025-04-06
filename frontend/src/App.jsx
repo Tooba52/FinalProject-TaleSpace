@@ -7,6 +7,7 @@ import CreateBook from "./pages/CreateBook";
 import WriteBook from "./pages/WriteBook";
 import Profile from "./pages/profile";
 import Settings from "./pages/Settings";
+import BrowseGenre from "./pages/BrowseGenre";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function Logout() {
@@ -69,6 +70,14 @@ function App() {
           element={
             <ProtectedRoute>
               <CreateBook />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/browse/:genreName"
+          element={
+            <ProtectedRoute>
+              <BrowseGenre />
             </ProtectedRoute>
           }
         />

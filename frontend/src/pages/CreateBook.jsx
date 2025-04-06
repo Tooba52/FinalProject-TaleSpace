@@ -3,7 +3,7 @@ import "../styles/CreateBook.css";
 import api from "../api";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import Footer from '../components/Footer';
+import Footer from "../components/Footer";
 
 function CreateBook() {
   const navigate = useNavigate();
@@ -44,6 +44,7 @@ function CreateBook() {
     "Gothic",
     "Post-Apocalyptic",
     "Slice of Life",
+    "Fiction",
   ];
 
   // useEffect hook to fetch

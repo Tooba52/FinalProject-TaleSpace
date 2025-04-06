@@ -1,0 +1,66 @@
+.book-card {
+  width: 145px;
+  height: 240px;
+  background-color: #fff;
+  padding: 15px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+  position: relative;
+}
+
+.book-card:hover {
+  transform: translateY(-5px);
+}
+
+.book-cover {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+.book-card p {
+  margin: 0;
+  font-weight: 500;
+  color: #333;
+  font-size: 14px;
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+}
+
+.book-icon {
+  font-size: 60px;
+  margin-bottom: 15px;
+}
+
+.book-cover {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Optional: Add hover effect */
+.book-cover:hover {
+  transform: scale(1.02);
+  transition: transform 0.2s;
+}
+
+.book-title {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.945); /* Semi-transparent background */
+  color: rgb(0, 0, 0);
+  padding: 8px;
+  text-align: center;
+  z-index: 10; /* Bring to front */
+  margin: 0;
+}

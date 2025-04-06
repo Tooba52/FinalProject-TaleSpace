@@ -28,7 +28,7 @@ body {
   flex-direction: column;
   align-items: center;
   width: 100%;
-  overflow-y: auto; 
+  overflow-y: auto;
 }
 
 /* Ensure book, genre, and author lists don't break layout */

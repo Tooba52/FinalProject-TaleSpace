@@ -1,0 +1,107 @@
+/* Main container */
+.browse-genre-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.content-wrapper {
+  flex: 1;
+  padding: 20px 40px;
+  max-width: 1800px; /* Increased to accommodate 7 books */
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Header styles */
+.genre-header {
+  text-align: left;
+  margin-bottom: 20px; /* Reduced margin */
+}
+
+.genre-title {
+  font-size: 26px; /* Slightly smaller */
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 10px 0; /* Tighter spacing */
+}
+
+.header-divider {
+  height: 1px; /* Thinner line */
+  background: #e0e0e0;
+  width: 100%;
+  margin-bottom: 20px; /* Reduced spacing */
+}
+
+/* Grid container */
+.book-grid-container {
+  margin-bottom: 30px;
+  min-height: 60vh;
+}
+
+/* Tighter 7-column grid */
+.book-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr); /* Fixed 7 columns */
+  gap: 15px; /* Reduced gap between books */
+  padding: 10px 0; /* Reduced padding */
+  margin-right: 3%;
+}
+
+/* More compact book cards */
+.book-card {
+  background: white;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08); /* Lighter shadow */
+  transition: transform 0.2s;
+  aspect-ratio: 2/3; /* Maintain book cover ratio */
+}
+
+.book-card:hover {
+  transform: translateY(-5px);
+}
+
+/* Pagination styles */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  margin: 40px 0;
+}
+
+.pagination button {
+  padding: 8px 20px;
+  background: #4a6fa5;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+.pagination button:hover:not(:disabled) {
+  background: #3a5a80;
+}
+
+.pagination button:disabled {
+  background: #cccccc;
+  cursor: not-allowed;
+}
+
+.pagination span {
+  font-weight: 500;
+  font-size: 15px;
+  color: #555;
+}
+
+/* No books message */
+.no-books-message {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 40px;
+  font-size: 18px;
+  color: #666;
+}

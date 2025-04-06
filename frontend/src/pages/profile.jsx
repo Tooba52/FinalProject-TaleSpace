@@ -2,65 +2,70 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import profile from "../images/profile.png";
 import api from "../api";
-import "../styles/profile.css";
 import Book from "../components/books";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import "../styles/Profile.css";
 
 function Profile() {
   const [firstName, setFirstName] = useState("");
   const [userBooks, setUserBooks] = useState([]);
   const [userId, setUserId] = useState(null);
 
-  // useEffect hook to fetch
   useEffect(() => {
     fetchUserProfile();
-    fetchUserBooks();
   }, []);
+
+  useEffect(() => {
+    if (userId) {
+      fetchUserBooks();
+    }
+  }, [userId]); // Add userId as dependency
 
   const fetchUserProfile = () => {
     api
-      .get("/api/user/profile/") // Fetch user details
+      .get("/api/user/profile/")
       .then((res) => {
-        setFirstName(res.data.first_name); // Set the first name in state
-        setUserId(res.data.user_id); // Store the user ID
+        setFirstName(res.data.first_name);
+        setUserId(res.data.user_id);
       })
       .catch((err) => console.error("Error fetching user profile", err));
   };
 
-  const fetchUserBooks = (userId) => {
+  const fetchUserBooks = () => {
+    if (!userId) return;
+
     api
-      .get("/api/books/")
+      .get(`/api/books/?author_id=${userId}`)
       .then((res) => {
-        console.log("Fetched Books:", res.data);
-        const filteredBooks = res.data.filter(
-          (book) => book.author_id === userId
-        );
-        console.log("Filtered Books:", filteredBooks);
-        setUserBooks(filteredBooks);
+        // Ensure the response contains the expected data structure
+        const userBooks = res.data.results || res.data; // Handle both paginated and non-paginated responses
+        setUserBooks(Array.isArray(userBooks) ? userBooks : []);
       })
-      .catch((err) => console.error("Error fetching user books", err));
+      .catch((err) => {
+        console.error("Error fetching user books", err);
+        setUserBooks([]); // Reset to empty array on error
+      });
   };
 
   return (
     <div className="profile-page">
       <Navbar variant="transparent" firstName={firstName} />
+
       <div className="profile-container">
-        {/* Profile Section */}
+        {/* Profile Header Section */}
         <div className="profile-header">
+          <img src={profile} alt="Profile" className="profile-icon" />
           <div className="profile-info">
-            <img src={profile} alt="Profile Icon" className="profile-icon" />
-            <div className="user-details">
-              <h2>Username</h2>
-              <div className="follow-stats">
-                <p>
-                  <strong>Followers</strong>
-                  <br />0
-                </p>
-                <p>
-                  <strong>Following</strong>
-                  <br />0
-                </p>
+            <h2>{firstName || "Username"}</h2>
+            <div className="follow-stats">
+              <div className="stat-item">
+                <strong>Followers</strong>
+                <span>0</span>
+              </div>
+              <div className="stat-item">
+                <strong>Following</strong>
+                <span>0</span>
               </div>
             </div>
           </div>
@@ -68,7 +73,7 @@ function Profile() {
 
         {/* Your Books Section */}
         {userBooks.length > 0 && (
-          <section className="your-books">
+          <section className="books-section">
             <h3>Your Books</h3>
             <div className="book-list">
               {userBooks.map((book) => (
@@ -80,9 +85,14 @@ function Profile() {
           </section>
         )}
 
-        {/* Favorite Books Section */}
-        <section className="favourited-books">
-          <h3>Favourited Books</h3>
+        {/* Favorited Books Section */}
+        <section className="books-section">
+          <div className="section-header">
+            <h3>Favourited Books</h3>
+            <Link to="/books" className="view-all">
+              View All ➤
+            </Link>
+          </div>
           <div className="book-list">
             {[...Array(7)].map((_, index) => (
               <div key={index} className="book-card">
@@ -91,13 +101,10 @@ function Profile() {
               </div>
             ))}
           </div>
-          <Link to="/books" className="view-all">
-            View All ➤
-          </Link>
         </section>
-
-        <Footer />
       </div>
+
+      <Footer />
     </div>
   );
 }

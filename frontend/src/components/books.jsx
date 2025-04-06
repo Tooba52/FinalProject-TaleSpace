@@ -1,9 +1,24 @@
+import React from "react";
+import "../styles/Books.css";
+import defaultCover from "../images/defaultCoverPhoto.jpeg"; // Import the image
+
 function Book({ book }) {
+  // Debug: Check what the API returns
+  console.log("Book data:", {
+    cover_photo: book.cover_photo,
+    cover_url: book.cover_url,
+  });
+
   return (
-    //visual formatting for the books including cover and title
     <div className="book-card">
-      <img src={book.cover_photo} alt={book.title} className="book-cover" />
-      <p>{book.title}</p>
+      <img
+        src={book.cover_photo ? book.cover_url : defaultCover}
+        alt={`Cover for ${book.title}`}
+        onError={(e) => {
+          e.target.src = defaultCover;
+        }}
+      />
+      <p className="book-title">{book.title}</p>
     </div>
   );
 }
