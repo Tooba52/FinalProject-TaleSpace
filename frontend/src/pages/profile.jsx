@@ -95,12 +95,15 @@ function Profile() {
           <section className="books-section">
             <h3>Your Books</h3>
             <div className="book-list">
-              {userBooks.map((book) => (
+              {userBooks.slice(0, 7).map((book) => (
                 <Link to={`/settings/books/${book.book_id}`} key={book.book_id}>
                   <Book book={book} />
                 </Link>
               ))}
             </div>
+            <Link to="/YourBooks/books/" className="view-all">
+              View All ➤
+            </Link>
           </section>
         )}
 
@@ -108,15 +111,15 @@ function Profile() {
         <section className="books-section">
           <div className="section-header">
             <h3>Favourited Books</h3>
-            {favouriteBooks.length > 0 && (
-              <Link to="/books" className="view-all">
+            {favouriteBooks.length > 7 && (
+              <Link to="/favourites" className="view-all">
                 View All ➤
               </Link>
             )}
           </div>
           <div className="book-list">
             {favouriteBooks.length > 0 ? (
-              favouriteBooks.map((book) => (
+              favouriteBooks.slice(0, 7).map((book) => (
                 <div
                   key={book.book_id}
                   onClick={() => handleBookClick(book.book_id)}
@@ -129,6 +132,9 @@ function Profile() {
               <p className="no-favourites">No favourited books yet</p>
             )}
           </div>
+          <Link to="/FavouitedBooks/books/" className="view-all">
+            View All ➤
+          </Link>
         </section>
       </div>
 

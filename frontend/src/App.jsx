@@ -12,6 +12,8 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import ReadBook from "./pages/ReadBook";
 import BookSettings from "./pages/BookSettings";
 import BookOverview from "./pages/BookOverview";
+import YourBooks from "./pages/YourBooks";
+import FavouritedBooks from "./pages/FavouritedBooks";
 
 function Logout() {
   localStorage.clear(); // Remove user session data
@@ -113,6 +115,22 @@ function App() {
           element={
             <ProtectedRoute>
               <BookOverview />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/YourBooks/books/"
+          element={
+            <ProtectedRoute>
+              <YourBooks />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/FavouitedBooks/books/"
+          element={
+            <ProtectedRoute>
+              <FavouritedBooks />
             </ProtectedRoute>
           }
         />
