@@ -65,12 +65,14 @@ class Book(models.Model):
     mature = models.BooleanField(default=False)  
     cover_photo = models.ImageField(upload_to='book_covers/', null=True, blank=True)  
     author = models.ForeignKey(WebsiteUser, on_delete=models.CASCADE) 
+    author_name = models.CharField(max_length=100, blank=True)
     created_at = models.DateTimeField(auto_now_add=True) 
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default=PRIVATE)
+    view_count = models.IntegerField(default=0)
 
 
     def Book(self):
-        return self  # Return book title
+        return self  
     
     
 # ========================
@@ -100,11 +102,14 @@ class Chapter(models.Model):
     def __str__(self):
         return f"Chapter {self.chapter_number}: {self.chapter_title or ' '} of {self.book.title}"
     
-# Chapter status choices
-STATUS_CHOICES = [
-    ('draft', 'Draft'),
-    ('published', 'Published'),
-]
 
+# ========================
+# Favourite Model
+# ========================
+class Favourite(models.Model):
+    user = models.ForeignKey(WebsiteUser, on_delete=models.CASCADE)
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
 
-    
+    class Meta:
+        unique_together = ('user', 'book')

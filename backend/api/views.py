@@ -6,12 +6,11 @@ from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.generics import (ListCreateAPIView, RetrieveUpdateAPIView, DestroyAPIView)
 from rest_framework.permissions import IsAuthenticated
-from .models import Book
-from .serializers import BookSerializer
 from .serializers import UserSerializer, BookSerializer, ChapterSerializer
-from .models import Book, Chapter
+from .models import Book, Chapter, Favourite
 from django.core.paginator import Paginator
-from django.db.models import Q
+from django.db.models import Q, Sum, F
+from collections import defaultdict
 
 User = get_user_model()
 
@@ -53,12 +52,13 @@ class BookListCreate(generics.ListCreateAPIView):
         if author_id := request.query_params.get('author_id'):
             queryset = queryset.filter(author_id=author_id)
         
-        # Filter by genre if genre parameter exists
+        # Filter by genre if genre parameter exists - only show public books
         if genre_name := request.query_params.get('genre'):
             genre_lower = genre_name.lower()
             queryset = queryset.filter(
-                Q(genres__contains=[genre_name.capitalize()]) | 
-                Q(genres__contains=[genre_lower.capitalize()])
+                (Q(genres__contains=[genre_name.capitalize()]) | 
+                Q(genres__contains=[genre_lower.capitalize()])),
+                status='public'  # Only show public books when filtering by genre
             )
         
         return queryset
@@ -105,7 +105,10 @@ class BookListCreate(generics.ListCreateAPIView):
         })
 
     def perform_create(self, serializer):
-        book = serializer.save(author=self.request.user)  
+        book = serializer.save(
+            author=self.request.user,
+            author_name=self.request.user.first_name
+        )
         self.create_default_chapter(book)
 
     def create_default_chapter(self, book):
@@ -131,10 +134,20 @@ class BookRetrieveUpdate(RetrieveUpdateAPIView):
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [IsAuthenticated]
     
+    def get_permissions(self):
+        if self.request.method == 'GET':
+            return []  # No auth required for viewing
+        return [IsAuthenticated()]  # Auth required for updates
+
     def get_queryset(self):
-        # This ensures users can only see their own books in detail view
+        if self.request.method == 'GET':
+            # Allow viewing public books by anyone
+            return Book.objects.filter(
+                Q(status='public') | 
+                Q(author=self.request.user)
+            )
+        # For updates, only show user's own books
         return Book.objects.filter(author=self.request.user)
     
 
@@ -147,8 +160,53 @@ class BookDelete(generics.DestroyAPIView):
     def get_queryset(self):
         return Book.objects.filter(author=self.request.user) 
     
+
+
+
+# ========================
+# Favourite managemnet views
+# ========================
+
+class CheckFavouriteView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, book_id):
+        is_favorite = Favourite.objects.filter(user=request.user, book_id=book_id).exists()
+        return Response({"is_favorite": is_favorite})
+
+class AddFavouriteView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, book_id):
+        favorite, created = Favourite.objects.get_or_create(
+            user=request.user,
+            book_id=book_id
+        )
+        if created:
+            return Response({"status": "added"})
+        return Response({"status": "already_exists"})
+
+class RemoveFavouriteView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, book_id):
+        deleted, _ = Favourite.objects.filter(
+            user=request.user,
+            book_id=book_id
+        ).delete()
+        if deleted:
+            return Response({"status": "removed"})
+        return Response({"status": "not_found"})
     
 
+class FavouriteBooksView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        favorites = Favourite.objects.filter(user=request.user).select_related('book')
+        books = [fav.book for fav in favorites]
+        serializer = BookSerializer(books, many=True)
+        return Response(serializer.data)
 
 # ========================
 # Chapter managemnet views
@@ -158,14 +216,24 @@ class ChapterListCreateView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, book_id):
-        """List and create chapters for a specific book"""
+        """List published chapters for a specific book"""
         try:
             book = Book.objects.get(book_id=book_id)
-            chapters = Chapter.objects.filter(book=book).order_by('chapter_number')
+            # Only show published chapters for read view
+            if request.query_params.get('published_only'):
+                chapters = Chapter.objects.filter(
+                    book=book, 
+                    chapter_status='published'
+                ).order_by('chapter_number')
+            else:
+                # For authors editing their book, show all chapters
+                chapters = Chapter.objects.filter(book=book).order_by('chapter_number')
+                
             serializer = ChapterSerializer(chapters, many=True)
             return Response(serializer.data)
         except Book.DoesNotExist:
             return Response({"detail": "Book not found."}, status=status.HTTP_404_NOT_FOUND)
+
 
     def post(self, request, book_id):
         """Create new chapter with auto-incremented number"""
@@ -195,17 +263,22 @@ class ChapterDetailView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, book_id, chapter_id):
-        """Retrieve a specific chapter"""
         try:
-            book = Book.objects.get(book_id=book_id)
-            chapter = Chapter.objects.get(book=book, chapter_id=chapter_id)
+            chapter = Chapter.objects.get(book_id=book_id, chapter_id=chapter_id)
+            
+            # === View-count logic (added to existing view) === #
+            if chapter.chapter_status == 'published':
+                session_key = f'book_{book_id}_viewed'
+                if not request.session.get(session_key):
+                    Book.objects.filter(book_id=book_id).update(view_count=F('view_count') + 1)
+                    request.session[session_key] = True
+            # === End view-count logic === #
+            
             serializer = ChapterSerializer(chapter)
             return Response(serializer.data)
-
-        except Book.DoesNotExist:
-            return Response({"detail": "Book not found."}, status=status.HTTP_404_NOT_FOUND)
+        
         except Chapter.DoesNotExist:
-            return Response({"detail": "Chapter not found."}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"detail": "Chapter not found."}, status=404)
 
     def put(self, request, book_id, chapter_id):
         """Update a specific chapter"""
@@ -236,3 +309,49 @@ class ChapterDetailView(APIView):
             return Response({"detail": "Book not found."}, status=status.HTTP_404_NOT_FOUND)
         except Chapter.DoesNotExist:
             return Response({"detail": "Chapter not found."}, status=status.HTTP_404_NOT_FOUND)
+
+
+# Leaderboard Views
+class TopBooksView(APIView):
+    """Top 10 most-viewed public books"""
+    permission_classes = [AllowAny]  # Public access
+
+    def get(self, request):
+        books = Book.objects.filter(status='public').order_by('-view_count')[:10]
+        serializer = BookSerializer(books, many=True)
+        return Response(serializer.data)
+
+
+class TopAuthorsView(APIView):
+    def get(self, request):
+        top_authors = (
+            Book.objects.filter(status='public')
+            .values('author_id')
+            .annotate(
+                total_views=Sum('view_count'),
+                first_name=F('author__first_name')  # Only get first name
+            )
+            .order_by('-total_views')[:7]
+        )
+        
+        # Simplified response with just first name
+        formatted_authors = [{
+            'author_id': author['author_id'],
+            'author_name': author['first_name'],  # Just the first name
+            'total_views': author['total_views']
+        } for author in top_authors]
+        
+        return Response(formatted_authors)
+
+class TopGenresView(APIView):
+    """Top 10 genres by total book views (handles JSONField)"""
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        genre_views = defaultdict(int)
+        for book in Book.objects.filter(status='public'):
+            for genre in book.genres:  # Loop through JSON list
+                genre_views[genre] += book.view_count
+        
+        top_genres = sorted(genre_views.items(), key=lambda x: x[1], reverse=True)[:10]
+        return Response([{"genre": g, "views": v} for g, v in top_genres])
