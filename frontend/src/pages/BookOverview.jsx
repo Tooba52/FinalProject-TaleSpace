@@ -12,13 +12,13 @@ function BookOverview() {
   const [firstName, setFirstName] = useState("");
   const navigate = useNavigate();
   const [book, setBook] = useState(null);
-  const [isFavorite, setIsFavorite] = useState(false);
+  const [isFavourite, setIsFavourite] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     fetchBookDetails();
     fetchUserProfile();
-    checkIfFavorite();
+    checkIfFavourite();
   }, [book_id]);
 
   const fetchBookDetails = () => {
@@ -55,30 +55,30 @@ function BookOverview() {
       .catch((err) => console.error("Error fetching user profile", err));
   };
 
-  const checkIfFavorite = () => {
+  const checkIfFavourite = () => {
     api
-      .get(`/api/books/${book_id}/is_favorite/`)
+      .get(`/api/books/${book_id}/is_favourite/`)
       .then((res) => {
-        setIsFavorite(res.data.is_favorite);
+        setIsFavourite(res.data.is_favourite);
       })
-      .catch((err) => console.error("Error checking favorite status", err));
+      .catch((err) => console.error("Error checking favourite status", err));
   };
 
-  const toggleFavorite = () => {
-    if (isFavorite) {
+  const toggleFavourite = () => {
+    if (isFavourite) {
       api
-        .delete(`/api/books/${book_id}/remove_favorite/`)
+        .delete(`/api/books/${book_id}/remove_favourite/`)
         .then(() => {
-          setIsFavorite(false);
+          setIsFavourite(false);
         })
-        .catch((err) => console.error("Error removing favorite", err));
+        .catch((err) => console.error("Error removing favourite", err));
     } else {
       api
-        .post(`/api/books/${book_id}/add_favorite/`)
+        .post(`/api/books/${book_id}/add_favourite/`)
         .then(() => {
-          setIsFavorite(true);
+          setIsFavourite(true);
         })
-        .catch((err) => console.error("Error adding favorite", err));
+        .catch((err) => console.error("Error adding favourite", err));
     }
   };
 
@@ -107,13 +107,15 @@ function BookOverview() {
               <h1>{book.title}</h1>
             </div>
             <button
-              onClick={toggleFavorite}
-              className={`overview-favorite-btn ${isFavorite ? "active" : ""}`}
+              onClick={toggleFavourite}
+              className={`overview-favourite-btn ${
+                isFavourite ? "active" : ""
+              }`}
               aria-label={
-                isFavorite ? "Remove from favorites" : "Add to favorites"
+                isFavourite ? "Remove from favourites" : "Add to favourites"
               }
             >
-              {isFavorite ? <FaHeart /> : <FaRegHeart />}
+              {isFavourite ? <FaHeart /> : <FaRegHeart />}
             </button>
           </div>
 
