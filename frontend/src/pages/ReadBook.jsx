@@ -19,16 +19,47 @@ function ReadBook() {
     status: "draft",
   });
 
-  // Destructure for cleaner access
   const { isLoading, chapters, content, chapterTitle, bookTitle, status } =
     state;
 
-  // Fetch initial data
+  // Critical fix: Replace history immediately when component mounts
+  useEffect(() => {
+    if (chapter_id) {
+      window.history.replaceState(
+        null,
+        "",
+        `/read/${book_id}/chapters/${chapter_id}`
+      );
+    }
+  }, []); // Empty dependency array to run only once on mount
+
+  // Handle all navigation within the book
+  const navigateToChapter = (chapterId) => {
+    const newPath = `/read/${book_id}/chapters/${chapterId}`;
+    window.history.replaceState(null, "", newPath); // Replace history before navigate
+    navigate(newPath, { replace: true });
+  };
+
+  // Force back button to go home
+  useEffect(() => {
+    const handleBackButton = (e) => {
+      if (window.location.pathname.includes("/read/")) {
+        e.preventDefault();
+        window.history.replaceState(null, "", "/"); // Clear history
+        navigate("/", { replace: true });
+      }
+    };
+
+    window.addEventListener("popstate", handleBackButton);
+    return () => window.removeEventListener("popstate", handleBackButton);
+  }, [navigate]);
+
+  // Fetch data
   useEffect(() => {
     const fetchData = async () => {
       try {
         const [chaptersRes, contentRes] = await Promise.all([
-          api.get(`/api/books/${book_id}/chapters/`),
+          api.get(`/api/books/${book_id}/chapters/?published_only=true`), // Only get published chapters
           chapter_id
             ? api
                 .get(`/api/books/${book_id}/chapters/${chapter_id}/`)
@@ -36,31 +67,24 @@ function ReadBook() {
             : null,
         ]);
 
-        // Get book title from first chapter's book reference
-        const bookTitle =
-          chaptersRes.data[0]?.book_detail?.title || "Untitled Book";
-
-        // Check if the current chapter exists
+        // Check if the requested chapter is published
         const currentChapterExists = chaptersRes.data.some(
           (ch) => ch.chapter_id == chapter_id
         );
 
-        // If we're on a chapter URL but that chapter doesn't exist, redirect to first chapter
         if (
           chapter_id &&
           !currentChapterExists &&
           chaptersRes.data.length > 0
         ) {
-          navigate(
-            `/read/${book_id}/chapters/${chaptersRes.data[0].chapter_id}`,
-            { replace: true }
-          );
+          // Redirect to first published chapter if requested chapter isn't published
+          navigateToChapter(chaptersRes.data[0].chapter_id);
           return;
         }
 
         setState((prev) => ({
           ...prev,
-          bookTitle,
+          bookTitle: chaptersRes.data[0]?.book_detail?.title || "Untitled Book",
           chapters: chaptersRes.data,
           content: contentRes?.data?.chapter_content || "",
           chapterTitle: contentRes?.data?.chapter_title || "",
@@ -86,28 +110,23 @@ function ReadBook() {
       .catch((err) => console.error("Error fetching user profile", err));
   };
 
-  // Render
   if (isLoading) return <div className="loading">Loading...</div>;
 
   return (
     <div className="read-book-container">
       <Navbar firstName={firstName} showSearch={false} showWriteButton={true} />
 
-      {/* HEADER SECTION */}
       <div className="book-header">
         <h1 className="book-title">{bookTitle}</h1>
       </div>
 
-      {/* CHAPTER HEADER */}
       <div className="chapter-header-container">
         <div className="chapter-header">
           <h2 className="chapter-title">{chapterTitle || "Untitled"}</h2>
         </div>
       </div>
 
-      {/* MAIN CONTENT AREA */}
       <div className="content-area">
-        {/* CHAPTER SIDEBAR */}
         <div className="chapter-sidebar">
           <h3>Chapters</h3>
           <ul className="chapter-list">
@@ -115,20 +134,11 @@ function ReadBook() {
               <li
                 key={chapter.chapter_id}
                 className={chapter_id == chapter.chapter_id ? "active" : ""}
-                onClick={() =>
-                  navigate(`/read/${book_id}/chapters/${chapter.chapter_id}`)
-                }
+                onClick={() => navigateToChapter(chapter.chapter_id)}
               >
                 <div className="chapter-item">
                   <div className="chapter-text">
                     {chapter.chapter_title || "Untitled"}
-                    {chapter.chapter_status === "published" ? (
-                      <span className="chapter-status-published">
-                        • Published
-                      </span>
-                    ) : (
-                      <span className="chapter-status-draft">• Draft</span>
-                    )}
                   </div>
                 </div>
               </li>
@@ -136,14 +146,12 @@ function ReadBook() {
           </ul>
         </div>
 
-        {/* READING AREA */}
         <div className="reading-area">
           <div
             className="content-display"
             dangerouslySetInnerHTML={{ __html: content }}
           />
 
-          {/* Navigation buttons */}
           <div className="chapter-navigation">
             {chapters.findIndex((ch) => ch.chapter_id == chapter_id) > 0 && (
               <button
@@ -151,11 +159,7 @@ function ReadBook() {
                   const currentIndex = chapters.findIndex(
                     (ch) => ch.chapter_id == chapter_id
                   );
-                  navigate(
-                    `/read/${book_id}/chapters/${
-                      chapters[currentIndex - 1].chapter_id
-                    }`
-                  );
+                  navigateToChapter(chapters[currentIndex - 1].chapter_id);
                 }}
                 className="nav-button prev-button"
               >
@@ -170,11 +174,7 @@ function ReadBook() {
                   const currentIndex = chapters.findIndex(
                     (ch) => ch.chapter_id == chapter_id
                   );
-                  navigate(
-                    `/read/${book_id}/chapters/${
-                      chapters[currentIndex + 1].chapter_id
-                    }`
-                  );
+                  navigateToChapter(chapters[currentIndex + 1].chapter_id);
                 }}
                 className="nav-button next-button"
               >
@@ -185,7 +185,6 @@ function ReadBook() {
         </div>
       </div>
 
-      {/* Footer */}
       <Footer />
     </div>
   );

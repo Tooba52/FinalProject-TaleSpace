@@ -40,29 +40,6 @@
   margin-left: auto;
 }
 
-.status-badge {
-  font-size: 12px;
-  font-weight: bold;
-  padding: 4px 8px;
-  border-radius: 4px;
-}
-
-.status-badge.draft {
-  background: #ffeb3b;
-  color: #000;
-}
-
-.status-badge.published {
-  background: #4caf50;
-  color: white;
-}
-
-.save-time {
-  margin-left: 8px;
-  font-weight: normal;
-  color: #666;
-}
-
 .action-buttons {
   display: flex;
   gap: 10px;

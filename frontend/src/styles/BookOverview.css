@@ -1,0 +1,166 @@
+.overview {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: #f8f9fa; /* Light background for the whole page */
+}
+
+.overview-container {
+  display: flex;
+  flex: 1;
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  gap: 3rem;
+  width: 100%;
+}
+
+/* Right Side - Book Details */
+.overview-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Header with title and favorite button */
+.overview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.overview-header h1 {
+  margin: 0;
+  font-size: 2rem;
+  color: #333;
+  font-weight: 600;
+  max-width: 80%;
+}
+
+.overview-favorite-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.8rem;
+  color: #ccc;
+  transition: color 0.2s;
+  padding: 0.5rem;
+}
+
+.overview-favorite-btn.active {
+  color: #ff4757;
+}
+
+.overview-favorite-btn:hover {
+  color: #ff6b81;
+}
+
+/* Author section */
+.overview-author {
+  font-size: 1.2rem;
+  color: #666;
+  margin-bottom: 1rem;
+  font-style: italic;
+}
+
+.mature-label-container {
+  margin-top: 0.5rem;
+}
+
+.mature-label {
+  display: inline-flex;
+  align-items: center;
+  background-color: #ff4757;
+  color: white;
+  font-size: 0.9rem;
+  font-weight: bold;
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.mature-icon {
+  margin-right: 0.5rem;
+  font-size: 0.9rem;
+}
+
+/* Genre section */
+.overview-meta {
+  margin-bottom: 2rem;
+  color: #555;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.overview-meta strong {
+  color: #333;
+}
+
+/* Description section */
+.overview-description {
+  margin-bottom: 2rem;
+}
+
+.overview-description h3 {
+  margin-bottom: 1rem;
+  color: #333;
+  font-size: 1.3rem;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 0.5rem;
+}
+
+.overview-description p {
+  line-height: 1.6;
+  color: #444;
+  font-size: 1rem;
+}
+
+/* Read button positioned at bottom right */
+.overview-action-buttons {
+  margin-top: auto; /* Pushes to bottom */
+  display: flex;
+  justify-content: flex-end;
+}
+
+.overview-start-reading-btn {
+  padding: 0.8rem 2rem;
+  background-color: #4a6fa5;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.overview-start-reading-btn:hover {
+  background-color: #3a5a8a;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .overview-container {
+    flex-direction: column;
+    padding: 1rem;
+    gap: 1.5rem;
+  }
+
+  .overview-card {
+    width: 100%;
+    height: auto;
+    position: static;
+  }
+
+  .overview-header h1 {
+    max-width: 70%;
+    font-size: 1.8rem;
+  }
+}

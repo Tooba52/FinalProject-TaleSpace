@@ -173,6 +173,46 @@
   cursor: not-allowed;
 }
 
+.mature-status {
+  margin-top: 0.3rem;
+}
+
+.mature-badge {
+  display: inline-block;
+  background-color: #ff4757;
+  color: white;
+  font-size: 0.8rem;
+  font-weight: bold;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Mature Content Toggle Styles */
+.mature-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.mature-toggle input[type="checkbox"] {
+  width: 1.2rem;
+  height: 1.2rem;
+  cursor: pointer;
+}
+
+.mature-toggle-label {
+  font-weight: bold;
+  color: #333;
+}
+
+/* When mature is checked */
+.mature-toggle input[type="checkbox"]:checked + .mature-toggle-label {
+  color: #ff4757;
+}
+
 /* Action Buttons */
 .action-buttons {
   display: flex;

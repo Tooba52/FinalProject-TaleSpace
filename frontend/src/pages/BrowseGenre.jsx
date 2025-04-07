@@ -53,7 +53,7 @@ function BrowseGenre() {
   };
 
   const handleBookClick = (bookId) => {
-    navigate(`/read/${bookId}`); // This will navigate to the read page
+    navigate(`/overview/books/${bookId}`); // This will navigate to overview
   };
 
   if (loading) return <div className="loading-spinner">Loading...</div>;

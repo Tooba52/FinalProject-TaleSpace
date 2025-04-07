@@ -131,7 +131,7 @@ function CreateBook() {
         setCoverPhoto(null);
         setCoverFile(null);
 
-        navigate(`/books/${response.data.book_id}/chapters/`, {
+        navigate(`/write/books/${response.data.book_id}/chapters/`, {
           replace: true,
         }); // Redirect to the writing page
       }

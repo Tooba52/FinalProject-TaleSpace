@@ -107,7 +107,7 @@ function WriteBook() {
           chaptersRes.data.length > 0
         ) {
           navigate(
-            `/books/${book_id}/chapters/${chaptersRes.data[0].chapter_id}`,
+            `/write/books/${book_id}/chapters/${chaptersRes.data[0].chapter_id}`,
             { replace: true }
           );
           return;
@@ -392,16 +392,6 @@ function WriteBook() {
         <div className="chapter-header">
           <h2 className="chapter-title">{chapterTitle || "Untitled"}</h2>
           <div className="chapter-actions">
-            <span className={`status-badge ${status}`}>
-              {status.toUpperCase()}
-              {lastSaved && status === "draft" && (
-                <span className="save-time">
-                  {saveState === "saving"
-                    ? "Saving..."
-                    : `Last saved: ${lastSaved.toLocaleTimeString()}`}
-                </span>
-              )}
-            </span>
             <div className="action-buttons">
               <button
                 onClick={handleSaveDraft}
@@ -451,9 +441,12 @@ function WriteBook() {
                 key={chapter.chapter_id}
                 className={chapter_id == chapter.chapter_id ? "active" : ""}
                 onClick={() =>
-                  navigate(`/books/${book_id}/chapters/${chapter.chapter_id}`, {
-                    replace: true,
-                  })
+                  navigate(
+                    `/write/books/${book_id}/chapters/${chapter.chapter_id}`,
+                    {
+                      replace: true,
+                    }
+                  )
                 }
               >
                 {editingId === chapter.chapter_id &&

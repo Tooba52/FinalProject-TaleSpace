@@ -9,6 +9,7 @@ import Book from "../components/books";
 
 function BookSettings() {
   const { book_id } = useParams();
+  const [firstName, setFirstName] = useState("");
   const navigate = useNavigate();
   const [book, setBook] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -18,10 +19,12 @@ function BookSettings() {
     description: "",
     genres: [],
     status: "public",
+    mature: false,
   });
 
   useEffect(() => {
     fetchBookDetails();
+    fetchUserProfile();
   }, [book_id]);
 
   const fetchBookDetails = () => {
@@ -34,9 +37,19 @@ function BookSettings() {
           description: res.data.description,
           genres: res.data.genres,
           status: res.data.status,
+          mature: res.data.mature || false,
         });
       })
       .catch((err) => console.error("Error fetching book details", err));
+  };
+
+  const fetchUserProfile = () => {
+    api
+      .get("/api/user/profile/")
+      .then((res) => {
+        setFirstName(res.data.first_name);
+      })
+      .catch((err) => console.error("Error fetching user profile", err));
   };
 
   const handleInputChange = (e) => {
@@ -66,15 +79,13 @@ function BookSettings() {
   };
 
   const handleSave = () => {
-    // Prepare complete data with all required fields
     const updateData = {
       title: formData.title,
       description: formData.description,
       genres: formData.genres,
       status: formData.status,
-      // Include other required fields from the original book data
+      mature: formData.mature, // Add this line
       language: book.language,
-      mature: book.mature,
     };
 
     api
@@ -82,12 +93,12 @@ function BookSettings() {
       .then((res) => {
         setBook(res.data);
         setIsEditing(false);
-        // Update formData with the new book data
         setFormData({
           title: res.data.title,
           description: res.data.description,
           genres: res.data.genres,
           status: res.data.status,
+          mature: res.data.mature, // Add this line
         });
       })
       .catch((err) => {
@@ -139,7 +150,7 @@ function BookSettings() {
 
   return (
     <div className="book-settings">
-      <Navbar />
+      <Navbar firstName={firstName} showSearch={false} showWriteButton={true} />
 
       <div className="book-settings-container">
         {/* Left Side - Book Card */}
@@ -201,6 +212,23 @@ function BookSettings() {
                   <option value="private">Private</option>
                 </select>
               </div>
+
+              <div className="form-group">
+                <label className="mature-toggle">
+                  <input
+                    type="checkbox"
+                    name="mature"
+                    checked={formData.mature}
+                    onChange={(e) => {
+                      setFormData({
+                        ...formData,
+                        mature: e.target.checked,
+                      });
+                    }}
+                  />
+                  <span className="mature-toggle-label">Mature Content</span>
+                </label>
+              </div>
             </>
           ) : (
             <>
@@ -214,6 +242,11 @@ function BookSettings() {
                 <div>
                   <strong>Status:</strong> {book.status}
                 </div>
+                {book.mature && (
+                  <div className="mature-status">
+                    <span className="mature-badge">Mature</span>
+                  </div>
+                )}
               </div>
             </>
           )}
@@ -257,7 +290,7 @@ function BookSettings() {
             </div>
 
             <Link
-              to={`/books/${book.book_id}/chapters`}
+              to={`/write/books/${book.book_id}/chapters`}
               className="continue-writing-btn"
             >
               Continue Writing

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import profile from "../images/profile.png";
 import api from "../api";
 import Book from "../components/books";
@@ -11,16 +11,16 @@ function Profile() {
   const [firstName, setFirstName] = useState("");
   const [userBooks, setUserBooks] = useState([]);
   const [userId, setUserId] = useState(null);
-
-  useEffect(() => {
-    fetchUserProfile();
-  }, []);
+  const [favouriteBooks, setFavouriteBooks] = useState([]);
+  const navigate = useNavigate(); // Add this line
 
   useEffect(() => {
     if (userId) {
       fetchUserBooks();
+      fetchFavouriteBooks();
     }
-  }, [userId]); // Add userId as dependency
+    fetchUserProfile();
+  }, [userId]);
 
   const fetchUserProfile = () => {
     api
@@ -46,6 +46,25 @@ function Profile() {
         console.error("Error fetching user books", err);
         setUserBooks([]); // Reset to empty array on error
       });
+  };
+
+  const fetchFavouriteBooks = () => {
+    if (!userId) return;
+
+    api
+      .get(`/api/books/favourites/`)
+      .then((res) => {
+        const favourites = res.data.results || res.data; // Handle paginated/non-paginated
+        setFavouriteBooks(Array.isArray(favourites) ? favourites : []);
+      })
+      .catch((err) => {
+        console.error("Error fetching favourite books", err);
+        setFavouriteBooks([]);
+      });
+  };
+
+  const handleBookClick = (bookId) => {
+    navigate(`/overview/books/${bookId}`); // This will navigate to overview
   };
 
   return (
@@ -77,7 +96,7 @@ function Profile() {
             <h3>Your Books</h3>
             <div className="book-list">
               {userBooks.map((book) => (
-                <Link to={`/books/${book.book_id}`} key={book.book_id}>
+                <Link to={`/settings/books/${book.book_id}`} key={book.book_id}>
                   <Book book={book} />
                 </Link>
               ))}
@@ -89,17 +108,26 @@ function Profile() {
         <section className="books-section">
           <div className="section-header">
             <h3>Favourited Books</h3>
-            <Link to="/books" className="view-all">
-              View All ➤
-            </Link>
+            {favouriteBooks.length > 0 && (
+              <Link to="/books" className="view-all">
+                View All ➤
+              </Link>
+            )}
           </div>
           <div className="book-list">
-            {[...Array(7)].map((_, index) => (
-              <div key={index} className="book-card">
-                <div className="book-icon">📖</div>
-                <p>Book Name</p>
-              </div>
-            ))}
+            {favouriteBooks.length > 0 ? (
+              favouriteBooks.map((book) => (
+                <div
+                  key={book.book_id}
+                  onClick={() => handleBookClick(book.book_id)}
+                  style={{ cursor: "pointer" }}
+                >
+                  <Book book={book} />
+                </div>
+              ))
+            ) : (
+              <p className="no-favourites">No favourited books yet</p>
+            )}
           </div>
         </section>
       </div>

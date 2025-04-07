@@ -11,6 +11,7 @@ import BrowseGenre from "./pages/BrowseGenre";
 import ProtectedRoute from "./components/ProtectedRoute";
 import ReadBook from "./pages/ReadBook";
 import BookSettings from "./pages/BookSettings";
+import BookOverview from "./pages/BookOverview";
 
 function Logout() {
   localStorage.clear(); // Remove user session data
@@ -36,7 +37,7 @@ function App() {
           }
         />
         <Route
-          path="/books/:book_id/chapters"
+          path="/write/books/:book_id/chapters"
           element={
             <ProtectedRoute>
               <WriteBook />
@@ -44,7 +45,7 @@ function App() {
           }
         />
         <Route
-          path="/books/:book_id/chapters/:chapter_id"
+          path="/write/books/:book_id/chapters/:chapter_id"
           element={
             <ProtectedRoute>
               <WriteBook />
@@ -100,10 +101,18 @@ function App() {
           }
         />
         <Route
-          path="/books/:book_id"
+          path="/settings/books/:book_id"
           element={
             <ProtectedRoute>
               <BookSettings />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="overview/books/:book_id"
+          element={
+            <ProtectedRoute>
+              <BookOverview />
             </ProtectedRoute>
           }
         />
