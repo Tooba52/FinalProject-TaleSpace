@@ -7,7 +7,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.generics import (ListCreateAPIView, RetrieveUpdateAPIView, DestroyAPIView)
 from rest_framework.permissions import IsAuthenticated
 from .serializers import UserSerializer, BookSerializer, ChapterSerializer
-from .models import Book, Chapter, Favourite
+from .models import Book, Chapter, Favourite, WebsiteUser
 from django.core.paginator import Paginator
 from django.db.models import Q, Sum, F
 from collections import defaultdict
@@ -33,6 +33,25 @@ class UserProfileView(APIView):
         user = request.user
         serializer = UserSerializer(user)
         return Response(serializer.data) 
+    
+
+class PublicUserProfileView(APIView):
+    """View for retrieving any user's public profile without follower data"""
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request, user_id):
+        try:
+            user = WebsiteUser.objects.get(pk=user_id)
+            return Response({
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'email': user.email,  # Only include if you want to show emails
+                'date_of_birth': user.date_of_birth,
+                'date_joined': user.date_joined,
+                # Removed follower-related fields
+            })
+        except WebsiteUser.DoesNotExist:
+            return Response({"error": "User not found"}, status=404)
 
 
 # ========================

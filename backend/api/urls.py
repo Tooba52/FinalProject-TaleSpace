@@ -19,6 +19,7 @@ urlpatterns = [
 
     #Profile endpointd
     path('user/profile/<int:user_id>/', views.UserProfileView.as_view()),  # Current user
+    path('public/profile/<int:user_id>/', views.PublicUserProfileView.as_view(), name='public-user-profile'),
 
     #Leaderboards
     path('leaderboard/books/', views.TopBooksView.as_view(), name='top-books'),

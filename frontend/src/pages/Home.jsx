@@ -138,7 +138,7 @@ function Home() {
             {topAuthors.length > 0 ? (
               topAuthors.map((author) => (
                 <Link
-                  to={`/author/${author.author_id}`}
+                  to={`/userprofile/${author.author_id}`}
                   key={author.author_id}
                   className="author-card"
                 >
