@@ -132,9 +132,11 @@ function Profile() {
               <p className="no-favourites">No favourited books yet</p>
             )}
           </div>
-          <Link to="/FavouitedBooks/books/" className="view-all">
-            View All ➤
-          </Link>
+          {favouriteBooks.length > 7 && (
+            <Link to="/FavouitedBooks/books/" className="view-all">
+              View All ➤
+            </Link>
+          )}
         </section>
       </div>
 

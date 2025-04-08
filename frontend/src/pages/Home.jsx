@@ -5,6 +5,7 @@ import "../styles/Home.css";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import Book from "../components/books";
+import GenreIcon from "../components/GenreIcons";
 
 function Home() {
   const [firstName, setFirstName] = useState("");
@@ -109,22 +110,23 @@ function Home() {
 
         {/* Top Genres Section */}
         <section className="top-genres">
-          <h3>Top Genres</h3>
+          <div className="section-header">
+            <h3>Top Genres</h3>
+          </div>
           <div className="genre-list">
             {topGenres.length > 0 ? (
-              topGenres.map((genre, index) => (
-                <div
-                  key={index}
-                  className="genre-card"
-                  onClick={() => handleGenreClick(genre.genre)}
-                  style={{ cursor: "pointer" }} // Visual cue that it's clickable
-                >
-                  <div className="genre-icon">🎭</div>
-                  <p>{genre.genre}</p>
-                </div>
-              ))
+              topGenres
+                .slice(0, 7)
+                .map((genre, index) => (
+                  <GenreIcon
+                    key={index}
+                    genre={genre.genre}
+                    onClick={() => handleGenreClick(genre.genre)}
+                    className="genre-card"
+                  />
+                ))
             ) : (
-              <p>No genre data available</p>
+              <p className="no-genres">No genre data available</p>
             )}
           </div>
         </section>
