@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import "../styles/Navbar.css";
 import logo from "../images/logo.jpeg";
 
@@ -12,6 +12,7 @@ const Navbar = ({
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isGenreDropdownOpen, setIsGenreDropdownOpen] = useState(false);
   const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState(""); // Properly initialize state
 
   // Sample genres - replace with your actual genres or fetch from API
   const genres = [
@@ -44,6 +45,14 @@ const Navbar = ({
   const handleLogout = () => {
     localStorage.clear();
     navigate("/login");
+  };
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
+      setSearchQuery("");
+    }
   };
 
   return (
@@ -80,7 +89,20 @@ const Navbar = ({
       </div>
 
       {showSearch && (
-        <input type="text" placeholder="Search" className="navbar__search" />
+        <form onSubmit={handleSearch} className="navbar__search-form">
+          <input
+            type="text"
+            placeholder="Search"
+            className="navbar__search"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          <button type="submit" className="navbar__search-button">
+            <span role="img" aria-label="search">
+              🔍
+            </span>
+          </button>
+        </form>
       )}
 
       <div className="navbar__links">

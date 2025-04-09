@@ -6,6 +6,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import Book from "../components/books";
 import GenreIcon from "../components/GenreIcons";
+import profile from "../images/profile.png";
 
 function Home() {
   const [firstName, setFirstName] = useState("");
@@ -116,7 +117,7 @@ function Home() {
           <div className="genre-list">
             {topGenres.length > 0 ? (
               topGenres
-                .slice(0, 7)
+                .slice(0, 8)
                 .map((genre, index) => (
                   <GenreIcon
                     key={index}
@@ -142,9 +143,14 @@ function Home() {
                   key={author.author_id}
                   className="author-card"
                 >
-                  <div className="author-icon">👤</div>
+                  <div className="author-icon">
+                    <img
+                      src={profile}
+                      alt={author.author_name || "Author"}
+                      className="author-profile-img"
+                    />
+                  </div>
                   <p>{author.author_name || "Unknown Author"}</p>
-                  <small>{author.total_views} views</small>
                 </Link>
               ))
             ) : (

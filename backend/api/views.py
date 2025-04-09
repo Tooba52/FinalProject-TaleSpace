@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from rest_framework.generics import (ListCreateAPIView, RetrieveUpdateAPIView, DestroyAPIView)
+from rest_framework.generics import (ListAPIView, RetrieveUpdateAPIView, DestroyAPIView)
 from rest_framework.permissions import IsAuthenticated
 from .serializers import UserSerializer, BookSerializer, ChapterSerializer
 from .models import Book, Chapter, Favourite, WebsiteUser
@@ -79,6 +79,7 @@ class BookListCreate(generics.ListCreateAPIView):
                 Q(genres__contains=[genre_lower.capitalize()])),
                 status='public'  # Only show public books when filtering by genre
             )
+        
         
         return queryset
     
@@ -181,6 +182,21 @@ class BookDelete(generics.DestroyAPIView):
     
 
 
+class BookSearch(ListAPIView):
+    serializer_class = BookSerializer
+    permission_classes = [AllowAny]
+    
+    def get_queryset(self):
+        search_query = self.request.query_params.get('q')
+        queryset = Book.objects.filter(status='public')
+        
+        if search_query:
+            queryset = queryset.filter(
+                Q(title__icontains=search_query) | 
+                Q(author_name__icontains=search_query)
+            )
+        return queryset
+    
 
 # ========================
 # Favourite managemnet views

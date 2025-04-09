@@ -3,6 +3,7 @@ import Action from "../images/action.png";
 import Adventure from "../images/adventure.png";
 import Animal from "../images/animal.png";
 import Apocalypse from "../images/apocalypse.png";
+import Comedy from "../images/crime.png";
 import Crime from "../images/crime.png";
 import Cyberpunk from "../images/cyberpunk.png";
 import Drama from "../images/drama.png";
@@ -31,12 +32,12 @@ const genreImages = {
   Action: Action,
   Adventure: Adventure,
   Animal: Animal,
-  Apocalypse: Apocalypse,
-  Cimre: Crime,
+  Comedy: Comedy,
+  Crime: Crime,
   Cyberpunk: Cyberpunk,
   Drama: Drama,
   Dystopian: Dystopian,
-  Fairytale: Fairytale,
+  "Fairy Tale": Fairytale,
   Fiction: Fiction,
   Fantasy: Fantasy,
   Gothic: Gothic,
@@ -45,11 +46,12 @@ const genreImages = {
   Historical: Historical,
   Musical: Musical,
   Mythology: Mythology,
-  Paranormal: Paranormal,
   Mystery: Mystery,
+  Paranormal: Paranormal,
+  "Post-Apocalyptic": Apocalypse,
   Romance: Romance,
-  SciFi: SciFi,
-  SliceOfLife: SliceOfLife,
+  "Sci-Fi": SciFi,
+  "Slice of Life": SliceOfLife,
   Sports: Sports,
   Steampunk: Steampunk,
   Supernatural: Supernatural,

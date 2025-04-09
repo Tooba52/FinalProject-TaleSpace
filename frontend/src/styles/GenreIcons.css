@@ -4,7 +4,8 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 125px;
+  width: 104px;
+  height: 104px;
   padding: 15px;
   margin: 12px;
   border-radius: 16px;
@@ -22,16 +23,15 @@
 
 /* Icon Container */
 .genre-icon-container {
-  width: 100px; /* Increased from 90px */
-  height: 100px;
+  width: 80px; /* Increased from 90px */
+  height: 80px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 12px;
   border-radius: 50%;
   background-color: #ffffff;
   overflow: hidden;
-  padding: 5px; /* Added padding to contain image */
+  padding: 6px; /* Added padding to contain image */
 }
 
 /* Image Styles */

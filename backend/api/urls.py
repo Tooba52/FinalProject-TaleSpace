@@ -6,6 +6,7 @@ urlpatterns = [
     path("books/", views.BookListCreate.as_view(), name="book-list-create"),  # List & Create books
     path("books/delete/<int:pk>/", views.BookDelete.as_view(), name="delete-book"),  # Delete a book
     path("books/<int:pk>/", views.BookRetrieveUpdate.as_view(), name="book-detail"),  # Add this 
+    path('books/search/', views.BookSearch.as_view(), name='book-search'),  # New
 
     # Chapter endpoints
     path('books/<int:book_id>/chapters/', views.ChapterListCreateView.as_view(), name='chapter-list-create'), # List & Create chapters
