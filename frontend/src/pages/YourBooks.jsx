@@ -11,16 +11,32 @@ function YourBooks() {
   const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
+  const [userId, setUserId] = useState(null); // Added userId state
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchUserBooks();
-  }, [page]);
+    fetchUserProfile(); // First fetch the user profile to get userId
+  }, []);
+
+  useEffect(() => {
+    if (userId) {
+      fetchUserBooks(); // Then fetch books only when userId is available
+    }
+  }, [userId, page]);
+
+  const fetchUserProfile = () => {
+    api
+      .get("/api/user/profile/")
+      .then((res) => {
+        setUserId(res.data.user_id);
+      })
+      .catch((err) => console.error("Error fetching user profile", err));
+  };
 
   const fetchUserBooks = () => {
     setLoading(true);
     api
-      .get(`/api/books/?my_books=true&page=${page}`) // Changed to use a query parameter
+      .get(`/api/books/?author_id=${userId}&page=${page}`) // Changed to use author_id
       .then((res) => {
         setUserBooks(res.data.results || []);
         setTotalPages(res.data.total_pages || 1);

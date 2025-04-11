@@ -40,7 +40,6 @@ function BrowseGenre() {
     }
   };
 
-
   const handleBookClick = (bookId) => {
     navigate(`/overview/books/${bookId}`); // This will navigate to overview
   };

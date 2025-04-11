@@ -21,8 +21,16 @@ function ReadBook() {
   const { isLoading, chapters, content, chapterTitle, bookTitle, status } =
     state;
 
-  // Critical fix: Replace history immediately when component mounts
+  // Handle all navigation within the book
+  const navigateToChapter = (chapterId) => {
+    const newPath = `/read/${book_id}/chapters/${chapterId}`;
+    window.history.replaceState(null, "", newPath);
+    navigate(newPath, { replace: true });
+  };
+
+  // Consolidated useEffect for all side effects
   useEffect(() => {
+    // 1. History management
     if (chapter_id) {
       window.history.replaceState(
         null,
@@ -30,35 +38,22 @@ function ReadBook() {
         `/read/${book_id}/chapters/${chapter_id}`
       );
     }
-  }, []); // Empty dependency array to run only once on mount
 
-  // Handle all navigation within the book
-  const navigateToChapter = (chapterId) => {
-    const newPath = `/read/${book_id}/chapters/${chapterId}`;
-    window.history.replaceState(null, "", newPath); // Replace history before navigate
-    navigate(newPath, { replace: true });
-  };
-
-  // Force back button to go home
-  useEffect(() => {
+    // 2. Back button handling
     const handleBackButton = (e) => {
       if (window.location.pathname.includes("/read/")) {
         e.preventDefault();
-        window.history.replaceState(null, "", "/"); // Clear history
+        window.history.replaceState(null, "", "/");
         navigate("/", { replace: true });
       }
     };
-
     window.addEventListener("popstate", handleBackButton);
-    return () => window.removeEventListener("popstate", handleBackButton);
-  }, [navigate]);
 
-  // Fetch data
-  useEffect(() => {
+    // 3. Data fetching
     const fetchData = async () => {
       try {
         const [chaptersRes, contentRes] = await Promise.all([
-          api.get(`/api/books/${book_id}/chapters/?published_only=true`), // Only get published chapters
+          api.get(`/api/books/${book_id}/chapters/?published_only=true`),
           chapter_id
             ? api
                 .get(`/api/books/${book_id}/chapters/${chapter_id}/`)
@@ -66,7 +61,6 @@ function ReadBook() {
             : null,
         ]);
 
-        // Check if the requested chapter is published
         const currentChapterExists = chaptersRes.data.some(
           (ch) => ch.chapter_id == chapter_id
         );
@@ -76,7 +70,6 @@ function ReadBook() {
           !currentChapterExists &&
           chaptersRes.data.length > 0
         ) {
-          // Redirect to first published chapter if requested chapter isn't published
           navigateToChapter(chaptersRes.data[0].chapter_id);
           return;
         }
@@ -97,7 +90,11 @@ function ReadBook() {
     };
 
     fetchData();
-  }, [book_id, chapter_id]);
+
+    return () => {
+      window.removeEventListener("popstate", handleBackButton);
+    };
+  }, [book_id, chapter_id, navigate]);
 
   if (isLoading) return <div className="loading">Loading...</div>;
 

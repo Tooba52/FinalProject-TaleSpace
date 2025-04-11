@@ -13,6 +13,7 @@ from django.db.models import Q, Sum, F
 from collections import defaultdict
 from django.contrib.auth import logout
 
+
 User = get_user_model()
 
 
@@ -253,14 +254,14 @@ class CheckFavouriteView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, book_id):
-        is_favorite = Favourite.objects.filter(user=request.user, book_id=book_id).exists()
-        return Response({"is_favorite": is_favorite})
+        is_favourite = Favourite.objects.filter(user=request.user, book_id=book_id).exists()
+        return Response({"is_favourite": is_favourite})
 
 class AddFavouriteView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, book_id):
-        favorite, created = Favourite.objects.get_or_create(
+        favourite, created = Favourite.objects.get_or_create(
             user=request.user,
             book_id=book_id
         )
@@ -289,6 +290,8 @@ class FavouriteBooksView(APIView):
         books = [fav.book for fav in favorites]
         serializer = BookSerializer(books, many=True)
         return Response(serializer.data)
+    
+
 
 # ========================
 # Chapter managemnet views

@@ -16,27 +16,33 @@ function BookOverview() {
   const [isFavourite, setIsFavourite] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [comments, setComments] = useState([]);
-  const [commentContent, setCommentContent] = useState("");
-  const [newComment, setNewComment] = useState(""); // Declare newComment state
+  const [newComment, setNewComment] = useState("");
   const [sortOrder, setSortOrder] = useState("newest");
   const [userId, setUserId] = useState(null);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
 
   useEffect(() => {
+    console.log("Component mounted - current favourite status:", isFavourite);
     fetchBookDetails();
-    checkIfFavourite();
     fetchComments();
     fetchUserProfile();
+    checkIfFavourite();
   }, [book_id]);
+
+  useEffect(() => {
+    console.log("Favorite status updated:", isFavourite);
+  }, [isFavourite]);
 
   const fetchUserProfile = () => {
     api
-      .get("/api/user/profile/") // Adjust the URL if needed
+      .get("/api/user/profile/")
       .then((res) => {
-        setUserId(res.data.user_id); // Add this line to set the user ID
+        setUserId(res.data.user_id);
         setFirstName(res.data.first_name);
-        setLastName(res.data.last_name); // This line might be incorrect. It should be res.data.last_name
+        setLastName(res.data.last_name);
+        // Only check favourite status after we have the user ID
+        checkIfFavourite();
       })
       .catch((err) => console.error("Error fetching user profile", err));
   };
@@ -46,7 +52,6 @@ function BookOverview() {
     api
       .get(`/api/books/${book_id}/`)
       .then((res) => {
-        console.log("Full API response:", res.data);
         setBook(res.data);
       })
       .catch((err) => {
@@ -62,7 +67,7 @@ function BookOverview() {
     api
       .get(`/api/books/${book_id}/is_favourite/`)
       .then((res) => {
-        setIsFavourite(res.data.is_favourite);
+        setIsFavourite(res.data.is_favourite); // Set the initial favourite status
       })
       .catch((err) => console.error("Error checking favourite status", err));
   };
@@ -77,54 +82,37 @@ function BookOverview() {
   };
 
   const handleAddComment = () => {
-    console.log("Add Comment Button Pressed"); // Debug: Confirm if this runs
-    if (newComment.trim() === "") return; // Prevent empty comments
-    console.log("Comment Content:", newComment); // Debug: Show comment content
-
+    if (newComment.trim() === "") return;
     const payload = {
-      comment_content: newComment, // The comment content
-      comment_user: userId, // Use the userId from state
-      comment_book: book_id, // Current book ID
+      comment_content: newComment,
+      comment_user: userId,
+      comment_book: book_id,
     };
-
-    console.log("Payload for comment:", payload);
-
     api
       .post(`/api/books/${book_id}/comments/create/`, payload)
       .then((res) => {
-        console.log("Comment Added:", res.data); // Log the response from the backend
-        setComments([...comments, res.data]); // Update the comment list
-        setNewComment(""); // Clear the input after successful submission
+        setComments([...comments, res.data]);
+        setNewComment("");
       })
       .catch((err) => {
-        console.error("Error adding comment", err); // Log the full error details
-        if (err.response && err.response.data) {
-          console.error("Backend error details:", err.response.data.errors); // Log the errors returned from the backend
-        }
+        console.error("Error adding comment", err);
       });
   };
 
   const handleDeleteComment = (commentId) => {
-    // Ask the user for confirmation before deleting
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this comment?"
     );
     if (!confirmDelete) return;
-
     api
-      .delete(`/api/comments/${commentId}/delete/`) // Use the correct URL here
+      .delete(`/api/comments/${commentId}/delete/`)
       .then(() => {
-        // Update comments list after successful deletion
         setComments(
           comments.filter((comment) => comment.comment_id !== commentId)
         );
-        console.log("Comment deleted successfully");
       })
       .catch((err) => {
         console.error("Error deleting comment", err);
-        if (err.response && err.response.data) {
-          console.error("Backend error details:", err.response.data.detail); // Adjusted for error response
-        }
       });
   };
 
@@ -133,14 +121,14 @@ function BookOverview() {
       api
         .delete(`/api/books/${book_id}/remove_favourite/`)
         .then(() => {
-          setIsFavourite(false);
+          setIsFavourite(false); // Set the favourite state to false
         })
         .catch((err) => console.error("Error removing favourite", err));
     } else {
       api
         .post(`/api/books/${book_id}/add_favourite/`)
         .then(() => {
-          setIsFavourite(true);
+          setIsFavourite(true); // Set the favourite state to true
         })
         .catch((err) => console.error("Error adding favourite", err));
     }
@@ -150,7 +138,6 @@ function BookOverview() {
     navigate(`/read/${book_id}/chapters/1`);
   };
 
-  // Sorting Comments
   const sortedComments = comments.sort((a, b) => {
     if (sortOrder === "newest") {
       return new Date(b.comment_created_at) - new Date(a.comment_created_at);
@@ -165,14 +152,10 @@ function BookOverview() {
   return (
     <div className="overview">
       <Navbar showSearch={false} showWriteButton={true} />
-
       <div className="overview-container">
-        {/* Left Side - Book Card */}
         <div className="book-card-view">
           <Book book={book} />
         </div>
-
-        {/* Right Side - Book Details */}
         <div className="overview-content">
           <div className="overview-header">
             <div className="title-container">
@@ -190,11 +173,9 @@ function BookOverview() {
               {isFavourite ? <FaHeart /> : <FaRegHeart />}
             </button>
           </div>
-
           <div className="overview-author">
             By {book.author_name || "Unknown Author"}
           </div>
-
           <div className="overview-meta">
             <div>
               <strong>Genres:</strong> {book.genres.join(", ")}
@@ -208,13 +189,10 @@ function BookOverview() {
               </div>
             )}
           </div>
-
           <div className="overview-description">
             <h3>Description</h3>
             <p>{book.description}</p>
           </div>
-
-          {/* Action Buttons */}
           <div className="overview-action-buttons">
             <button
               onClick={startReading}
@@ -226,11 +204,8 @@ function BookOverview() {
         </div>
       </div>
 
-      {/* Comment Section */}
       <div className="comments-section">
         <h3>Comments</h3>
-
-        {/* Sort Buttons */}
         <div className="sort-buttons">
           <button
             onClick={() => setSortOrder("newest")}
@@ -246,7 +221,6 @@ function BookOverview() {
           </button>
         </div>
 
-        {/* Comment Input */}
         <div className="add-comment">
           <textarea
             value={newComment}
@@ -258,12 +232,10 @@ function BookOverview() {
           </button>
         </div>
 
-        {/* Comments List */}
         <div className="comments-list">
           {sortedComments.length > 0 ? (
             sortedComments.map((comment) => (
               <div key={comment.comment_id} className="comment-item">
-                {/* Display delete button only if the user is the comment author */}
                 {comment.comment_user === userId && (
                   <button
                     onClick={() => handleDeleteComment(comment.comment_id)}
@@ -273,12 +245,10 @@ function BookOverview() {
                     <FaTrash />
                   </button>
                 )}
-
-                {/* Display the comment author */}
                 <div className="comment-author">
                   {comment.comment_user === userId
-                    ? `${firstName} ${lastName}` // If it's the logged-in user's comment
-                    : comment.comment_user_full_name}{" "}
+                    ? `${firstName} ${lastName}`
+                    : comment.comment_user_full_name}
                 </div>
                 <div className="comment-content">{comment.comment_content}</div>
                 <div className="comment-date">

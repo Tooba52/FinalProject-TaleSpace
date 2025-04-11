@@ -111,11 +111,6 @@ function Profile() {
         <section className="books-section">
           <div className="section-header">
             <h3>Favourited Books</h3>
-            {favouriteBooks.length > 7 && (
-              <Link to="/favourites" className="view-all">
-                View All ➤
-              </Link>
-            )}
           </div>
           <div className="book-list">
             {favouriteBooks.length > 0 ? (
@@ -132,11 +127,9 @@ function Profile() {
               <p className="no-favourites">No favourited books yet</p>
             )}
           </div>
-          {favouriteBooks.length > 7 && (
-            <Link to="/FavouitedBooks/books/" className="view-all">
-              View All ➤
-            </Link>
-          )}
+          <Link to="/FavouitedBooks/books/" className="view-all">
+            View All ➤
+          </Link>
         </section>
       </div>
 

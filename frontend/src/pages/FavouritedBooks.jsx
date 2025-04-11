@@ -4,37 +4,37 @@ import api from "../api";
 import BookCard from "../components/books";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-// import "../styles/FavouritedBooks.css"; // Create a style file for this page
 
-function FavouritedBooks() {
-  const [favouriteBooks, setFavouriteBooks] = useState([]);
+function FavoriteBooks() {
+  const [favoriteBooks, setFavoriteBooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [userId, setUserId] = useState(null);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchFavouritedBooks();
+    fetchFavoriteBooks();
   }, [page]);
 
-  const fetchFavouritedBooks = async () => {
+  const fetchFavoriteBooks = async () => {
     try {
       setLoading(true);
       const response = await api.get(
-        `/api/books/favourites/?user_id=${userId}&page=${page}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-          },
-        }
+        `/api/books/favourites/?page=${page}&page_size=28`
+      ); // Added page_size parameter
+      const data = response.data;
+
+      setFavoriteBooks(data.results || data);
+      setTotalPages(
+        data.total_pages || Math.ceil((data.count || data.length) / 28)
       );
-      setFavouriteBooks(response.data.results);
-      setTotalPages(response.data.total_pages);
+    } catch (err) {
+      console.error("Error fetching favorite books", err);
+      setError("Failed to load favorite books");
+      setFavoriteBooks([]);
+    } finally {
       setLoading(false);
-    } catch (error) {
-      console.error("Error:", error);
     }
   };
 
@@ -46,18 +46,19 @@ function FavouritedBooks() {
   if (error) return <div className="error-message">{error}</div>;
 
   return (
-    <div className="favourited-books-container">
+    <div className="favorite-books-container">
       <Navbar />
+
       <div className="content-wrapper">
         <div className="genre-header">
-          <h1>Your Favourited Books</h1>
+          <h1>Your Favorite Books</h1>
           <div className="header-divider"></div>
         </div>
 
         <div className="book-grid-container">
           <div className="book-grid">
-            {favouriteBooks.length > 0 ? (
-              favouriteBooks.map((book) => (
+            {favoriteBooks.length > 0 ? (
+              favoriteBooks.map((book) => (
                 <div
                   key={book.book_id}
                   onClick={() => handleBookClick(book.book_id)}
@@ -68,7 +69,7 @@ function FavouritedBooks() {
               ))
             ) : (
               <div className="no-books-message">
-                You haven't favorited any books yet.
+                {!loading && "You haven't favorited any books yet."}
               </div>
             )}
           </div>
@@ -96,9 +97,10 @@ function FavouritedBooks() {
           </div>
         )}
       </div>
+
       <Footer />
     </div>
   );
 }
 
-export default FavouritedBooks;
+export default FavoriteBooks;
