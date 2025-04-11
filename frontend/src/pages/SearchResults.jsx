@@ -11,40 +11,29 @@ const SearchResults = () => {
   const [error, setError] = useState(null);
   const [searchParams] = useSearchParams();
   const searchQuery = searchParams.get("q");
+  const [bookResults, setBookResults] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchResults = async () => {
+      setLoading(true);
       try {
-        setLoading(true);
-        setError(null);
-
         const token = localStorage.getItem("access_token");
         const headers = {
           "Content-Type": "application/json",
+          ...(token && { Authorization: `Bearer ${token}` }),
         };
 
-        if (token) {
-          headers["Authorization"] = `Bearer ${token}`;
-        }
-
-        const response = await fetch(
+        // Always fetch both, but only display based on searchType
+        const bookResponse = await fetch(
           `http://localhost:8000/api/books/search/?q=${encodeURIComponent(
             searchQuery
           )}`,
           { headers }
         );
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        setResults(data);
-      } catch (err) {
-        console.error("Fetch error:", err);
-        setError(err.message);
-        setResults([]);
+        setBookResults(await bookResponse.json());
+      } catch (error) {
+        console.error("Search error:", error);
       } finally {
         setLoading(false);
       }
@@ -63,37 +52,22 @@ const SearchResults = () => {
   if (error) return <div className="error-message">{error}</div>;
 
   return (
-    <div className="search-results-container">
+    <div className="search-page">
       <Navbar />
-
-      <div className="content-wrapper">
-        <div className="search-header">
-          <h1>Search Results for "{searchQuery}"</h1>
-          <div className="header-divider"></div>
-        </div>
-
-        <div className="book-grid-container">
+      {/* Results Section */}
+      <div className="search-results-container">
+        <h2>Results for "{searchQuery}"</h2>
+        {bookResults.length > 0 ? (
           <div className="book-grid">
-            {results.length > 0 ? (
-              results.map((book) => (
-                <div
-                  key={book.book_id}
-                  onClick={() => handleBookClick(book.book_id)}
-                  className="book-card-wrapper"
-                >
-                  <BookCard book={book} />
-                </div>
-              ))
-            ) : (
-              <div className="no-results-message">
-                No books found matching your search.
-              </div>
-            )}
+            {bookResults.map((book) => (
+              <BookCard key={book.book_id} book={book} />
+            ))}
           </div>
-        </div>
+        ) : (
+          <p>No books found matching your search.</p>
+        )}
+        <></>
       </div>
-
-      <Footer />
     </div>
   );
 };

@@ -50,11 +50,11 @@ const Navbar = ({
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
+      // Default to 'books' search type when searching from navbar
+      navigate(`/search?q=${encodeURIComponent(searchQuery)}&type=books`);
       setSearchQuery("");
     }
   };
-
   return (
     <nav className={`navbar navbar--${variant}`}>
       <Link to="/" className="navbar__logo">

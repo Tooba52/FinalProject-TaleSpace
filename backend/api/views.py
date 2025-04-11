@@ -11,6 +11,7 @@ from .models import Book, Chapter, Favourite, WebsiteUser
 from django.core.paginator import Paginator
 from django.db.models import Q, Sum, F
 from collections import defaultdict
+from django.contrib.auth import logout
 
 User = get_user_model()
 
@@ -34,6 +35,31 @@ class UserProfileView(APIView):
         serializer = UserSerializer(user)
         return Response(serializer.data) 
     
+    def put(self, request):
+        user = request.user
+        data = request.data.copy()
+        
+        # Handle password change if included
+        if 'current_password' in data and 'new_password' in data:
+            if not user.check_password(data['current_password']):
+                return Response(
+                    {"error": "Current password is incorrect"},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            user.set_password(data['new_password'])
+            user.save()
+            # Remove password fields from data so they don't get included in regular update
+            data.pop('current_password')
+            data.pop('new_password')
+        
+        # Handle regular profile updates
+        serializer = UserSerializer(user, data=data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
 
 class PublicUserProfileView(APIView):
     """View for retrieving any user's public profile without follower data"""
@@ -54,6 +80,39 @@ class PublicUserProfileView(APIView):
             return Response({"error": "User not found"}, status=404)
 
 
+
+#delete
+
+class DeleteAccountView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request):
+        try:
+            user = request.user
+            current_password = request.data.get('current_password')
+            
+            if not user.check_password(current_password):
+                return Response(
+                    {"error": "Incorrect password"},
+                    status=status.HTTP_401_UNAUTHORIZED
+                )
+            
+            # Delete the user
+            user.delete()
+            
+            # Logout the user
+            logout(request)
+            
+            return Response(
+                {"detail": "Account successfully deleted"},
+                status=status.HTTP_200_OK  # Changed from 204 to 200 to include message
+            )
+            
+        except Exception as e:
+            return Response(
+                {"error": str(e)},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 # ========================
 # Book managemnet views
 # ========================
@@ -182,21 +241,7 @@ class BookDelete(generics.DestroyAPIView):
     
 
 
-class BookSearch(ListAPIView):
-    serializer_class = BookSerializer
-    permission_classes = [AllowAny]
-    
-    def get_queryset(self):
-        search_query = self.request.query_params.get('q')
-        queryset = Book.objects.filter(status='public')
-        
-        if search_query:
-            queryset = queryset.filter(
-                Q(title__icontains=search_query) | 
-                Q(author_name__icontains=search_query)
-            )
-        return queryset
-    
+
 
 # ========================
 # Favourite managemnet views
@@ -390,3 +435,20 @@ class TopGenresView(APIView):
         
         top_genres = sorted(genre_views.items(), key=lambda x: x[1], reverse=True)[:10]
         return Response([{"genre": g, "views": v} for g, v in top_genres])
+
+
+#search
+class BookSearch(ListAPIView):
+    serializer_class = BookSerializer
+    permission_classes = [AllowAny]
+    
+    def get_queryset(self):
+        search_query = self.request.query_params.get('q')
+        queryset = Book.objects.filter(status='public')
+        
+        if search_query:
+            queryset = queryset.filter(
+                Q(title__icontains=search_query) | 
+                Q(author_name__icontains=search_query)
+            )
+        return queryset
