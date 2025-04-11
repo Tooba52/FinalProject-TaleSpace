@@ -5,7 +5,6 @@ import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
 import "../styles/Form.css";
 import LoadingIndicator from "./LoadingIndicator";
 import { validatePassword } from "./utils";
-import PasswordStrengthIndicator from "./PasswordStrengthIndicator";
 import PasswordField from "./PasswordField";
 import FormFields from "./FormFields";
 
@@ -110,23 +109,9 @@ function Form({ route, method }) {
           setPassword={setPassword}
           setIsPasswordStarted={setIsPasswordStarted}
         />
-        {/* Password strength indicator */}
-        {method === "register" && isPasswordStarted && (
-          <PasswordStrengthIndicator password={password} />
-        )}
         {/* Login options */}
         {method === "login" && (
           <div className="loginoptions-container">
-            <div className="remember-me">
-              <label htmlFor="rememberMe">
-                Remember me
-                <label className="logintoggle-switch">
-                  <input type="checkbox" id="rememberMe" />
-                  <span className="loginslider"></span>
-                </label>
-              </label>
-            </div>
-
             <div className="forgot-password">
               <Link to="/forgot-password">Forgot password?</Link>
             </div>

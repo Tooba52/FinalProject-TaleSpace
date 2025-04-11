@@ -29,6 +29,7 @@ class WebsiteUser(AbstractUser):
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
     date_of_birth = models.DateField(null=True, blank=True)
+    dark_mode_enabled = models.BooleanField(default=False)
 
     # Password with validation
     password = models.CharField(validators=[validate_strong_password], max_length=128)  # Enforce strong password rules
@@ -113,3 +114,19 @@ class Favourite(models.Model):
 
     class Meta:
         unique_together = ('user', 'book')
+
+
+# ========================
+# Comment Model
+# ========================
+class Comment(models.Model):
+    """Model representing a comment on a book"""
+
+    comment_id = models.BigAutoField(primary_key=True)
+    comment_user = models.ForeignKey(WebsiteUser, on_delete=models.CASCADE)  # Commenter
+    comment_book = models.ForeignKey(Book, related_name='comments', on_delete=models.CASCADE)  # Which book the comment is for
+    comment_content = models.TextField()  # Comment text
+    comment_created_at = models.DateTimeField(auto_now_add=True)  # Timestamp
+
+    def __str__(self):
+        return f"Comment by {self.comment_user.email} on {self.comment_book.title}"

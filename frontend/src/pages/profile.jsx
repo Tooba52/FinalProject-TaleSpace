@@ -69,7 +69,7 @@ function Profile() {
 
   return (
     <div className="profile-page">
-      <Navbar variant="transparent" firstName={firstName} />
+      <Navbar />
 
       <div className="profile-container">
         {/* Profile Header Section */}

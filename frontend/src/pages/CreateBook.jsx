@@ -7,7 +7,6 @@ import Footer from "../components/Footer";
 
 function CreateBook() {
   const navigate = useNavigate();
-  const [firstName, setFirstName] = useState("");
 
   // State variables for managing form inputs and book creation
   const [title, setTitle] = useState("");
@@ -47,22 +46,14 @@ function CreateBook() {
     "Sports",
     "Steampunk",
     "Supernatural",
-    "Thriller",    
+    "Thriller",
   ];
 
   // useEffect hook to fetch
   useEffect(() => {
-    fetchUserProfile();
   }, []);
 
-  const fetchUserProfile = () => {
-    api
-      .get("/api/user/profile/") // Fetch user details
-      .then((res) => {
-        setFirstName(res.data.first_name); // Set the first name in state
-      })
-      .catch((err) => console.error("Error fetching user profile", err));
-  };
+
 
   //allows up to 3 genres to be selected
   const handleGenreClick = (genre) => {
@@ -161,7 +152,6 @@ function CreateBook() {
     <div className="create-book-container">
       {/* Navigation Bar */}
       <Navbar
-        firstName={firstName}
         showSearch={false}
         showWriteButton={false}
       />

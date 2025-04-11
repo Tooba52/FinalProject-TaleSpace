@@ -1,5 +1,5 @@
 from rest_framework import serializers 
-from .models import WebsiteUser, Book, Chapter 
+from .models import WebsiteUser, Book, Chapter, Comment, Favourite
 
 
 # ========================
@@ -9,8 +9,11 @@ class UserSerializer(serializers.ModelSerializer):
     """Handles user registration and profile serialization"""
     class Meta:
         model = WebsiteUser
-        fields = ["user_id", "email", "password", "first_name", "last_name", "date_of_birth"]
-        extra_kwargs = {"password": {"write_only": True}}  # Never show password in responses
+        fields = ["user_id", "email", "password", "first_name", "last_name", "date_of_birth", "dark_mode_enabled"]
+        extra_kwargs = {
+            'password': {'write_only': True},
+            'dark_mode_enabled': {'required': False}  # Make it optional for updates
+        }
 
     def create(self, validated_data):
         """Create user with properly hashed password"""
@@ -83,3 +86,25 @@ class ChapterSerializer(serializers.ModelSerializer):
             'chapter_content': {'allow_blank': True}, 
         }
 
+
+# ========================
+# Serializer for favourite model
+# ========================
+class FavouriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Favourite
+        fields = ['id', 'user', 'book', 'created_at']
+        read_only_fields = ['id', 'created_at']
+
+# ========================
+# Serializer for Comment model
+# ========================
+class CommentSerializer(serializers.ModelSerializer):
+    comment_user_full_name = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Comment
+        fields = ['comment_id', 'comment_content', 'comment_user', 'comment_book', 'comment_created_at', 'comment_user_full_name']
+
+    def get_comment_user_full_name(self, obj):
+        return f"{obj.comment_user.first_name} {obj.comment_user.last_name}"

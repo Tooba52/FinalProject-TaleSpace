@@ -5,7 +5,7 @@ import "../styles/Settings.css";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { validatePassword } from "../components/utils";
-import PasswordStrengthIndicator from "../components/PasswordStrengthIndicator";
+import { useDarkMode } from "../components/DarkModeContext";
 
 function Settings() {
   const [userData, setUserData] = useState({
@@ -13,7 +13,6 @@ function Settings() {
     last_name: "",
     email: "",
   });
-  const [darkMode, setDarkMode] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showPasswordFields, setShowPasswordFields] = useState(false);
@@ -24,10 +23,12 @@ function Settings() {
   });
   const [isPasswordStarted, setIsPasswordStarted] = useState(false);
   const [passwordError, setPasswordError] = useState(null);
+  const { darkMode, toggleDarkMode } = useDarkMode();
 
   useEffect(() => {
     fetchUserProfile();
-  }, []);
+    document.documentElement.classList.toggle("dark-mode", darkMode);
+  }, [darkMode]);
 
   const fetchUserProfile = async () => {
     try {
@@ -72,6 +73,7 @@ function Settings() {
         first_name: userData.first_name,
         last_name: userData.last_name,
         email: userData.email,
+        dark_mode_enabled: darkMode, // Add this line
       };
 
       // Include password data if changing
@@ -83,6 +85,7 @@ function Settings() {
       // Send the request
       await api.put("/api/user/profile/", dataToSend);
 
+      // Reset form on success
       // Reset form on success
       setShowPasswordFields(false);
       setPasswordData({
@@ -196,7 +199,7 @@ function Settings() {
 
   return (
     <div className={`settings-page ${darkMode ? "dark-mode" : ""}`}>
-      <Navbar variant="transparent" firstName={userData.first_name} />
+      <Navbar />
       <div className="settings-container">
         <h2>Account Settings</h2>
 
@@ -244,7 +247,7 @@ function Settings() {
                 type="checkbox"
                 id="darkMode"
                 checked={darkMode}
-                onChange={(e) => setDarkMode(e.target.checked)}
+                onChange={toggleDarkMode}
               />
               <label htmlFor="darkMode">Dark mode</label>
             </div>
@@ -286,11 +289,6 @@ function Settings() {
                     value={passwordData.new_password}
                     onChange={handlePasswordChange}
                   />
-                  {isPasswordStarted && (
-                    <PasswordStrengthIndicator
-                      password={passwordData.new_password}
-                    />
-                  )}
                 </div>
                 <div className="form-group">
                   <label htmlFor="confirm_password">Confirm New Password</label>

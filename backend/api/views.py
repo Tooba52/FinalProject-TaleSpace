@@ -6,8 +6,8 @@ from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.generics import (ListAPIView, RetrieveUpdateAPIView, DestroyAPIView)
 from rest_framework.permissions import IsAuthenticated
-from .serializers import UserSerializer, BookSerializer, ChapterSerializer
-from .models import Book, Chapter, Favourite, WebsiteUser
+from .serializers import UserSerializer, BookSerializer, ChapterSerializer, CommentSerializer
+from .models import Book, Chapter, Favourite, WebsiteUser, Comment
 from django.core.paginator import Paginator
 from django.db.models import Q, Sum, F
 from collections import defaultdict
@@ -32,11 +32,13 @@ class UserProfileView(APIView):
 
     def get(self, request):
         user = request.user
+        print(f"Fetching profile for {user.email}. Dark mode: {user.dark_mode_enabled}")
         serializer = UserSerializer(user)
         return Response(serializer.data) 
     
     def put(self, request):
         user = request.user
+        print(f"Updating profile for {user.email}. Incoming data:", request.data)
         data = request.data.copy()
         
         # Handle password change if included
@@ -452,3 +454,64 @@ class BookSearch(ListAPIView):
                 Q(author_name__icontains=search_query)
             )
         return queryset
+    
+
+
+#comment
+class CommentListView(APIView):
+    """Fetch all comments for a specific book."""
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        book_id = kwargs.get('book_id')  # Assuming the book_id is passed in the URL
+        
+        if book_id:
+            comments = Comment.objects.filter(comment_book__book_id=book_id)  # Filter by book_id
+        else:
+            return Response({'detail': 'Book ID is required'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        serializer = CommentSerializer(comments, many=True)
+        return Response(serializer.data)
+    
+
+
+class CommentCreateView(APIView):
+    """Create a new comment for a book."""
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        book_id = kwargs.get('book_id')  # Get book_id from the URL
+
+        try:
+            book = Book.objects.get(book_id=book_id)  # Find the book by its ID
+        except Book.DoesNotExist:
+            return Response({'detail': 'Book not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        # Create a new comment instance
+        serializer = CommentSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(comment_user=request.user, comment_book=book)  # Save with logged-in user and selected book
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            # Log the errors from serializer
+            return Response({'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+    
+class CommentDeleteView(APIView):
+    """Delete an existing comment."""
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, *args, **kwargs):
+        comment_id = kwargs.get('comment_id')  # Get comment_id from the URL
+        
+        try:
+            comment = Comment.objects.get(comment_id=comment_id)
+        except Comment.DoesNotExist:
+            return Response({'detail': 'Comment not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        # Check if the current user is the author of the comment
+        if comment.comment_user != request.user:
+            return Response({'detail': 'You do not have permission to delete this comment'}, status=status.HTTP_403_FORBIDDEN)
+
+        # Delete the comment
+        comment.delete()
+        return Response({'detail': 'Comment deleted successfully'}, status=status.HTTP_204_NO_CONTENT)

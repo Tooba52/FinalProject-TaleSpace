@@ -9,7 +9,6 @@ import Book from "../components/books";
 
 function BookSettings() {
   const { book_id } = useParams();
-  const [firstName, setFirstName] = useState("");
   const navigate = useNavigate();
   const [book, setBook] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -24,7 +23,6 @@ function BookSettings() {
 
   useEffect(() => {
     fetchBookDetails();
-    fetchUserProfile();
   }, [book_id]);
 
   const fetchBookDetails = () => {
@@ -41,15 +39,6 @@ function BookSettings() {
         });
       })
       .catch((err) => console.error("Error fetching book details", err));
-  };
-
-  const fetchUserProfile = () => {
-    api
-      .get("/api/user/profile/")
-      .then((res) => {
-        setFirstName(res.data.first_name);
-      })
-      .catch((err) => console.error("Error fetching user profile", err));
   };
 
   const handleInputChange = (e) => {
@@ -84,7 +73,7 @@ function BookSettings() {
       description: formData.description,
       genres: formData.genres,
       status: formData.status,
-      mature: formData.mature, // Add this line
+      mature: formData.mature,
       language: book.language,
     };
 
@@ -98,7 +87,7 @@ function BookSettings() {
           description: res.data.description,
           genres: res.data.genres,
           status: res.data.status,
-          mature: res.data.mature, // Add this line
+          mature: res.data.mature,
         });
       })
       .catch((err) => {
@@ -153,7 +142,7 @@ function BookSettings() {
 
   return (
     <div className="book-settings">
-      <Navbar firstName={firstName} showSearch={false} showWriteButton={true} />
+      <Navbar showSearch={false} showWriteButton={true} />
 
       <div className="book-settings-container">
         {/* Left Side - Book Card */}

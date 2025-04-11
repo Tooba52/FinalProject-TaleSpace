@@ -2,7 +2,8 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: #f9f9f9;
+  background-color: var(--bg-color);
+  color: var(--text-color);
 }
 
 .settings-page.dark-mode {
@@ -15,39 +16,46 @@
   margin: 2rem auto;
   padding: 0 1rem;
   width: 100%;
+  background-color: var(--card-bg);
+}
+
+.settings-page.dark-mode .settings-container {
+  background-color: #333;
 }
 
 .settings-container h2 {
   font-size: 2rem;
   margin-bottom: 2rem;
-  color: #333;
+  color: var(--text-color);
 }
 
-.dark-mode .settings-container h2 {
+.settings-page.dark-mode .settings-container h2 {
   color: #fff;
 }
 
 .settings-section {
-  background-color: #fff;
+  background-color: var(--card-bg);
   border-radius: 8px;
   padding: 1.5rem;
   margin-bottom: 1.5rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--border-color);
 }
 
-.dark-mode .settings-section {
-  background-color: #333;
+.settings-page.dark-mode .settings-section {
+  background-color: #444;
+  border-color: #555;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .settings-section h3 {
   font-size: 1.3rem;
   margin-bottom: 1rem;
-  color: #444;
+  color: var(--text-color);
 }
 
-.dark-mode .settings-section h3 {
-  color: #ddd;
+.settings-page.dark-mode .settings-section h3 {
+  color: #fff;
 }
 
 .form-group {
@@ -60,20 +68,28 @@
   font-weight: 500;
 }
 
+.settings-page.dark-mode .form-group label {
+  color: #eee;
+}
+
 .form-group input,
-.form-group textarea {
+.form-group textarea,
+.form-group select {
   width: 100%;
   padding: 0.8rem;
   border: 1px solid #ddd;
   border-radius: 4px;
   font-size: 1rem;
+  background-color: #fff;
+  color: #333;
 }
 
-.dark-mode .form-group input,
-.dark-mode .form-group textarea {
-  background-color: #444;
+.settings-page.dark-mode .form-group input,
+.settings-page.dark-mode .form-group textarea,
+.settings-page.dark-mode .form-group select {
+  background-color: #555;
   color: #fff;
-  border-color: #555;
+  border-color: #666;
 }
 
 .form-group textarea {
@@ -97,12 +113,20 @@
   text-decoration: none;
 }
 
+.settings-page.dark-mode .action-link {
+  color: #4dabf7;
+}
+
 .action-link:hover {
   text-decoration: underline;
 }
 
 .action-link.danger {
   color: #cc0000;
+}
+
+.settings-page.dark-mode .action-link.danger {
+  color: #ff6b6b;
 }
 
 .save-button {
@@ -118,4 +142,12 @@
 
 .save-button:hover {
   background-color: #0052a3;
+}
+
+.settings-page.dark-mode .save-button {
+  background-color: #1a7fda;
+}
+
+.settings-page.dark-mode .save-button:hover {
+  background-color: #166dbf;
 }

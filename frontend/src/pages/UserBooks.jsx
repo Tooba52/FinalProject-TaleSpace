@@ -9,7 +9,6 @@ function UserBooks() {
   const { user_id } = useParams(); // Get user_id from URL
   const [userData, setUserData] = useState({
     firstName: "",
-    lastName: "",
   });
   const [userBooks, setUserBooks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -31,7 +30,6 @@ function UserBooks() {
       .then((res) => {
         setUserData({
           firstName: res.data.first_name,
-          lastName: res.data.last_name,
         });
       })
       .catch((err) => console.error("Error fetching user profile", err));

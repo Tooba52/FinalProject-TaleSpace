@@ -7,7 +7,6 @@ import Footer from "../components/Footer";
 // import "../styles/FavouritedBooks.css"; // Create a style file for this page
 
 function FavouritedBooks() {
-  const [firstName, setFirstName] = useState("");
   const [favouriteBooks, setFavouriteBooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -17,7 +16,6 @@ function FavouritedBooks() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchUserProfile();
     fetchFavouritedBooks();
   }, [page]);
 
@@ -40,16 +38,6 @@ function FavouritedBooks() {
     }
   };
 
-  const fetchUserProfile = () => {
-    api
-      .get("/api/user/profile/")
-      .then((res) => {
-        setFirstName(res.data.first_name);
-        setUserId(res.data.user_id);
-      })
-      .catch((err) => console.error("Error fetching user profile", err));
-  };
-
   const handleBookClick = (bookId) => {
     navigate(`/overview/books/${bookId}`);
   };
@@ -59,7 +47,7 @@ function FavouritedBooks() {
 
   return (
     <div className="favourited-books-container">
-      <Navbar firstName={firstName} userId={userId} />
+      <Navbar />
       <div className="content-wrapper">
         <div className="genre-header">
           <h1>Your Favourited Books</h1>

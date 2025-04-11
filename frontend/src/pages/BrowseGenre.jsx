@@ -7,7 +7,6 @@ import Footer from "../components/Footer";
 import "../styles/BrowseGenre.css";
 
 function BrowseGenre() {
-  const [firstName, setFirstName] = useState("");
   const { genreName } = useParams();
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -18,7 +17,6 @@ function BrowseGenre() {
   const navigate = useNavigate(); // Add this line
 
   useEffect(() => {
-    fetchUserProfile();
     fetchBooks();
   }, [genreName, page]); // Add page to dependencies
 
@@ -42,15 +40,6 @@ function BrowseGenre() {
     }
   };
 
-  const fetchUserProfile = () => {
-    api
-      .get("/api/user/profile/")
-      .then((res) => {
-        setFirstName(res.data.first_name);
-        setUserId(res.data.user_id);
-      })
-      .catch((err) => console.error("Error fetching user profile", err));
-  };
 
   const handleBookClick = (bookId) => {
     navigate(`/overview/books/${bookId}`); // This will navigate to overview
@@ -61,7 +50,7 @@ function BrowseGenre() {
 
   return (
     <div className="browse-genre-container">
-      <Navbar firstName={firstName} userId={userId} />
+      <Navbar />
 
       <div className="content-wrapper">
         <div className="genre-header">

@@ -9,41 +9,29 @@ import GenreIcon from "../components/GenreIcons";
 import profile from "../images/profile.png";
 
 function Home() {
-  const [firstName, setFirstName] = useState("");
   const [topBooks, setTopBooks] = useState([]);
   const [topAuthors, setTopAuthors] = useState([]);
   const [topGenres, setTopGenres] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const navigate = useNavigate(); // Add this line
+  const navigate = useNavigate();
 
   useEffect(() => {
-    fetchUserProfile();
     fetchLeaderboards();
   }, []);
 
-  const fetchUserProfile = () => {
-    api
-      .get("/api/user/profile/")
-      .then((res) => {
-        setFirstName(res.data.first_name);
-      })
-      .catch((err) => console.error("Error fetching user profile", err));
-  };
-
   const handleBookClick = (bookId) => {
-    navigate(`/overview/books/${bookId}`); // This will navigate to overview
+    navigate(`/overview/books/${bookId}`);
   };
 
   const handleGenreClick = (genre) => {
-    navigate(`/browse/${genre.toLowerCase().replace(/\s+/g, "-")}`); // This will navigate to browse genres
+    navigate(`/browse/${genre.toLowerCase().replace(/\s+/g, "-")}`);
   };
 
   const fetchLeaderboards = () => {
     setLoading(true);
     setError(null);
 
-    // Fetch all leaderboard data in parallel
     Promise.all([
       api.get("/api/leaderboard/books/"),
       api.get("/api/leaderboard/authors/"),
@@ -73,7 +61,7 @@ function Home() {
 
   return (
     <div className="home-page">
-      <Navbar variant="transparent" firstName={firstName} />
+      <Navbar variant="transparent" />
       <div className="home-container">
         {/* Banner Section */}
         <div className="banner">
@@ -98,7 +86,7 @@ function Home() {
                   key={book.book_id}
                   className="book-link"
                   onClick={() => handleBookClick(book.book_id)}
-                  style={{ cursor: "pointer" }} // Makes it clear it's clickable
+                  style={{ cursor: "pointer" }}
                 >
                   <Book book={book} />
                 </div>

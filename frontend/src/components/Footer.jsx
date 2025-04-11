@@ -1,9 +1,11 @@
 import React from "react";
-import "../styles/Footer.css"; // Create this CSS file
+import "../styles/Footer.css";
+import { useDarkMode } from "./DarkModeContext";
 
 const Footer = () => {
+  const { darkMode } = useDarkMode();
   return (
-    <footer className="app-footer">
+    <footer className={`app-footer ${darkMode ? "dark-mode" : ""}`}>
       <p>© 2025 All Rights Reserved. TaleSpace Inc.</p>
     </footer>
   );

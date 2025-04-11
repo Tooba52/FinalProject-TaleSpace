@@ -7,7 +7,6 @@ import "../styles/Readbook.css";
 
 function ReadBook() {
   const { book_id, chapter_id } = useParams();
-  const [firstName, setFirstName] = useState("");
   const navigate = useNavigate();
 
   const [state, setState] = useState({
@@ -97,24 +96,14 @@ function ReadBook() {
       }
     };
 
-    fetchUserProfile();
     fetchData();
   }, [book_id, chapter_id]);
-
-  const fetchUserProfile = () => {
-    api
-      .get("/api/user/profile/")
-      .then((res) => {
-        setFirstName(res.data.first_name);
-      })
-      .catch((err) => console.error("Error fetching user profile", err));
-  };
 
   if (isLoading) return <div className="loading">Loading...</div>;
 
   return (
     <div className="read-book-container">
-      <Navbar firstName={firstName} showSearch={false} showWriteButton={true} />
+      <Navbar showSearch={false} showWriteButton={true} />
 
       <div className="book-header">
         <h1 className="book-title">{bookTitle}</h1>

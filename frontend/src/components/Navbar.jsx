@@ -1,18 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import "../styles/Navbar.css";
 import logo from "../images/logo.jpeg";
+import api from "../api";
 
 const Navbar = ({
   variant = "default",
-  firstName,
   showSearch = true,
   showWriteButton = true,
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isGenreDropdownOpen, setIsGenreDropdownOpen] = useState(false);
+  const [firstName, setFirstName] = useState("");
   const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = useState(""); // Properly initialize state
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Sample genres - replace with your actual genres or fetch from API
   const genres = [
@@ -42,6 +43,20 @@ const Navbar = ({
     "Fiction",
   ];
 
+  useEffect(() => {
+    // Fetch user profile when component mounts
+    const fetchUserProfile = () => {
+      api
+        .get("/api/user/profile/")
+        .then((res) => {
+          setFirstName(res.data.first_name);
+        })
+        .catch((err) => console.error("Error fetching user profile", err));
+    };
+
+    fetchUserProfile();
+  }, []);
+
   const handleLogout = () => {
     localStorage.clear();
     navigate("/login");
@@ -50,7 +65,6 @@ const Navbar = ({
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      // Default to 'books' search type when searching from navbar
       navigate(`/search?q=${encodeURIComponent(searchQuery)}&type=books`);
       setSearchQuery("");
     }

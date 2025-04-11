@@ -1,168 +1,57 @@
-.home-page html,
+:root {
+  --bg-color: #ffffff;
+  --text-color: #333333;
+  --navbar-bg: #e1e7f5;
+  --card-bg: #f5f5f5;
+  /* other light mode variables */
+}
+
+.dark-mode {
+  --bg-color: #1a1a1a !important;
+  --text-color: #f0f0f0 !important;
+  --card-bg: #2d2d2d !important;
+  --navbar-bg: #2d3748 !important;
+  /* Add all other dark mode variables here */
+}
+
+* {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Apply to the entire app */
+html,
+body,
+#root {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  height: 100%;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.app-container {
+  min-height: 100vh;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+/* Remove the .home-page prefix from your existing html, body styles */
+html,
 body {
   margin: 0;
   padding: 0;
   overflow-y: scroll;
   box-sizing: border-box;
   width: 100%;
-  height: 100%;
 }
 
-/* Main container styling */
 .home-container {
   display: flex;
   flex-direction: column;
-  align-items: center; /* Base Styles */
-  .home-page html,
-  body {
-    margin: 0;
-    padding: 0;
-    overflow-y: scroll;
-    box-sizing: border-box;
-    width: 100%;
-    height: 100%;
-  }
-
-  .home-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    padding: 0 20px;
-    max-width: 1400px;
-    margin: 0 auto;
-  }
-
-  .book-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-  }
-
-  .banner {
-    width: 100%;
-    text-align: center;
-    padding: 20px 0;
-  }
-
-  /* Section Containers */
-  .top-books,
-  .top-genres,
-  .top-authors {
-    width: 100%;
-    margin-top: 30px;
-    padding: 0 10px;
-  }
-
-  /* Book List Grid */
-  .book-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 20px;
-    width: 100%;
-  }
-
-  /* Book Card Adjustments */
-  .book-card {
-    width: 100%;
-    height: auto;
-    aspect-ratio: 0.7; /* Maintain book-like proportion */
-    padding: 10px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .book-cover {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  /* Genre List Grid */
-  .genre-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    gap: 20px;
-    width: 100%;
-  }
-
-  .genre-card {
-    width: 100%;
-    aspect-ratio: 1/1; /* Square shape */
-    margin: 0;
-  }
-
-  .genre-icon-container {
-    width: 100%;
-    height: 100%;
-  }
-
-  /* Author List Grid */
-  .author-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    gap: 20px;
-    width: 100%;
-  }
-
-  .author-card {
-    min-width: auto;
-    width: 100%;
-  }
-
-  .author-icon {
-    width: 100%;
-    aspect-ratio: 1/1; /* Square shape */
-    height: auto;
-  }
-
-  /* Responsive Adjustments */
-  @media (max-width: 1024px) {
-    .book-list {
-      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    }
-
-    .genre-list,
-    .author-list {
-      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-    }
-  }
-
-  @media (max-width: 768px) {
-    .book-list {
-      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-      gap: 15px;
-    }
-
-    .genre-list,
-    .author-list {
-      grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-      gap: 15px;
-    }
-
-    .author-icon {
-      max-width: 80px;
-    }
-  }
-
-  @media (max-width: 480px) {
-    .book-list {
-      grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
-      gap: 12px;
-    }
-
-    .genre-list,
-    .author-list {
-      grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
-      gap: 12px;
-    }
-
-    .home-container {
-      padding: 0 15px;
-    }
-  }
+  align-items: center;
   width: 100%;
+  padding: 0 20px;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
 .book-container {
@@ -174,11 +63,63 @@ body {
 }
 
 .banner {
+  width: 100%;
+  text-align: center;
+  padding: 20px 0;
   justify-content: center;
   align-items: center;
 }
 
-/* Author card specific styles */
+/* Section Containers */
+.top-books,
+.top-genres,
+.top-authors {
+  width: 90%;
+  margin-top: 30px;
+  padding: 0 10px;
+}
+
+/* Book List Grid */
+.book-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 20px;
+  width: 100%;
+}
+
+/* Book Card Adjustments */
+.book-card {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 0.7;
+  padding: 10px;
+  position: relative;
+  overflow: hidden;
+}
+
+.book-cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Genre List Grid */
+.genre-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 20px;
+  width: 100%;
+}
+
+/* Author List Grid */
+.author-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 20px;
+  width: 100%;
+}
+
+/* Author Card Specific Styles */
 .author-card {
   display: flex;
   flex-direction: column;
@@ -187,7 +128,7 @@ body {
   color: inherit;
   padding: 10px;
   transition: transform 0.2s;
-  min-width: 100px; /* Increased minimum width */
+  min-width: 100px;
 }
 
 .author-card:hover {
@@ -195,9 +136,9 @@ body {
 }
 
 .author-icon {
-  width: 100px; /* Increased from 50px */
-  height: 100px; /* Increased from 50px */
-  margin-bottom: 10px; /* More space below image */
+  width: 100px;
+  height: 100px;
+  margin-bottom: 10px;
 }
 
 .author-profile-img {
@@ -205,16 +146,26 @@ body {
   height: 100%;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid #f0f0f0; /* Slightly thicker border */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Added subtle shadow */
+  border: 2px solid #f0f0f0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* Ensure book, genre, and author lists don't break layout */
+.author-card p {
+  font-size: 0.9rem;
+  margin: 6px 0;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100px;
+}
+
+/* Genre and Author Layout Adjustments */
 .genre-list,
 .author-list {
   display: flex;
-  gap: 15px; /* Slightly reduced gap */
-  padding: 8px; /* Reduced padding */
+  gap: 15px;
+  padding: 8px;
   white-space: nowrap;
 }
 
@@ -222,29 +173,32 @@ body {
   gap: 20px;
 }
 
-/* Adjust typography to match smaller images */
-.author-card p {
-  font-size: 0.9rem;
-  margin: 6px 0;
-  font-weight: 500; /* Slightly bolder */
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100px;
+/* Responsive Adjustments */
+@media (max-width: 1024px) {
+  .book-list {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  }
+
+  .genre-list,
+  .author-list {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  }
 }
 
-/* Ensure sections don't shrink too much */
-.top-books,
-.top-genres,
-.top-authors {
-  width: 90%;
-  margin-top: 30px; /* Reduced from 40px */
-}
-
-/* Responsive adjustments */
 @media (max-width: 768px) {
+  .book-list {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 15px;
+  }
+
+  .genre-list,
+  .author-list {
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 15px;
+  }
+
   .author-icon {
-    width: 40px; /* Even smaller on mobile */
+    width: 40px;
     height: 40px;
   }
 
@@ -256,5 +210,22 @@ body {
   .genre-list,
   .author-list {
     gap: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .book-list {
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    gap: 12px;
+  }
+
+  .genre-list,
+  .author-list {
+    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+    gap: 12px;
+  }
+
+  .home-container {
+    padding: 0 15px;
   }
 }

@@ -6,43 +6,22 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
 function YourBooks() {
-  const [firstName, setFirstName] = useState("");
   const [userBooks, setUserBooks] = useState([]);
-  const [userId, setUserId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [page, setPage] = useState(1); // Add page state
-  const [totalPages, setTotalPages] = useState(0); // Add totalPages state
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchUserProfile();
-  }, []);
-
-  useEffect(() => {
-    if (userId) {
-      fetchUserBooks();
-    }
-  }, [userId, page]); // Add page to dependencies
-
-  const fetchUserProfile = () => {
-    api
-      .get("/api/user/profile/")
-      .then((res) => {
-        setFirstName(res.data.first_name);
-        setUserId(res.data.user_id);
-      })
-      .catch((err) => console.error("Error fetching user profile", err));
-  };
+    fetchUserBooks();
+  }, [page]);
 
   const fetchUserBooks = () => {
-    if (!userId) return;
-
     setLoading(true);
     api
-      .get(`/api/books/?author_id=${userId}&page=${page}`) // Add page parameter
+      .get(`/api/books/?my_books=true&page=${page}`) // Changed to use a query parameter
       .then((res) => {
-        // Handle paginated response
         setUserBooks(res.data.results || []);
         setTotalPages(res.data.total_pages || 1);
         setLoading(false);
@@ -64,7 +43,7 @@ function YourBooks() {
 
   return (
     <div className="your-books-container">
-      <Navbar firstName={firstName} userId={userId} />
+      <Navbar />
 
       <div className="content-wrapper">
         <div className="genre-header">
@@ -92,7 +71,6 @@ function YourBooks() {
           </div>
         </div>
 
-        {/* Add pagination controls */}
         {totalPages > 1 && (
           <div className="pagination">
             <button

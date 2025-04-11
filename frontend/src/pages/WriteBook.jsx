@@ -9,7 +9,6 @@ import "../styles/Writebook.css";
 
 function WriteBook() {
   const { book_id, chapter_id } = useParams();
-  const [firstName, setFirstName] = useState("");
   const navigate = useNavigate();
 
   const [state, setState] = useState({
@@ -131,19 +130,9 @@ function WriteBook() {
       }
     };
 
-    fetchUserProfile();
     fetchData();
     return () => autoSave.cancel();
   }, [book_id, chapter_id, autoSave]);
-
-  const fetchUserProfile = () => {
-    api
-      .get("/api/user/profile/")
-      .then((res) => {
-        setFirstName(res.data.first_name);
-      })
-      .catch((err) => console.error("Error fetching user profile", err));
-  };
 
   //Chapter actions
   const handleContentChange = (e) => {
@@ -376,11 +365,7 @@ function WriteBook() {
 
   return (
     <div className="write-book-container">
-      <Navbar
-        firstName={firstName}
-        showSearch={false}
-        showWriteButton={false}
-      />
+      <Navbar showSearch={false} showWriteButton={false} />
 
       {/* HEADER SECTION */}
       <div className="book-header">
