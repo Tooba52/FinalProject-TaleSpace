@@ -18,6 +18,7 @@ function UserProfile() {
   });
   const [userBooks, setUserBooks] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isFollowing, setIsFollowing] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -27,6 +28,8 @@ function UserProfile() {
     }
     fetchUserProfile();
     fetchUserBooks();
+    fetchFollowStats();
+    checkFollowStatus();
   }, [user_id, navigate]); // Add navigate to dependencies
 
   const fetchUserProfile = () => {
@@ -63,6 +66,56 @@ function UserProfile() {
     navigate(`/overview/books/${bookId}`);
   };
 
+  const fetchFollowStats = () => {
+    Promise.all([
+      api.get(`/api/followers/${user_id}/`),
+      api.get(`/api/following/${user_id}/`),
+    ])
+      .then(([followersRes, followingRes]) => {
+        setUserData((prev) => ({
+          ...prev,
+          followers: followersRes.data.count,
+          following: followingRes.data.count,
+        }));
+      })
+      .catch((err) => console.error("Error fetching follow stats", err));
+  };
+
+  const checkFollowStatus = () => {
+    api
+      .get(`/api/check-follow/${user_id}/`)
+      .then((res) => setIsFollowing(res.data.is_following))
+      .catch((err) => console.error("Error checking follow status", err));
+  };
+
+  const handleFollow = () => {
+    const action = isFollowing
+      ? api.delete(`/api/unfollow/${user_id}/`)
+      : api.post(`/api/follow/${user_id}/`);
+
+    action
+      .then(() => {
+        setIsFollowing(!isFollowing);
+        // Fetch updated counts from both endpoints
+        return Promise.all([
+          api.get(`/api/followers/${user_id}/`),
+          api.get(`/api/following/${user_id}/`),
+        ]);
+      })
+      .then(([followersRes, followingRes]) => {
+        setUserData((prev) => ({
+          ...prev,
+          followers: followersRes.data.count,
+          following: followingRes.data.count,
+        }));
+      })
+      .catch((err) => {
+        console.error("Error:", err);
+        // Optional: revert the follow state on error
+        setIsFollowing(isFollowing);
+      });
+  };
+
   if (isLoading) return <div className="loading">Loading profile...</div>;
 
   return (
@@ -88,7 +141,12 @@ function UserProfile() {
                 <span>{userData.following}</span>
               </div>
             </div>
-            <button className="follow-button">Follow</button>
+            <button
+              className={`follow-button ${isFollowing ? "following" : ""}`}
+              onClick={handleFollow}
+            >
+              {isFollowing ? "Unfollow" : "Follow"}
+            </button>
           </div>
         </div>
 

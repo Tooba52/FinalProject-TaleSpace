@@ -12,12 +12,17 @@ function Profile() {
   const [userBooks, setUserBooks] = useState([]);
   const [userId, setUserId] = useState(null);
   const [favouriteBooks, setFavouriteBooks] = useState([]);
+  const [followStats, setFollowStats] = useState({
+    followers: 0,
+    following: 0,
+  });
   const navigate = useNavigate(); // Add this line
 
   useEffect(() => {
     if (userId) {
       fetchUserBooks();
       fetchFavouriteBooks();
+      fetchFollowStats();
     }
     fetchUserProfile();
   }, [userId]);
@@ -67,6 +72,22 @@ function Profile() {
     navigate(`/overview/books/${bookId}`); // This will navigate to overview
   };
 
+  const fetchFollowStats = () => {
+    if (!userId) return;
+
+    Promise.all([
+      api.get(`/api/followers/${userId}/`),
+      api.get(`/api/following/${userId}/`),
+    ])
+      .then(([followersRes, followingRes]) => {
+        setFollowStats({
+          followers: followersRes.data.count,
+          following: followingRes.data.count,
+        });
+      })
+      .catch((err) => console.error("Error fetching follow stats", err));
+  };
+
   return (
     <div className="profile-page">
       <Navbar />
@@ -80,11 +101,11 @@ function Profile() {
             <div className="follow-stats">
               <div className="stat-item">
                 <strong>Followers</strong>
-                <span>0</span>
+                <span>{followStats.followers}</span>
               </div>
               <div className="stat-item">
                 <strong>Following</strong>
-                <span>0</span>
+                <span>{followStats.following}</span>
               </div>
             </div>
           </div>

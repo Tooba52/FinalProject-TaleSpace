@@ -7,7 +7,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.generics import (ListAPIView, RetrieveUpdateAPIView, DestroyAPIView)
 from rest_framework.permissions import IsAuthenticated
 from .serializers import UserSerializer, BookSerializer, ChapterSerializer, CommentSerializer
-from .models import Book, Chapter, Favourite, WebsiteUser, Comment
+from .models import Book, Chapter, Favourite, WebsiteUser, Comment, Follow
 from django.core.paginator import Paginator
 from django.db.models import Q, Sum, F
 from collections import defaultdict
