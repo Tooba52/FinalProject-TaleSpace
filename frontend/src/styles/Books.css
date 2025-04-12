@@ -6,7 +6,7 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
   gap: 6px;
   padding-bottom: 6px; /* Added to balance visual spacing */
 }
@@ -19,6 +19,7 @@
   align-items: center;
   overflow: hidden;
   border-radius: 4px;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
 }
 
 .book-cover {
@@ -28,18 +29,16 @@
 }
 
 .book-title {
-  width: 100%;
+  width: calc(100% - 16px);
   margin: 0;
-  padding: 0 5px; /* Increased side padding for better text flow */
-  font-weight: 500;
-  color: var(--text-color);
-  font-size: 15px;
-  line-height: 1.2;
-  display: flex; /* Changed from -webkit-box to flex */
-  justify-content: center; /* Center text horizontally */
-  align-items: center; /* Center text vertically */
-  text-align: center; /* Double ensure centering */
+  padding: 6px 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  line-height: 1.3;
+  text-align: center;
   overflow: hidden;
-  text-overflow: ellipsis;
-  word-break: break-word;
+  background-color: white;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  color: black;
 }

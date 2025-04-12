@@ -33,32 +33,41 @@
   color: #486fb6;
 }
 
-/* Dark variant adjustments */
-.navbar--dark .navbar__logo span {
-  color: white;
+.navbar__search-container {
+  flex-grow: 1;
+  max-width: 350px;
+  margin: 0 1rem;
 }
 
-.navbar__search-form {
+.navbar__search-wrapper {
+  position: relative;
   display: flex;
   align-items: center;
-  flex-grow: 1;
-  max-width: 500px;
-  margin: 0 1rem;
 }
 
 .navbar__search {
   width: 100%;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 2.5rem 0.5rem 1rem;
   border: 1px solid #ddd;
-  border-radius: 20px;
+  border-radius: 10px;
   outline: none;
+  font-size: 0.95rem;
 }
 
 .navbar__search-button {
+  position: absolute;
+  right: 0.5rem;
   background: none;
   border: none;
   cursor: pointer;
-  color: #666;
+  color: #486fb6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  font-size: 14px; /* Control icon size */
 }
 
 .navbar__search:focus {

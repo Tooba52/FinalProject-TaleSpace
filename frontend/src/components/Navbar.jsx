@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { FaSearch } from "react-icons/fa";
 import "../styles/Navbar.css";
 import logo from "../images/logo.jpeg";
 import api from "../api";
@@ -76,7 +77,7 @@ const Navbar = ({
         <span>TaleSpace</span>
       </Link>
 
-      {/* Updated Genre Dropdown with correct links */}
+      {/* Genre Dropdown remains unchanged */}
       <div
         className="navbar__genre-dropdown"
         onMouseEnter={() => setIsGenreDropdownOpen(true)}
@@ -91,9 +92,9 @@ const Navbar = ({
             {genres.map((genre) => (
               <Link
                 key={genre}
-                to={`/browse/${genre.toLowerCase().replace(/\s+/g, "-")}`} // Updated to use /browse/:genreName
+                to={`/browse/${genre.toLowerCase().replace(/\s+/g, "-")}`}
                 className="navbar__genre-item"
-                onClick={() => setIsGenreDropdownOpen(false)} // Close dropdown when a genre is selected
+                onClick={() => setIsGenreDropdownOpen(false)}
               >
                 {genre}
               </Link>
@@ -103,22 +104,23 @@ const Navbar = ({
       </div>
 
       {showSearch && (
-        <form onSubmit={handleSearch} className="navbar__search-form">
-          <input
-            type="text"
-            placeholder="Search"
-            className="navbar__search"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-          <button type="submit" className="navbar__search-button">
-            <span role="img" aria-label="search">
-              🔍
-            </span>
-          </button>
+        <form onSubmit={handleSearch} className="navbar__search-container">
+          <div className="navbar__search-wrapper">
+            <input
+              type="text"
+              placeholder="Search"
+              className="navbar__search"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <button type="submit" className="navbar__search-button">
+              <FaSearch aria-label="search" />
+            </button>
+          </div>
         </form>
       )}
 
+      {/* Rest of the navbar remains unchanged */}
       <div className="navbar__links">
         {showWriteButton && (
           <Link to="/create-book" className="navbar__button">
@@ -126,7 +128,6 @@ const Navbar = ({
           </Link>
         )}
 
-        {/* Existing Account dropdown */}
         <div
           className="navbar__dropdown-container"
           onMouseEnter={() => setIsDropdownOpen(true)}

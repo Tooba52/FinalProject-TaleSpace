@@ -73,8 +73,29 @@ body {
 .top-genres,
 .top-authors {
   width: 90%;
-  margin-top: 30px;
+  margin-top: 40px; /* Increased from 30px */
+  margin-bottom: 40px;
   padding: 0 10px;
+}
+
+.top-books h3,
+.top-genres h3,
+.top-authors h3 {
+  position: relative;
+  margin-bottom: 30px;
+  padding-bottom: 10px;
+}
+
+.top-books h3::after,
+.top-genres h3::after,
+.top-authors h3::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, #486fb6 20%, #e5e7eb 5%);
 }
 
 /* Grid layout only - no card styling */
@@ -87,12 +108,25 @@ body {
 }
 
 /* Genre and Author grids - layout only */
-.genre-list,
+.genre-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 20px;
+  width: 100%;
+}
+
 .author-list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
   gap: 20px;
   width: 100%;
+}
+
+.author-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
 }
 
 /* Author specific styles */
@@ -102,19 +136,31 @@ body {
   align-items: center;
   text-decoration: none;
   color: inherit;
-  padding: 10px;
+  background-color: #ffffff;
   transition: transform 0.2s;
-  min-width: 100px;
+  box-shadow: 0 10px 10px rgba(0, 0, 0, 0.2);
+  border-radius: 50%;
 }
 
 .author-card:hover {
   transform: translateY(-3px);
+  box-shadow: 0 10px 10px rgba(0, 0, 0, 0.2);
 }
 
 .author-icon {
   width: 100px;
   height: 100px;
-  margin-bottom: 10px;
+}
+
+.author-name {
+  margin-top: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-align: center;
+  overflow: hidden;
+  max-width: 110px;
+  padding: 4px 8px;
+  background-color: rgba(255, 254, 254, 0.03);
 }
 
 .author-profile-img {
@@ -122,8 +168,7 @@ body {
   height: 100%;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid #f0f0f0;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 2px solid #ffffff;
 }
 
 .author-card p {

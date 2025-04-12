@@ -1,9 +1,87 @@
 .app-footer {
+  background-color: #e1e7f5;
+  color: #333;
+  padding: 2%;
+  margin-top: 3%;
   width: 100%;
-  padding: 1rem;
+}
+
+.footer-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 5%;
+  margin: 0 auto;
+  padding-left: 5%;
+}
+
+.footer-heading {
+  font-size: 120%;
+  display: flex;
+  align-items: center;
+  gap: 2%;
+}
+
+.footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-links li {
+  margin-bottom: 1%;
+}
+
+.footer-links a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer-links a:hover {
+  color: #486fb6;
+}
+
+.social-icons {
+  display: flex;
+  gap: 5%;
+  margin-top: 2%;
+  font-size: 150%;
+}
+
+.contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.contact-info p {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.footer-bottom {
   text-align: center;
-  background: #f8f9fa;
-  border-top: 1px solid #e9ecef;
-  margin-top: auto; /* Important for sticky footer */
-  flex-shrink: 0; /* Prevents footer from shrinking */
+  padding-top: 3%;
+  margin-top: 1%;
+}
+
+@media (max-width: 768px) {
+  .footer-content {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .footer-section {
+    text-align: center;
+  }
+
+  .social-links {
+    justify-content: center;
+  }
+
+  .footer-heading {
+    justify-content: center;
+  }
 }

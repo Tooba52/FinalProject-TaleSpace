@@ -63,14 +63,6 @@ function Home() {
       });
   };
 
-  if (loading) {
-    return <div className="loading">Loading leaderboards...</div>;
-  }
-
-  if (error) {
-    return <div className="error">{error}</div>;
-  }
-
   return (
     <div className="home-page">
       <Navbar variant="transparent" />
@@ -111,13 +103,11 @@ function Home() {
 
         {/* Top Genres Section */}
         <section className="top-genres">
-          <div className="section-header">
-            <h3>Top Genres</h3>
-          </div>
+          <h3>Top Genres</h3>
           <div className="genre-list">
             {topGenres.length > 0 ? (
               topGenres
-                .slice(0, 8)
+                .slice(0, 7)
                 .map((genre, index) => (
                   <GenreIcon
                     key={index}
@@ -138,20 +128,23 @@ function Home() {
           <div className="author-list">
             {topAuthors.length > 0 ? (
               topAuthors.map((author) => (
-                <Link
-                  to={`/userprofile/${author.author_id}`}
-                  key={author.author_id}
-                  className="author-card"
-                >
-                  <div className="author-icon">
-                    <img
-                      src={profile}
-                      alt={author.author_name || "Author"}
-                      className="author-profile-img"
-                    />
-                  </div>
-                  <p>{author.author_name || "Unknown Author"}</p>
-                </Link>
+                <div key={author.author_id} className="author-item">
+                  <Link
+                    to={`/userprofile/${author.author_id}`}
+                    className="author-card"
+                  >
+                    <div className="author-icon">
+                      <img
+                        src={profile}
+                        alt={author.author_name || "Author"}
+                        className="author-profile-img"
+                      />
+                    </div>
+                  </Link>
+                  <p className="author-name">
+                    {author.author_name || "Unknown Author"}
+                  </p>
+                </div>
               ))
             ) : (
               <p>No authors found</p>
