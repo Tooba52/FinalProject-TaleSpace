@@ -8,24 +8,81 @@ export function DarkModeProvider({ children }) {
   const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem("access_token");
-    if (token) {
-      fetchDarkModePreference();
-    } else {
-      setInitialized(true);
-    }
+    const initializeDarkMode = async () => {
+      try {
+        const token = localStorage.getItem("access_token");
+
+        if (token) {
+          // For authenticated users
+          await fetchDarkModePreference();
+        } else {
+          // For non-authenticated users
+          const savedMode = localStorage.getItem("darkMode");
+
+          if (savedMode !== null) {
+            // Use saved preference from localStorage
+            setDarkMode(savedMode === "true");
+            document.documentElement.classList.toggle(
+              "dark-mode",
+              savedMode === "true"
+            );
+          } else {
+            // Detect system preference
+            const systemPrefersDark =
+              window.matchMedia &&
+              window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+            setDarkMode(systemPrefersDark);
+            document.documentElement.classList.toggle(
+              "dark-mode",
+              systemPrefersDark
+            );
+            localStorage.setItem("darkMode", systemPrefersDark.toString());
+          }
+        }
+      } catch (error) {
+        console.error("Error initializing dark mode:", error);
+        // Fallback to light mode if initialization fails
+        setDarkMode(false);
+        document.documentElement.classList.remove("dark-mode");
+      } finally {
+        setInitialized(true);
+      }
+    };
+
+    initializeDarkMode();
+
+    // Optional: Watch for system preference changes
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    const handleSystemThemeChange = (e) => {
+      if (!localStorage.getItem("darkMode")) {
+        setDarkMode(e.matches);
+        document.documentElement.classList.toggle("dark-mode", e.matches);
+      }
+    };
+
+    mediaQuery.addEventListener("change", handleSystemThemeChange);
+
+    return () => {
+      mediaQuery.removeEventListener("change", handleSystemThemeChange);
+    };
   }, []);
 
   const fetchDarkModePreference = async () => {
     try {
       const res = await api.get("/api/user/profile/");
       const darkModeValue = !!res.data.dark_mode_enabled;
-      console.log("Initial dark mode from API:", darkModeValue);
       setDarkMode(darkModeValue);
-      // Apply to HTML element immediately
       document.documentElement.classList.toggle("dark-mode", darkModeValue);
+      // Also store in localStorage for immediate access
+      localStorage.setItem("darkMode", darkModeValue.toString());
     } catch (err) {
       console.error("Error fetching dark mode preference", err);
+      // Fallback to localStorage if API fails
+      const savedMode = localStorage.getItem("darkMode");
+      if (savedMode !== null) {
+        setDarkMode(savedMode === "true");
+      }
     } finally {
       setInitialized(true);
     }
@@ -33,22 +90,21 @@ export function DarkModeProvider({ children }) {
 
   const toggleDarkMode = async () => {
     const newMode = !darkMode;
-    console.log("Toggling dark mode to:", newMode);
     setDarkMode(newMode);
-    // Apply to HTML element immediately
     document.documentElement.classList.toggle("dark-mode", newMode);
+    localStorage.setItem("darkMode", newMode.toString());
 
     try {
       const token = localStorage.getItem("access_token");
       if (token) {
         await api.patch("/api/user/profile/", { dark_mode_enabled: newMode });
-        console.log("Dark mode saved to DB");
       }
     } catch (err) {
       console.error("Error saving dark mode preference", err);
       // Revert if save fails
       setDarkMode(!newMode);
       document.documentElement.classList.toggle("dark-mode", !newMode);
+      localStorage.setItem("darkMode", (!newMode).toString());
     }
   };
 
@@ -58,9 +114,7 @@ export function DarkModeProvider({ children }) {
 
   return (
     <DarkModeContext.Provider value={{ darkMode, toggleDarkMode }}>
-      <div className={`app-container ${darkMode ? "dark-mode" : ""}`}>
-        {children}
-      </div>
+      {children}
     </DarkModeContext.Provider>
   );
 }

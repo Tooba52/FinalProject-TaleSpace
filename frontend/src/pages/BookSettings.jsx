@@ -142,7 +142,7 @@ function BookSettings() {
 
   return (
     <div className="book-settings">
-      <Navbar showSearch={false} showWriteButton={true} />
+      <Navbar />
 
       <div className="book-settings-container">
         {/* Left Side - Book Card */}

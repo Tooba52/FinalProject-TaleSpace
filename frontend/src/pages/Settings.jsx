@@ -27,8 +27,7 @@ function Settings() {
 
   useEffect(() => {
     fetchUserProfile();
-    document.documentElement.classList.toggle("dark-mode", darkMode);
-  }, [darkMode]);
+  }, []);
 
   const fetchUserProfile = async () => {
     try {
@@ -309,10 +308,7 @@ function Settings() {
             )}
 
             <div className="form-group">
-              <button
-                className="action-link danger"
-                onClick={handleDeleteAccount}
-              >
+              <button className="Settings-delete" onClick={handleDeleteAccount}>
                 Delete Account
               </button>
             </div>

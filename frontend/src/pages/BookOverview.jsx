@@ -202,7 +202,7 @@ function BookOverview() {
 
   return (
     <div className="overview">
-      <Navbar showSearch={false} showWriteButton={true} />
+      <Navbar />
       <div className="overview-container">
         <div className="book-card-view">
           <Book book={book} />

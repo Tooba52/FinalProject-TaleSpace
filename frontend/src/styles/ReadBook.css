@@ -10,95 +10,14 @@
 }
 
 .read-book-title {
-  font-size: 24px;
+  font-size: 120%;
+  font-weight: 700;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: #222;
   margin: 0;
-}
-
-.chapter-header-container {
-  padding: 0 40px;
-}
-
-.chapter-header {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-  padding: 10px 0;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.chapter-title {
-  margin: 0;
-  font-size: 20px;
-}
-
-.content-area {
-  display: flex;
-  flex: 1;
-  gap: 20px;
-  padding: 0 40px 20px 40px;
-  min-height: 80vh;
-}
-
-.chapter-sidebar {
-  width: 280px;
-  background-color: #fff;
-  border-radius: 8px;
-  border: 1px solid #e0e0e0;
-  padding: 15px;
-  display: flex;
-  flex-direction: column;
-  max-height: 100vh;
-  overflow-y: auto;
-}
-
-.chapter-list {
-  padding-left: 10px;
-  padding-right: 5px;
-  list-style-type: none;
-}
-
-.chapter-list li {
-  min-height: 48px;
   display: flex;
   align-items: center;
-  padding: 8px 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.chapter-list li:hover {
-  background-color: #f0f0f0;
-}
-
-.chapter-list li.active {
-  background-color: #e3f2fd;
-  font-weight: bold;
-}
-
-.chapter-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-}
-
-.chapter-text {
-  flex: 1;
-}
-
-.chapter-status-published {
-  font-size: 11px;
-  color: #4caf50;
-  margin-left: 8px;
-}
-
-.chapter-status-draft {
-  font-size: 11px;
-  color: #af9d4c;
-  margin-left: 8px;
+  gap: 0.625rem;
 }
 
 .reading-area {

@@ -55,19 +55,28 @@ const SearchResults = () => {
     <div className="search-page">
       <Navbar />
       {/* Results Section */}
-      <div className="search-results-container">
-        <h2>Results for "{searchQuery}"</h2>
-        {bookResults.length > 0 ? (
-          <div className="book-grid">
-            {bookResults.map((book) => (
-              <BookCard key={book.book_id} book={book} />
-            ))}
-          </div>
-        ) : (
-          <p>No books found matching your search.</p>
-        )}
-        <></>
+      <div className="book-grid-container">
+        <h2 className="search-heading">Results for "{searchQuery}"</h2>
+        <div className="search-divider"></div>
+        <div className="book-grid">
+          {bookResults.length > 0 ? (
+            bookResults.map((book) => (
+              <div
+                key={book.book_id}
+                onClick={() => handleBookClick(book.book_id)}
+                className="book-card-wrapper"
+              >
+                <BookCard book={book} />
+              </div>
+            ))
+          ) : (
+            <div className="no-books-message">
+              No books found matching your search.
+            </div>
+          )}
+        </div>
       </div>
+      <Footer />
     </div>
   );
 };

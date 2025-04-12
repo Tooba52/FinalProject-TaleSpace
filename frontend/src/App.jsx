@@ -18,6 +18,7 @@ import FavouritedBooks from "./pages/FavouritedBooks";
 import UserProfile from "./pages/UserProfile";
 import UserBooks from "./pages/UserBooks";
 import SearchResults from "./pages/SearchResults";
+import "./styles/Global.css";
 
 function Logout() {
   localStorage.clear(); // Remove user session data

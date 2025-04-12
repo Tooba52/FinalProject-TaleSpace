@@ -1,5 +1,5 @@
 .search-results-container {
-  max-width: 1200px;
+  max-width: 1300px;
   margin: 0 auto;
   padding: 1rem;
   width: 100%;
@@ -49,22 +49,8 @@
   margin-bottom: 0.5rem;
 }
 
-.header-divider {
-  height: 3px;
-  background-color: #ddd;
-  width: 100px;
-  margin: 0 auto;
-}
-
 .book-card-wrapper:hover {
   transform: translateY(-5px);
-}
-
-.user-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 1.5rem;
-  margin-top: 1rem;
 }
 
 .no-results-message {
@@ -73,6 +59,18 @@
   padding: 2rem;
   font-size: 1.2rem;
   color: #666;
+}
+
+.book-grid-container {
+  margin-left: 4%;
+  margin-top: 4%;
+}
+
+.search-divider {
+  height: 2px;
+  width: 100%;
+  margin: 12px 0 24px; /* spacing above and below the line */
+  background: linear-gradient(90deg, #486fb6 20%, #e5e7eb 20%);
 }
 
 .search-results-heading {

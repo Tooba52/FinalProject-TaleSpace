@@ -4,6 +4,7 @@
   min-height: 100vh;
   background-color: var(--bg-color);
   color: var(--text-color);
+  font-family: "Roboto", sans-serif;
 }
 
 .settings-page.dark-mode {
@@ -12,11 +13,13 @@
 }
 
 .settings-container {
-  max-width: 800px;
-  margin: 2rem auto;
-  padding: 0 1rem;
+  max-width: 900px;
+  margin: 3rem auto;
+  padding: 1.5rem;
   width: 100%;
   background-color: var(--card-bg);
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .settings-page.dark-mode .settings-container {
@@ -24,8 +27,9 @@
 }
 
 .settings-container h2 {
-  font-size: 2rem;
-  margin-bottom: 2rem;
+  font-size: 2.4rem;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
   color: var(--text-color);
 }
 
@@ -36,21 +40,22 @@
 .settings-section {
   background-color: var(--card-bg);
   border-radius: 8px;
-  padding: 1.5rem;
-  margin-bottom: 1.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   border: 1px solid var(--border-color);
 }
 
 .settings-page.dark-mode .settings-section {
   background-color: #444;
   border-color: #555;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .settings-section h3 {
-  font-size: 1.3rem;
-  margin-bottom: 1rem;
+  font-size: 1.6rem;
+  margin-bottom: 1.5rem;
+  font-weight: 500;
   color: var(--text-color);
 }
 
@@ -59,29 +64,31 @@
 }
 
 .form-group {
-  margin-bottom: 1.2rem;
+  margin-bottom: 1.6rem;
 }
 
 .form-group label {
   display: block;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.8rem;
   font-weight: 500;
+  font-size: 1.1rem;
 }
 
 .settings-page.dark-mode .form-group label {
-  color: #eee;
+  color: #ddd;
 }
 
 .form-group input,
 .form-group textarea,
 .form-group select {
   width: 100%;
-  padding: 0.8rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  padding: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
   font-size: 1rem;
   background-color: #fff;
   color: #333;
+  transition: border-color 0.3s ease;
 }
 
 .settings-page.dark-mode .form-group input,
@@ -90,6 +97,13 @@
   background-color: #555;
   color: #fff;
   border-color: #666;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  border-color: #0066cc;
+  outline: none;
 }
 
 .form-group textarea {
@@ -103,7 +117,7 @@
 
 .checkbox-group input {
   width: auto;
-  margin-right: 0.8rem;
+  margin-right: 1rem;
 }
 
 .action-link {
@@ -111,6 +125,9 @@
   padding: 0.5rem 0;
   color: #0066cc;
   text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+  background-color: white;
 }
 
 .settings-page.dark-mode .action-link {
@@ -119,29 +136,40 @@
 
 .action-link:hover {
   text-decoration: underline;
+  color: #0052a3;
 }
 
-.action-link.danger {
+.Settings-delete {
   color: #cc0000;
+  background-color: white;
 }
 
-.settings-page.dark-mode .action-link.danger {
+.settings-page.dark-mode .Settings-delete {
   color: #ff6b6b;
 }
 
+.Settings-delete:hover {
+  color: #ff4d4d;
+}
+
 .save-button {
-  background-color: #0066cc;
+  background-color: #486fb6;
   color: white;
   border: none;
-  padding: 0.8rem 1.5rem;
-  border-radius: 4px;
-  font-size: 1rem;
+  padding: 1rem 2rem;
+  border-radius: 6px;
+  font-size: 1.1rem;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  width: 100%;
+  max-width: 200px;
+  margin-top: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .save-button:hover {
   background-color: #0052a3;
+  transform: translateY(-2px);
 }
 
 .settings-page.dark-mode .save-button {
@@ -150,4 +178,28 @@
 
 .settings-page.dark-mode .save-button:hover {
   background-color: #166dbf;
+}
+
+.settings-page .error-message,
+.settings-page .password-error-message {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: #ffebeb;
+  color: #cc0000;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.settings-page.dark-mode .error-message,
+.settings-page.dark-mode .password-error-message {
+  background-color: #ff4d4d;
+  color: white;
+}
+
+.settings-page .password-error-message {
+  margin-top: 1rem;
+}
+
+.settings-page .password-error-message span {
+  font-weight: bold;
 }

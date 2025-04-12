@@ -42,9 +42,6 @@ function FavoriteBooks() {
     navigate(`/overview/books/${bookId}`);
   };
 
-  if (loading) return <div className="loading-spinner">Loading...</div>;
-  if (error) return <div className="error-message">{error}</div>;
-
   return (
     <div className="favorite-books-container">
       <Navbar />

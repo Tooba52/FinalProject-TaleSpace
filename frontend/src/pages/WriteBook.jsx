@@ -268,10 +268,6 @@ function WriteBook() {
         ...prev,
         chapters: [...prev.chapters, response.data],
       }));
-
-      navigate(`/books/${book_id}/chapters/${response.data.chapter_id}`, {
-        replace: true,
-      });
     } catch (err) {
       console.error("Chapter creation failed:", err);
     }
@@ -365,11 +361,11 @@ function WriteBook() {
 
   return (
     <div className="write-book-container">
-      <Navbar showSearch={false} showWriteButton={false} />
+      <Navbar showWriteButton={false} />
 
       {/* HEADER SECTION */}
       <div className="book-header">
-        <h1 className="write-book-title">Editing: {bookTitle}</h1>
+        <h1 className="write-book-title">{bookTitle}</h1>
       </div>
 
       {/* CHAPTER HEADER WITH ACTIONS */}
@@ -408,7 +404,7 @@ function WriteBook() {
                     : ""
                 }
               >
-                {saveState === "saving" ? "Publishing..." : "Publish Chapter"}
+                {saveState === "saving" ? "Publishing..." : "Publish"}
               </button>
             </div>
           </div>
@@ -419,7 +415,6 @@ function WriteBook() {
       <div className="content-area">
         {/* CHAPTER SIDEBAR */}
         <div className="chapter-sidebar">
-          <h3>Chapters</h3>
           <ul className="chapter-list">
             {chapters.map((chapter, index) => (
               <li

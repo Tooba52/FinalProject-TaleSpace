@@ -100,7 +100,7 @@ function ReadBook() {
 
   return (
     <div className="read-book-container">
-      <Navbar showSearch={false} showWriteButton={true} />
+      <Navbar />
 
       <div className="book-header">
         <h1 className="read-book-title">{bookTitle}</h1>
