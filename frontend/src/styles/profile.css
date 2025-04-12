@@ -94,12 +94,6 @@
   text-decoration: underline;
 }
 
-.book-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-
 .no-books {
   color: #666;
   font-style: italic;

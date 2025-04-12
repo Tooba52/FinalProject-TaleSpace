@@ -35,4 +35,11 @@ urlpatterns = [
     path('books/<int:book_id>/comments/', views.CommentListView.as_view(), name='book-comments'),  # List comments for a book
     path('books/<int:book_id>/comments/create/', views.CommentCreateView.as_view(), name='create-comment'),  # Create a comment for a book
     path('comments/<int:comment_id>/delete/', views.CommentDeleteView.as_view(), name='delete-comment'),  # Delete a comment
+
+    # Comments Endpoints
+    path('follow/<int:user_id>/', views.FollowUserView.as_view(), name='follow-user'),
+    path('unfollow/<int:user_id>/', views.UnfollowUserView.as_view(), name='unfollow-user'),
+    path('check-follow/<int:user_id>/', views.CheckFollowStatusView.as_view(), name='check-follow'),
+    path('followers/<int:user_id>/', views.UserFollowersListView.as_view(), name='user-followers'),
+    path('following/<int:user_id>/', views.UserFollowingListView.as_view(), name='user-following'),
 ]

@@ -130,3 +130,33 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"Comment by {self.comment_user.email} on {self.comment_book.title}"
+    
+
+
+# ========================
+# Follow Model
+# ========================
+class Follow(models.Model):
+    """Tracks who follows whom (simple follow/unfollow)"""
+    
+    follower = models.ForeignKey(
+        WebsiteUser, 
+        related_name='following',  # users I follow
+        on_delete=models.CASCADE
+    )
+    followed = models.ForeignKey(
+        WebsiteUser, 
+        related_name='followers',  # users following me
+        on_delete=models.CASCADE
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('follower', 'followed')  # prevents duplicate follows
+        indexes = [
+            models.Index(fields=['follower']),
+            models.Index(fields=['followed']),
+        ]
+
+    def __str__(self):
+        return f"{self.follower.email} follows {self.followed.email}"

@@ -1,57 +1,45 @@
 .book-card {
-  width: 109px;
-  height: 190px;
-  background-color: #fff;
-  padding: 15px;
-  border-radius: 8px;
+  width: 130px;
+  background-color: white;
+  border-radius: 6px;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  position: relative;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  gap: 6px;
+  padding-bottom: 6px; /* Added to balance visual spacing */
 }
 
-.book-cover {
+.cover-container {
   width: 100%;
-  height: 180%;
-  object-fit: cover;
-  border-radius: 5px;
-  margin-bottom: 10px;
-}
-
-.book-card p {
-  margin: 0;
-  font-weight: 500;
-  color: #333;
-  font-size: 14px;
-  flex-grow: 1;
+  height: 100%;
   display: flex;
+  justify-content: center;
   align-items: center;
-}
-
-.book-icon {
-  font-size: 60px;
-  margin-bottom: 15px;
+  overflow: hidden;
+  border-radius: 4px;
 }
 
 .book-cover {
-  width: 100%;
-  height: auto;
-  display: block;
+  height: 100%;
+  max-width: 100%;
+  object-fit: contain;
 }
 
-/* Optional: Add hover effect */
-
-.bookcard-title {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: rgba(255, 255, 255, 0.945); /* Semi-transparent background */
-  color: rgb(0, 0, 0);
-  padding: 8px;
-  text-align: center;
-  z-index: 10; /* Bring to front */
+.book-title {
+  width: 100%;
   margin: 0;
+  padding: 0 5px; /* Increased side padding for better text flow */
+  font-weight: 500;
+  color: var(--text-color);
+  font-size: 15px;
+  line-height: 1.2;
+  display: flex; /* Changed from -webkit-box to flex */
+  justify-content: center; /* Center text horizontally */
+  align-items: center; /* Center text vertically */
+  text-align: center; /* Double ensure centering */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-word;
 }

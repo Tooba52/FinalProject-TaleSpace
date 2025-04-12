@@ -49,18 +49,69 @@ function BookOverview() {
 
   const fetchBookDetails = () => {
     setIsLoading(true);
+    console.log(`[DEBUG] Fetching book details for book_id: ${book_id}`);
+
     api
       .get(`/api/books/${book_id}/`)
       .then((res) => {
+        console.group("[DEBUG] Book details API response");
+        console.log("Full response:", res);
+        console.log("Response data:", res.data);
+        console.log("Cover photo fields:", {
+          cover_photo: res.data.cover_photo,
+          cover_url: res.data.cover_url,
+          has_cover_photo: !!res.data.cover_photo,
+          has_cover_url: !!res.data.cover_url,
+        });
+
+        // Additional validation
+        if (res.data.cover_url) {
+          console.log("Cover URL analysis:", {
+            isAbsolute: res.data.cover_url.startsWith("http"),
+            isRelative: res.data.cover_url.startsWith("/"),
+            isValid: typeof res.data.cover_url === "string",
+          });
+
+          // Test if the URL is accessible
+          fetch(res.data.cover_url, { method: "HEAD" })
+            .then((imgRes) => {
+              console.log(
+                `Cover URL accessibility check: ${
+                  imgRes.ok ? "SUCCESS" : "FAILED"
+                } (Status: ${imgRes.status})`
+              );
+            })
+            .catch((imgErr) => {
+              console.error("Cover URL accessibility error:", imgErr);
+            });
+        }
+
+        console.groupEnd();
+
         setBook(res.data);
       })
       .catch((err) => {
-        console.error("Error:", err);
-        if (err.response?.status === 404) {
-          navigate("/not-found");
+        console.group("[DEBUG] Book details error");
+        console.error("API Error:", err);
+        console.log("Error details:", {
+          status: err.response?.status,
+          data: err.response?.data,
+          headers: err.response?.headers,
+        });
+
+        if (err.response) {
+          console.log("Response headers:", err.response.headers);
+          if (err.response.status === 404) {
+            console.warn("Book not found, redirecting...");
+            navigate("/not-found");
+          }
         }
+        console.groupEnd();
       })
-      .finally(() => setIsLoading(false));
+      .finally(() => {
+        console.log("[DEBUG] Book details fetch completed");
+        setIsLoading(false);
+      });
   };
 
   const checkIfFavourite = () => {

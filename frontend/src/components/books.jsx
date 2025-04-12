@@ -1,24 +1,36 @@
 import React from "react";
 import "../styles/Books.css";
-import defaultCover from "../images/defaultCoverPhoto.jpeg"; // Import the image
+import defaultCover from "../images/defaultCoverPhoto.jpeg";
 
 function Book({ book }) {
-  // Debug: Check what the API returns
-  console.log("Book data:", {
-    cover_photo: book.cover_photo,
-    cover_url: book.cover_url,
-  });
+  const getCoverImage = () => {
+    // Use absolute URL if provided
+    if (book.cover_url) {
+      // Ensure URL is absolute (prepends backend URL if relative)
+      if (book.cover_url.startsWith("/")) {
+        return `http://127.0.0.1:8000${book.cover_url}`;
+      }
+      return book.cover_url;
+    }
+
+    // Fallback to default
+    return defaultCover;
+  };
 
   return (
     <div className="book-card">
-      <img
-        src={book.cover_photo ? book.cover_url : defaultCover}
-        alt={`Cover for ${book.title}`}
-        onError={(e) => {
-          e.target.src = defaultCover;
-        }}
-      />
-      <p className="bookcard-title">{book.title}</p>
+      <div className="cover-container">
+        <img
+          className="book-cover"
+          src={getCoverImage()}
+          alt={`Cover for ${book.title}`}
+          onError={(e) => {
+            console.error("Failed to load cover:", e.target.src);
+            e.target.src = defaultCover;
+          }}
+        />
+      </div>
+      <p className="book-title">{book.title}</p>
     </div>
   );
 }

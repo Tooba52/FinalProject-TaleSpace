@@ -42,10 +42,11 @@ class BookSerializer(serializers.ModelSerializer):
 
     def get_cover_url(self, obj):
         if obj.cover_photo:
+            # Remove any existing path segments
+            filename = str(obj.cover_photo).split('/')[-1]  # Gets just '123.jpg'
             if 'request' in self.context:
-                # Now uses /book_covers/ instead of /media/
-                return self.context['request'].build_absolute_uri(f'/book_covers/{obj.cover_photo}')
-            return f'/book_covers/{obj.cover_photo}'
+                return self.context['request'].build_absolute_uri(f'/book_covers/{filename}')
+            return f'/book_covers/{filename}'
         return None
 
 

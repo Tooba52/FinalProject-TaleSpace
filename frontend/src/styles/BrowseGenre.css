@@ -48,18 +48,6 @@
   margin-right: 3%;
 }
 
-/* More compact book cards */
-.book-card {
-  background: white;
-  border-radius: 6px;
-  overflow: hidden;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08); /* Lighter shadow */
-  aspect-ratio: 2/3; /* Maintain book cover ratio */
-}
-
-.book-card:hover {
-  cursor: pointer;
-}
 
 /* Pagination styles */
 .pagination {

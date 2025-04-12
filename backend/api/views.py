@@ -396,7 +396,9 @@ class ChapterDetailView(APIView):
             return Response({"detail": "Chapter not found."}, status=status.HTTP_404_NOT_FOUND)
 
 
-# Leaderboard Views
+# ========================
+# Leaderboard managemnet views
+# ========================
 class TopBooksView(APIView):
     """Top 10 most-viewed public books"""
     permission_classes = [AllowAny]  # Public access
@@ -442,7 +444,9 @@ class TopGenresView(APIView):
         return Response([{"genre": g, "views": v} for g, v in top_genres])
 
 
-#search
+# ========================
+# Search managemnet views
+# ========================
 class BookSearch(ListAPIView):
     serializer_class = BookSerializer
     permission_classes = [AllowAny]
@@ -460,7 +464,9 @@ class BookSearch(ListAPIView):
     
 
 
-#comment
+# ========================
+# Comment managemnet views
+# ========================
 class CommentListView(APIView):
     """Fetch all comments for a specific book."""
     permission_classes = [IsAuthenticated]
@@ -518,3 +524,148 @@ class CommentDeleteView(APIView):
         # Delete the comment
         comment.delete()
         return Response({'detail': 'Comment deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
+    
+
+# ========================
+# Follow managemnet views
+# ========================
+class FollowUserView(APIView):
+    """Follow another user"""
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, user_id):
+        try:
+            user_to_follow = WebsiteUser.objects.get(pk=user_id)
+            
+            # Prevent self-follow
+            if request.user == user_to_follow:
+                return Response(
+                    {"detail": "You cannot follow yourself."},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            
+            # Create follow relationship
+            Follow.objects.get_or_create(
+                follower=request.user,
+                followed=user_to_follow
+            )
+            
+            return Response(
+                {"detail": f"Successfully followed {user_to_follow.email}"},
+                status=status.HTTP_201_CREATED
+            )
+            
+        except WebsiteUser.DoesNotExist:
+            return Response(
+                {"detail": "User not found."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+
+class UnfollowUserView(APIView):
+    """Unfollow a user"""
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, user_id):
+        try:
+            user_to_unfollow = WebsiteUser.objects.get(pk=user_id)
+            
+            # Delete follow relationship if it exists
+            deleted_count, _ = Follow.objects.filter(
+                follower=request.user,
+                followed=user_to_unfollow
+            ).delete()
+            
+            if deleted_count > 0:
+                return Response(
+                    {"detail": f"Successfully unfollowed {user_to_unfollow.email}"},
+                    status=status.HTTP_200_OK
+                )
+            return Response(
+                {"detail": "You were not following this user."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+            
+        except WebsiteUser.DoesNotExist:
+            return Response(
+                {"detail": "User not found."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+
+class CheckFollowStatusView(APIView):
+    """Check if current user follows another user"""
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, user_id):
+        try:
+            target_user = WebsiteUser.objects.get(pk=user_id)
+            is_following = Follow.objects.filter(
+                follower=request.user,
+                followed=target_user
+            ).exists()
+            
+            return Response({
+                "is_following": is_following,
+                "target_user_id": user_id
+            })
+            
+        except WebsiteUser.DoesNotExist:
+            return Response(
+                {"detail": "User not found."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+
+class UserFollowersListView(APIView):
+    """List all followers of a user"""
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, user_id):
+        try:
+            user = WebsiteUser.objects.get(pk=user_id)
+            followers = user.followers.all()  # Using related_name from Follow model
+            follower_data = [{
+                'user_id': f.follower.pk,
+                'email': f.follower.email,
+                'first_name': f.follower.first_name,
+                'last_name': f.follower.last_name
+            } for f in followers]
+            
+            return Response({
+                "count": len(follower_data),
+                "followers": follower_data
+            })
+            
+        except WebsiteUser.DoesNotExist:
+            return Response(
+                {"detail": "User not found."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+
+class UserFollowingListView(APIView):
+    """List all users a person is following"""
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, user_id):
+        try:
+            user = WebsiteUser.objects.get(pk=user_id)
+            following = user.following.all()  # Using related_name from Follow model
+            following_data = [{
+                'user_id': f.followed.pk,
+                'email': f.followed.email,
+                'first_name': f.followed.first_name,
+                'last_name': f.followed.last_name
+            } for f in following]
+            
+            return Response({
+                "count": len(following_data),
+                "following": following_data
+            })
+            
+        except WebsiteUser.DoesNotExist:
+            return Response(
+                {"detail": "User not found."},
+                status=status.HTTP_404_NOT_FOUND
+            )

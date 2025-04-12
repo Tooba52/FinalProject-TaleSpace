@@ -33,7 +33,11 @@ function Home() {
     setError(null);
 
     Promise.all([
-      api.get("/api/leaderboard/books/"),
+      api.get("/api/leaderboard/books/", {
+        params: {
+          include_covers: true, // If your API supports this
+        },
+      }),
       api.get("/api/leaderboard/authors/"),
       api.get("/api/leaderboard/genres/"),
     ])
@@ -41,6 +45,14 @@ function Home() {
         setTopBooks(booksRes.data);
         setTopAuthors(authorsRes.data);
         setTopGenres(genresRes.data);
+
+        // Debugging code
+        console.log("First book in list:", {
+          id: booksRes.data[0]?.book_id,
+          cover_photo: booksRes.data[0]?.cover_photo,
+          cover_url: booksRes.data[0]?.cover_url,
+          rawCover: booksRes.data[0],
+        });
       })
       .catch((err) => {
         console.error("Error fetching leaderboards:", err);

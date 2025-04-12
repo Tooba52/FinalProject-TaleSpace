@@ -103,7 +103,7 @@ function ReadBook() {
       <Navbar showSearch={false} showWriteButton={true} />
 
       <div className="book-header">
-        <h1 className="book-title">{bookTitle}</h1>
+        <h1 className="read-book-title">{bookTitle}</h1>
       </div>
 
       <div className="chapter-header-container">

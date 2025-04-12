@@ -369,7 +369,7 @@ function WriteBook() {
 
       {/* HEADER SECTION */}
       <div className="book-header">
-        <h1 className="book-title">Editing: {bookTitle}</h1>
+        <h1 className="write-book-title">Editing: {bookTitle}</h1>
       </div>
 
       {/* CHAPTER HEADER WITH ACTIONS */}
