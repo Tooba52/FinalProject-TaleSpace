@@ -1,7 +1,7 @@
-import Form from "../components/Form"; 
-import logo from "../images/logo.jpeg"; 
-import womanWriting from "../images/womanWriting.jpeg"; 
-import "../styles/loginRegLayout.css"; 
+import Form from "../components/Form";
+import logo from "../images/logo.jpeg";
+import womanWriting from "../images/womanWriting.jpeg";
+import "../styles/loginRegLayout.css";
 
 function Register() {
   return (
@@ -36,4 +36,4 @@ function Register() {
   );
 }
 
-export default Register; 
+export default Register;

@@ -8,7 +8,7 @@ import Footer from "../components/Footer";
 import "../styles/Profile.css";
 
 function UserProfile() {
-  const { user_id } = useParams(); // Get userId from URL
+  const { user_id } = useParams();
   const [userData, setUserData] = useState({
     firstName: "",
     lastName: "",
@@ -22,20 +22,17 @@ function UserProfile() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!user_id) {
-      console.error("No user ID in URL");
-      return;
-    }
+    if (!user_id) return;
     fetchUserProfile();
     fetchUserBooks();
     fetchFollowStats();
     checkFollowStatus();
-  }, [user_id, navigate]); // Add navigate to dependencies
+  }, [user_id, navigate]);
 
   const fetchUserProfile = () => {
     setIsLoading(true);
     api
-      .get(`/api/public/profile/${user_id}/`) // Note new endpoint and trailing slash
+      .get(`/api/public/profile/${user_id}/`)
       .then((res) => {
         setUserData({
           firstName: res.data.first_name,
@@ -45,21 +42,20 @@ function UserProfile() {
           following: res.data.following_count || 0,
         });
       })
-      .catch((err) => {
-        console.error("Error fetching user profile", err);
+      .catch(() => {
         navigate("/error");
       })
       .finally(() => setIsLoading(false));
   };
 
   const fetchUserBooks = () => {
-    api
-      .get(`/api/books/?author_id=${user_id}`)
-      .then((res) => {
-        const books = res.data.results || res.data;
-        setUserBooks(Array.isArray(books) ? books : []);
-      })
-      .catch((err) => console.error("Error fetching user books", err));
+    api.get(`/api/books/?author_id=${user_id}`).then((res) => {
+      const books = res.data.results || res.data;
+      const publicBooks = Array.isArray(books)
+        ? books.filter((book) => book.status === "public")
+        : [];
+      setUserBooks(publicBooks);
+    });
   };
 
   const handleBookClick = (bookId) => {
@@ -70,22 +66,19 @@ function UserProfile() {
     Promise.all([
       api.get(`/api/followers/${user_id}/`),
       api.get(`/api/following/${user_id}/`),
-    ])
-      .then(([followersRes, followingRes]) => {
-        setUserData((prev) => ({
-          ...prev,
-          followers: followersRes.data.count,
-          following: followingRes.data.count,
-        }));
-      })
-      .catch((err) => console.error("Error fetching follow stats", err));
+    ]).then(([followersRes, followingRes]) => {
+      setUserData((prev) => ({
+        ...prev,
+        followers: followersRes.data.count,
+        following: followingRes.data.count,
+      }));
+    });
   };
 
   const checkFollowStatus = () => {
     api
       .get(`/api/check-follow/${user_id}/`)
-      .then((res) => setIsFollowing(res.data.is_following))
-      .catch((err) => console.error("Error checking follow status", err));
+      .then((res) => setIsFollowing(res.data.is_following));
   };
 
   const handleFollow = () => {
@@ -96,7 +89,6 @@ function UserProfile() {
     action
       .then(() => {
         setIsFollowing(!isFollowing);
-        // Fetch updated counts from both endpoints
         return Promise.all([
           api.get(`/api/followers/${user_id}/`),
           api.get(`/api/following/${user_id}/`),
@@ -109,9 +101,7 @@ function UserProfile() {
           following: followingRes.data.count,
         }));
       })
-      .catch((err) => {
-        console.error("Error:", err);
-        // Optional: revert the follow state on error
+      .catch(() => {
         setIsFollowing(isFollowing);
       });
   };
@@ -123,7 +113,6 @@ function UserProfile() {
       <Navbar />
 
       <div className="profile-container">
-        {/* Profile Header Section */}
         <div className="profile-header">
           <img src={profile} alt="Profile" className="profile-icon" />
           <div className="profile-info">
@@ -150,7 +139,6 @@ function UserProfile() {
           </div>
         </div>
 
-        {/* User's Books Section */}
         <section className="books-section">
           <h3>{userData.firstName}'s Books</h3>
           <div className="book-list">
@@ -169,7 +157,10 @@ function UserProfile() {
             )}
           </div>
           {userBooks.length > 7 && (
-            <Link to={`/userprofile/${user_id}/books`} className="view-all">
+            <Link
+              to={`/userprofile/${user_id}/books/page/1`}
+              className="view-all"
+            >
               View All ➤
             </Link>
           )}

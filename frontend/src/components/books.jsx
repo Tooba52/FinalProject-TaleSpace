@@ -2,17 +2,18 @@ import React from "react";
 import "../styles/Books.css";
 import defaultCover from "../images/defaultCoverPhoto.jpeg";
 
-function Book({ book }) {
+
+// Displays a single book card with its cover and title
+const Book = ({ book }) => {
+  // Returns the image URL for the book cover
   const getCoverImage = () => {
-    // Use absolute URL if provided
+    // if provided
     if (book.cover_url) {
-      // Ensure URL is absolute (prepends backend URL if relative)
       if (book.cover_url.startsWith("/")) {
         return `http://127.0.0.1:8000${book.cover_url}`;
       }
       return book.cover_url;
     }
-
     // Fallback to default
     return defaultCover;
   };
@@ -33,6 +34,6 @@ function Book({ book }) {
       <p className="book-title">{book.title}</p>
     </div>
   );
-}
+};
 
 export default Book;

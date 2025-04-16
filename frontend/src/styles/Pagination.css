@@ -1,0 +1,30 @@
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  padding: 20px 0;
+  flex-wrap: wrap;
+}
+
+.pagination-link {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #f5f5f5;
+  color: #486fb6;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.pagination-link:hover {
+  background-color: #e0e0e0;
+}
+
+.pagination-link.active {
+  background-color: #486fb6;
+  color: #fff;
+  border-color: #486fb6;
+  pointer-events: none;
+}

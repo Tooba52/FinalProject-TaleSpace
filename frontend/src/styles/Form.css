@@ -18,9 +18,9 @@
   max-width: 320px;
   display: flex;
   flex-direction: column;
-  padding-top: 10px; 
-  padding-bottom: 10px; 
-  box-shadow: none; 
+  padding-top: 10px;
+  padding-bottom: 10px;
+  box-shadow: none;
 }
 
 .loginform-label {
@@ -75,22 +75,13 @@
   color: #6495ed;
 }
 
-/* Remember me, toggle switch, and forgot password alignment */
-.loginoptions-container {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  align-items: center;
-  margin-bottom: 15px;
-}
-
 .remember-me label {
   display: flex;
   align-items: center;
   gap: 10px;
   text-align: left;
   white-space: nowrap;
-  font-weight: normal; 
+  font-weight: normal;
   font-size: 90%;
   color: #5f5f5f;
 }
@@ -160,8 +151,8 @@ input:checked + .loginslider:before {
 }
 
 .dob-input {
-  color: #5f5f5f; 
-  cursor: pointer; 
+  color: #5f5f5f;
+  cursor: pointer;
 }
 
 .dob-input::-webkit-calendar-picker-indicator {

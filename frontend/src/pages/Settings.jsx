@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import api from "../api";
 import "../styles/Settings.css";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { validatePassword } from "../components/utils";
-import { useDarkMode } from "../components/DarkModeContext";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
 function Settings() {
   const [userData, setUserData] = useState({
@@ -16,14 +16,15 @@ function Settings() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showPasswordFields, setShowPasswordFields] = useState(false);
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [passwordData, setPasswordData] = useState({
     current_password: "",
     new_password: "",
     confirm_password: "",
   });
-  const [isPasswordStarted, setIsPasswordStarted] = useState(false);
   const [passwordError, setPasswordError] = useState(null);
-  const { darkMode, toggleDarkMode } = useDarkMode();
 
   useEffect(() => {
     fetchUserProfile();
@@ -31,17 +32,16 @@ function Settings() {
 
   const fetchUserProfile = async () => {
     try {
-      setLoading(true);
-      setError(null);
-      const response = await api.get("/api/user/profile/");
+      const token = localStorage.getItem("access");
+      if (!token) return;
+      const res = await api.get("/api/user/profile/");
       setUserData({
-        first_name: response.data.first_name || "",
-        last_name: response.data.last_name || "",
-        email: response.data.email || "",
+        first_name: res.data.first_name || "",
+        last_name: res.data.last_name || "",
+        email: res.data.email || "",
       });
-    } catch (err) {
-      console.error("Error fetching user profile", err);
-      setError("Failed to load profile data");
+    } catch {
+      setError("Failed to load profile data.");
     } finally {
       setLoading(false);
     }
@@ -52,64 +52,45 @@ function Settings() {
     setError(null);
     setPasswordError(null);
 
+    if (showPasswordFields && passwordData.new_password) {
+      if (!validatePassword(passwordData.new_password)) {
+        setPasswordError("Password must be stronger.");
+        return;
+      }
+      if (passwordData.new_password !== passwordData.confirm_password) {
+        setPasswordError("Passwords do not match.");
+        return;
+      }
+    }
+
+    const dataToSend = {
+      first_name: userData.first_name,
+      last_name: userData.last_name,
+      email: userData.email,
+    };
+
+    if (showPasswordFields) {
+      dataToSend.current_password = passwordData.current_password;
+      dataToSend.new_password = passwordData.new_password;
+    }
+
     try {
-      // Validate password if changing
-      if (showPasswordFields && passwordData.new_password) {
-        if (!validatePassword(passwordData.new_password)) {
-          setPasswordError(
-            "Password must be at least 8 characters long and include: uppercase, lowercase, a number, and a special character"
-          );
-          return;
-        }
-        if (passwordData.new_password !== passwordData.confirm_password) {
-          setPasswordError("New passwords don't match");
-          return;
-        }
-      }
-
-      // Prepare data to send
-      const dataToSend = {
-        first_name: userData.first_name,
-        last_name: userData.last_name,
-        email: userData.email,
-        dark_mode_enabled: darkMode, // Add this line
-      };
-
-      // Include password data if changing
-      if (showPasswordFields) {
-        dataToSend.current_password = passwordData.current_password;
-        dataToSend.new_password = passwordData.new_password;
-      }
-
-      // Send the request
       await api.put("/api/user/profile/", dataToSend);
-
-      // Reset form on success
-      // Reset form on success
       setShowPasswordFields(false);
       setPasswordData({
         current_password: "",
         new_password: "",
         confirm_password: "",
       });
-      setIsPasswordStarted(false);
       setPasswordError(null);
-
-      alert("Settings saved successfully!");
-    } catch (err) {
-      console.error("Error saving settings", err);
-
-      // Clear sensitive password fields on error
-      setPasswordData((prev) => ({
-        ...prev,
+      alert("Settings updated.");
+    } catch {
+      setPasswordData({
         current_password: "",
         new_password: "",
         confirm_password: "",
-      }));
-
-      setError(
-        err.response?.data?.error || err.message || "Failed to save settings"
-      );
+      });
+      setError("Failed to update settings.");
     }
   };
 
@@ -127,55 +108,36 @@ function Settings() {
       ...prev,
       [name]: value,
     }));
-
-    // Clear password error when user starts typing
-    if (passwordError) setPasswordError(null);
-
-    if (name === "new_password") {
-      setIsPasswordStarted(value.length > 0);
-    }
   };
 
   const handleDeleteAccount = async () => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete your account? This action cannot be undone."
-    );
-
+    const confirmed = window.confirm("Delete account permanently?");
     if (!confirmed) return;
 
-    const currentPassword = prompt(
-      "Please enter your current password to confirm deletion:"
-    );
+    const currentPassword = prompt("Enter current password to confirm:");
     if (!currentPassword) return;
 
     try {
-      const response = await api.delete("/api/user/delete-account/", {
+      const res = await api.delete("/api/user/delete-account/", {
         data: { current_password: currentPassword },
+        validateStatus: () => true,
       });
 
-      // Clear all auth tokens
-      localStorage.removeItem("ACCESS_TOKEN");
-      localStorage.removeItem("REFRESH_TOKEN");
-
-      // Force full page reload to clear all state
-      window.location.href = "/login";
-    } catch (err) {
-      console.error("Account deletion error:", err.response?.data);
-
-      // Handle specific error cases
-      if (err.response?.status === 401) {
-        setError("Incorrect password. Please try again.");
+      if (res.status === 200 || res.status === 204) {
+        localStorage.removeItem("access");
+        localStorage.removeItem("refresh");
+        alert("Account deleted.");
+        window.location.href = "/login";
+      } else if (res.status === 401) {
+        setError("Incorrect password.");
+        alert("Incorrect password.");
       } else {
-        setError(
-          err.response?.data?.error ||
-            "Account deletion failed. Please try again."
-        );
+        setError("Could not delete account.");
+        alert("Deletion failed.");
       }
-
-      // Even if error, clear sensitive data
-      localStorage.removeItem("ACCESS_TOKEN");
-      localStorage.removeItem("REFRESH_TOKEN");
-      window.location.href = "/login";
+    } catch {
+      setError("Unexpected error occurred.");
+      alert("Something went wrong.");
     }
   };
 
@@ -188,7 +150,6 @@ function Settings() {
         new_password: "",
         confirm_password: "",
       });
-      setIsPasswordStarted(false);
     }
   };
 
@@ -197,7 +158,7 @@ function Settings() {
   }
 
   return (
-    <div className={`settings-page ${darkMode ? "dark-mode" : ""}`}>
+    <div className="settings-page">
       <Navbar />
       <div className="settings-container">
         <h2>Account Settings</h2>
@@ -205,10 +166,9 @@ function Settings() {
         {error && <div className="error-message">{error}</div>}
 
         <form onSubmit={handleSubmit} className="settings-form">
-          {/* Profile Section */}
           <section className="settings-section">
             <h3>Profile Information</h3>
-            <div className="form-group">
+            <div className="settings-form-group">
               <label htmlFor="first_name">First Name</label>
               <input
                 type="text"
@@ -219,7 +179,7 @@ function Settings() {
               />
             </div>
 
-            <div className="form-group">
+            <div className="settings-form-group">
               <label htmlFor="last_name">Last Name</label>
               <input
                 type="text"
@@ -230,7 +190,7 @@ function Settings() {
               />
             </div>
 
-            <div className="form-group">
+            <div className="settings-form-group">
               <label htmlFor="email">Email</label>
               <input
                 type="email"
@@ -240,22 +200,11 @@ function Settings() {
                 onChange={handleInputChange}
               />
             </div>
-
-            <div className="form-group checkbox-group">
-              <input
-                type="checkbox"
-                id="darkMode"
-                checked={darkMode}
-                onChange={toggleDarkMode}
-              />
-              <label htmlFor="darkMode">Dark mode</label>
-            </div>
           </section>
 
-          {/* Password Change Section */}
           <section className="settings-section">
             <h3>Account Actions</h3>
-            <div className="form-group">
+            <div className="settings-form-group">
               <button
                 type="button"
                 className="action-link"
@@ -269,46 +218,85 @@ function Settings() {
 
             {showPasswordFields && (
               <>
-                <div className="form-group">
+                <div className="form-group password-container">
                   <label htmlFor="current_password">Current Password</label>
-                  <input
-                    type="password"
-                    id="current_password"
-                    name="current_password"
-                    value={passwordData.current_password}
-                    onChange={handlePasswordChange}
-                  />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="new_password">New Password</label>
-                  <input
-                    type="password"
-                    id="new_password"
-                    name="new_password"
-                    value={passwordData.new_password}
-                    onChange={handlePasswordChange}
-                  />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="confirm_password">Confirm New Password</label>
-                  <input
-                    type="password"
-                    id="confirm_password"
-                    name="confirm_password"
-                    value={passwordData.confirm_password}
-                    onChange={handlePasswordChange}
-                  />
+                  <div className="password-input-wrapper">
+                    <input
+                      type={showCurrentPassword ? "text" : "password"}
+                      id="current_password"
+                      name="current_password"
+                      value={passwordData.current_password}
+                      onChange={handlePasswordChange}
+                    />
+                    <span
+                      className="password-toggle"
+                      onClick={() =>
+                        setShowCurrentPassword(!showCurrentPassword)
+                      }
+                    >
+                      <FontAwesomeIcon
+                        icon={showCurrentPassword ? faEyeSlash : faEye}
+                      />
+                    </span>
+                  </div>
                 </div>
 
-                {/* Password requirements error */}
+                <div className="form-group password-container">
+                  <label htmlFor="new_password">New Password</label>
+                  <div className="password-input-wrapper">
+                    <input
+                      type={showNewPassword ? "text" : "password"}
+                      id="new_password"
+                      name="new_password"
+                      value={passwordData.new_password}
+                      onChange={handlePasswordChange}
+                    />
+                    <span
+                      className="password-toggle"
+                      onClick={() => setShowNewPassword(!showNewPassword)}
+                    >
+                      <FontAwesomeIcon
+                        icon={showNewPassword ? faEyeSlash : faEye}
+                      />
+                    </span>
+                  </div>
+                </div>
+
+                <div className="form-group password-container">
+                  <label htmlFor="confirm_password">Confirm New Password</label>
+                  <div className="password-input-wrapper">
+                    <input
+                      type={showConfirmPassword ? "text" : "password"}
+                      id="confirm_password"
+                      name="confirm_password"
+                      value={passwordData.confirm_password}
+                      onChange={handlePasswordChange}
+                    />
+                    <span
+                      className="password-toggle"
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
+                    >
+                      <FontAwesomeIcon
+                        icon={showConfirmPassword ? faEyeSlash : faEye}
+                      />
+                    </span>
+                  </div>
+                </div>
+
                 {passwordError && (
                   <div className="password-error-message">{passwordError}</div>
                 )}
               </>
             )}
 
-            <div className="form-group">
-              <button className="Settings-delete" onClick={handleDeleteAccount}>
+            <div className="settings-form-group">
+              <button
+                type="button"
+                className="Settings-delete"
+                onClick={handleDeleteAccount}
+              >
                 Delete Account
               </button>
             </div>

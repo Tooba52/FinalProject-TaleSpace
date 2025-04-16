@@ -4,6 +4,7 @@ import api from "../api";
 import BookCard from "../components/books";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import Pagination from "../components/Pagination";
 import Action from "../images/action.png";
 import Adventure from "../images/adventure.png";
 import Animal from "../images/animal.png";
@@ -34,43 +35,42 @@ import Thriller from "../images/thriller.png";
 import "../styles/BrowseGenre.css";
 
 function BrowseGenre() {
-  const { genreName } = useParams();
+  const { genreName, pageNumber = 1 } = useParams();
+  const currentPage = parseInt(pageNumber, 10) || 1;
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [userId, setUserId] = useState(null);
-  const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
-  const navigate = useNavigate(); // Add this line
+  const navigate = useNavigate();
 
   const genreImages = {
-    Action: Action,
-    Adventure: Adventure,
-    Animal: Animal,
-    Comedy: Comedy,
-    Crime: Crime,
-    Cyberpunk: Cyberpunk,
-    Drama: Drama,
-    Dystopian: Dystopian,
+    Action,
+    Adventure,
+    Animal,
+    Comedy,
+    Crime,
+    Cyberpunk,
+    Drama,
+    Dystopian,
     "Fairy Tale": Fairytale,
-    Fiction: Fiction,
-    Fantasy: Fantasy,
-    Gothic: Gothic,
-    Heartbreak: Heartbreak,
-    Horror: Horror,
-    Historical: Historical,
-    Musical: Musical,
-    Mythology: Mythology,
-    Mystery: Mystery,
-    Paranormal: Paranormal,
+    Fiction,
+    Fantasy,
+    Gothic,
+    Heartbreak,
+    Horror,
+    Historical,
+    Musical,
+    Mythology,
+    Mystery,
+    Paranormal,
     "Post-Apocalyptic": Apocalypse,
-    Romance: Romance,
+    Romance,
     "Sci-Fi": SciFi,
     "Slice of Life": SliceOfLife,
-    Sports: Sports,
-    Steampunk: Steampunk,
-    Supernatural: Supernatural,
-    Thriller: Thriller,
+    Sports,
+    Steampunk,
+    Supernatural,
+    Thriller,
   };
 
   const genreDescriptions = {
@@ -107,67 +107,62 @@ function BrowseGenre() {
   };
 
   useEffect(() => {
-    console.log("Current genre:", genreName);
     fetchBooks();
-  }, [genreName, page]); // Add page to dependencies
+  }, [genreName, currentPage]);
 
   const fetchBooks = async () => {
     try {
       setLoading(true);
       const response = await api.get(
-        `/api/books/?genre=${genreName}&page=${page}`,
+        `/api/browse/${genreName}/page/${currentPage}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
           },
         }
       );
-      console.log("API Response:", response.data); // Debug log
+
       setBooks(response.data.results);
       setTotalPages(response.data.total_pages);
-      setLoading(false);
     } catch (error) {
-      console.error("Error:", error.response); // More detailed error
+      setError(error);
+      setBooks([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      navigate(`/browse/${genreName}/page/${newPage}`);
+      window.scrollTo(0, 0);
     }
   };
 
   const handleBookClick = (bookId) => {
-    navigate(`/overview/books/${bookId}`); // This will navigate to overview
+    navigate(`/overview/books/${bookId}`);
   };
 
   const getGenreIcon = (genre) => {
-    if (!genre) return Fiction; // Default fallback
-
-    // First try exact match
-    if (genreImages[genre]) {
-      return genreImages[genre];
-    }
-
-    // Then try case-insensitive match
+    if (!genre) return Fiction;
+    if (genreImages[genre]) return genreImages[genre];
     const matchedKey = Object.keys(genreImages).find(
       (key) => key.toLowerCase() === genre.toLowerCase()
     );
-
     return matchedKey ? genreImages[matchedKey] : Fiction;
   };
 
   const getGenreDescription = (genre) => {
     if (!genre) return genreDescriptions.default;
-
-    // Try exact match first
-    if (genreDescriptions[genre]) {
-      return genreDescriptions[genre];
-    }
-
-    // Case-insensitive fallback
+    if (genreDescriptions[genre]) return genreDescriptions[genre];
     const matchedKey = Object.keys(genreDescriptions).find(
       (key) => key.toLowerCase() === genre.toLowerCase()
     );
-
     return matchedKey
       ? genreDescriptions[matchedKey]
       : genreDescriptions.default;
   };
+
   return (
     <div className="browse-genre-container">
       <Navbar />
@@ -185,8 +180,7 @@ function BrowseGenre() {
             </div>
           </div>
           <h1 className="browse-genre-title">{genreName} Books</h1>
-          <div className="header-divider"></div>{" "}
-          {/* This will now span full width */}
+          <div className="header-divider"></div>
         </div>
 
         <div className="book-grid-container">
@@ -209,27 +203,11 @@ function BrowseGenre() {
           </div>
         </div>
 
-        {totalPages > 1 && (
-          <div className="pagination">
-            <button
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
-              disabled={page === 1}
-            >
-              Previous
-            </button>
-
-            <span>
-              Page {page} of {totalPages}
-            </span>
-
-            <button
-              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-              disabled={page === totalPages}
-            >
-              Next
-            </button>
-          </div>
-        )}
+        <Pagination
+          totalPages={totalPages}
+          currentPage={currentPage}
+          basePath={`/browse/${genreName}`}
+        />
       </div>
 
       <Footer />

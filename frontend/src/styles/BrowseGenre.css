@@ -8,7 +8,7 @@
 .content-wrapper {
   flex: 1;
   padding: 20px 40px;
-  max-width: 1800px; /* Increased to accommodate 7 books */
+  max-width: 1800px;
   margin: 0 auto;
   width: 100%;
 }
@@ -17,14 +17,14 @@
 .genre-header {
   position: relative;
   width: 100%;
-  padding-bottom: 25px; /* Space for the divider */
+  padding-bottom: 25px;
 }
 
 .genre-title {
-  font-size: 26px; /* Slightly smaller */
+  font-size: 26px;
   font-weight: 600;
   color: #333;
-  margin: 0 0 10px 0; /* Tighter spacing */
+  margin: 0 0 10px 0;
 }
 
 .header-divider {
@@ -35,18 +35,13 @@
   z-index: 1;
 }
 
-/* Grid container */
-.book-grid-container {
-  margin-bottom: 30px;
-  min-height: 60vh;
-}
-
 /* Tighter 7-column grid */
 .book-grid {
   display: grid;
-  grid-template-columns: repeat(7, 1fr); /* Fixed 7 columns */
-  gap: 15px; /* Reduced gap between books */
-  margin-right: 3%;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 15px;
+  margin-right: 2%;
+  margin-left: 2%;
 }
 
 /* Pagination styles */
@@ -103,10 +98,10 @@
 
 .browse-genre-title {
   text-transform: capitalize;
-  font-size: 1.2rem; /* ~19px - adjust as needed */
+  font-size: 1.2rem;
   font-weight: 600;
   color: #333;
-  margin: 5px 0; /* Reduced spacing */
+  margin: 5px 0;
   line-height: 1.3;
 }
 

@@ -62,15 +62,16 @@
 }
 
 .book-grid-container {
-  margin-left: 4%;
-  margin-top: 4%;
+  margin-left: 2%;
+  margin-top: 1%;
 }
 
 .search-divider {
   height: 2px;
   width: 100%;
-  margin: 12px 0 24px; /* spacing above and below the line */
+  margin: 12px 0 24px;
   background: linear-gradient(90deg, #486fb6 20%, #e5e7eb 20%);
+  margin-bottom: 5%;
 }
 
 .search-results-heading {

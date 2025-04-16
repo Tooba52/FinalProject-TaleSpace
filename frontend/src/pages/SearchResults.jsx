@@ -1,48 +1,50 @@
 import React, { useState, useEffect } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useSearchParams, useNavigate, useParams } from "react-router-dom";
+import api from "../api";
 import BookCard from "../components/books";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import Pagination from "../components/Pagination";
 import "../styles/SearchResults.css";
 
 const SearchResults = () => {
-  const [results, setResults] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [searchParams] = useSearchParams();
   const searchQuery = searchParams.get("q");
+  const { pageNumber = 1 } = useParams();
+  const currentPage = parseInt(pageNumber, 10);
+  const [totalPages, setTotalPages] = useState(0);
   const [bookResults, setBookResults] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchResults = async () => {
+      if (!searchQuery) {
+        setLoading(false);
+        setBookResults([]);
+        return;
+      }
+
       setLoading(true);
       try {
-        const token = localStorage.getItem("access_token");
-        const headers = {
-          "Content-Type": "application/json",
-          ...(token && { Authorization: `Bearer ${token}` }),
-        };
-
-        // Always fetch both, but only display based on searchType
-        const bookResponse = await fetch(
-          `http://localhost:8000/api/books/search/?q=${encodeURIComponent(
+        const response = await api.get(
+          `/api/books/search/?q=${encodeURIComponent(
             searchQuery
-          )}`,
-          { headers }
+          )}&page=${currentPage}`
         );
-        setBookResults(await bookResponse.json());
+
+        setBookResults(response.data.results || []);
+        setTotalPages(response.data.total_pages || 0);
       } catch (error) {
-        console.error("Search error:", error);
+        setError("Failed to load search results");
       } finally {
         setLoading(false);
       }
     };
 
-    if (searchQuery) {
-      fetchResults();
-    }
-  }, [searchQuery]);
+    fetchResults();
+  }, [searchQuery, currentPage]);
 
   const handleBookClick = (bookId) => {
     navigate(`/overview/books/${bookId}`);
@@ -54,10 +56,10 @@ const SearchResults = () => {
   return (
     <div className="search-page">
       <Navbar />
-      {/* Results Section */}
       <div className="book-grid-container">
         <h2 className="search-heading">Results for "{searchQuery}"</h2>
         <div className="search-divider"></div>
+
         <div className="book-grid">
           {bookResults.length > 0 ? (
             bookResults.map((book) => (
@@ -71,10 +73,17 @@ const SearchResults = () => {
             ))
           ) : (
             <div className="no-books-message">
-              No books found matching your search.
+              {searchQuery
+                ? "No books found matching your search."
+                : "Please enter a search term."}
             </div>
           )}
         </div>
+        <Pagination
+          totalPages={totalPages}
+          currentPage={Number(currentPage)}
+          basePath={`/search`}
+        />
       </div>
       <Footer />
     </div>

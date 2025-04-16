@@ -8,7 +8,6 @@ import Footer from "../components/Footer";
 function CreateBook() {
   const navigate = useNavigate();
 
-  // State variables for managing form inputs and book creation
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [selectedGenres, setSelectedGenres] = useState([]);
@@ -18,7 +17,6 @@ function CreateBook() {
   const [coverFile, setCoverFile] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Predefined genres for selection
   const genres = [
     "Action",
     "Adventure",
@@ -49,13 +47,8 @@ function CreateBook() {
     "Thriller",
   ];
 
-  // useEffect hook to fetch
-  useEffect(() => {
-  }, []);
+  useEffect(() => {}, []);
 
-
-
-  //allows up to 3 genres to be selected
   const handleGenreClick = (genre) => {
     if (selectedGenres.includes(genre)) {
       setSelectedGenres(selectedGenres.filter((g) => g !== genre));
@@ -64,7 +57,6 @@ function CreateBook() {
     }
   };
 
-  // Handles cover photo file selection and displays preview
   const handleCoverPhotoChange = (e) => {
     const file = e.target.files[0];
     if (
@@ -79,9 +71,7 @@ function CreateBook() {
     }
   };
 
-  // Handles the saving of the book details
   const handleSave = async () => {
-    // Ensure required fields are filled out
     if (!title || !description || selectedGenres.length === 0 || !language) {
       alert("Please fill in all required fields.");
       return;
@@ -89,7 +79,6 @@ function CreateBook() {
 
     setIsLoading(true);
 
-    // Prepare form data
     const formData = new FormData();
     formData.append("title", title);
     formData.append("description", description);
@@ -101,10 +90,8 @@ function CreateBook() {
     }
 
     const token = localStorage.getItem("access");
-    console.log("🔍 Sending token:", token);
 
     try {
-      // API request to create the book
       const response = await api.post("/api/books/", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
@@ -112,11 +99,8 @@ function CreateBook() {
         },
       });
 
-      console.log("Book Created Successfully:", response.data);
-
       if (response.status === 201) {
         alert("Book created successfully!");
-        // Reset form fields after successful submission
         setTitle("");
         setDescription("");
         setSelectedGenres([]);
@@ -127,39 +111,31 @@ function CreateBook() {
 
         navigate(`/write/books/${response.data.book_id}/chapters/`, {
           replace: true,
-        }); // Redirect to the writing page
+        });
       }
     } catch (error) {
-      console.error("❌ Error creating book:", error);
-
       if (error.response) {
-        console.log("🔍 Status Code:", error.response.status);
-        console.log("🔍 Response Data:", error.response.data);
-        console.log("🔍 Headers:", error.response.headers);
-
-        alert(`Failed to create book: ${JSON.stringify(error.response.data)}`);
+        alert(
+          `Failed to create book: ${
+            error.response.data.detail || "Unknown error"
+          }`
+        );
       } else if (error.request) {
-        console.log("🔍 Request:", error.request);
         alert("No response received from server");
       } else {
-        console.log("🔍 Error Message:", error.message);
-        alert("Error setting up request: " + error.message);
+        alert("Error setting up request");
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <div className="create-book-container">
-      {/* Navigation Bar */}
-      <Navbar
-        showSearch={false}
-        showWriteButton={false}
-      />
+      <Navbar showSearch={false} showWriteButton={false} />
 
       <div className="createbook-container">
-        {/* Book Creation Form */}
         <div className="createbook-form">
-          {/* Cover Photo Section */}
           <div className="cover-photo">
             {coverPhoto ? (
               <img src={coverPhoto} alt="Cover Preview" />
@@ -175,7 +151,6 @@ function CreateBook() {
             )}
           </div>
 
-          {/* Form Fields for book details */}
           <div className="createbook-form-fields">
             <label>Title</label>
             <input
@@ -183,13 +158,11 @@ function CreateBook() {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
             />
-            {/* Description */}
             <label>Description</label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
             ></textarea>
-            {/* Select Genres */}
             <label>Select Genres (Choose up to 3)</label>
             <div className="createbook-genres">
               {genres.map((genre) => (
@@ -202,7 +175,6 @@ function CreateBook() {
                 </button>
               ))}
             </div>
-            {/* Language */}
             <label>Language</label>
             <select
               value={language}
@@ -213,7 +185,6 @@ function CreateBook() {
               <option value="Spanish">Spanish</option>
               <option value="French">French</option>
             </select>
-            {/* Rating */}
             <label>Rating</label>
             <div className="mature-rating">
               <span>Mature</span>
@@ -230,7 +201,7 @@ function CreateBook() {
               disabled={isLoading}
               aria-live="polite"
             >
-              {isLoading ? "Saving..." : "Save"}{" "}
+              {isLoading ? "Saving..." : "Save"}
             </button>
           </div>
         </div>

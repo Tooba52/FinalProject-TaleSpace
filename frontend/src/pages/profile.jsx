@@ -16,7 +16,7 @@ function Profile() {
     followers: 0,
     following: 0,
   });
-  const navigate = useNavigate(); // Add this line
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (userId) {
@@ -39,42 +39,28 @@ function Profile() {
 
   const fetchUserBooks = () => {
     if (!userId) return;
-
     api
       .get(`/api/books/?author_id=${userId}`)
       .then((res) => {
-        // Ensure the response contains the expected data structure
-        const userBooks = res.data.results || res.data; // Handle both paginated and non-paginated responses
+        const userBooks = res.data.results || res.data;
         setUserBooks(Array.isArray(userBooks) ? userBooks : []);
       })
-      .catch((err) => {
-        console.error("Error fetching user books", err);
-        setUserBooks([]); // Reset to empty array on error
-      });
+      .catch(() => setUserBooks([]));
   };
 
   const fetchFavouriteBooks = () => {
     if (!userId) return;
-
     api
       .get(`/api/books/favourites/`)
       .then((res) => {
-        const favourites = res.data.results || res.data; // Handle paginated/non-paginated
+        const favourites = res.data.results || res.data;
         setFavouriteBooks(Array.isArray(favourites) ? favourites : []);
       })
-      .catch((err) => {
-        console.error("Error fetching favourite books", err);
-        setFavouriteBooks([]);
-      });
-  };
-
-  const handleBookClick = (bookId) => {
-    navigate(`/overview/books/${bookId}`); // This will navigate to overview
+      .catch(() => setFavouriteBooks([]));
   };
 
   const fetchFollowStats = () => {
     if (!userId) return;
-
     Promise.all([
       api.get(`/api/followers/${userId}/`),
       api.get(`/api/following/${userId}/`),
@@ -88,12 +74,15 @@ function Profile() {
       .catch((err) => console.error("Error fetching follow stats", err));
   };
 
+  const handleBookClick = (bookId) => {
+    navigate(`/overview/books/${bookId}`);
+  };
+
   return (
     <div className="profile-page">
       <Navbar />
 
       <div className="profile-container">
-        {/* Profile Header Section */}
         <div className="profile-header">
           <img src={profile} alt="Profile" className="profile-icon" />
           <div className="profile-info">
@@ -111,7 +100,6 @@ function Profile() {
           </div>
         </div>
 
-        {/* Your Books Section */}
         {userBooks.length > 0 && (
           <section className="books-section">
             <h3>Your Books</h3>
@@ -122,13 +110,12 @@ function Profile() {
                 </Link>
               ))}
             </div>
-            <Link to="/YourBooks/books/" className="view-all">
+            <Link to="/YourBooks/books/page/1" className="view-all">
               View All ➤
             </Link>
           </section>
         )}
 
-        {/* Favorited Books Section */}
         <section className="books-section">
           <div className="section-header">
             <h3>Favourited Books</h3>
@@ -148,7 +135,7 @@ function Profile() {
               <p className="no-favourites">No favourited books yet</p>
             )}
           </div>
-          <Link to="/FavouitedBooks/books/" className="view-all">
+          <Link to="/FavouritedBooks/books/page/1" className="view-all">
             View All ➤
           </Link>
         </section>

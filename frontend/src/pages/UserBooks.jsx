@@ -4,16 +4,18 @@ import api from "../api";
 import BookCard from "../components/books";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import Pagination from "../components/Pagination";
 
 function UserBooks() {
-  const { user_id } = useParams(); // Get user_id from URL
+  const { user_id } = useParams();
   const [userData, setUserData] = useState({
     firstName: "",
   });
   const [userBooks, setUserBooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [page, setPage] = useState(1);
+  const { pageNumber = 1 } = useParams();
+  const currentPage = parseInt(pageNumber, 10);
   const [totalPages, setTotalPages] = useState(0);
   const navigate = useNavigate();
 
@@ -22,7 +24,7 @@ function UserBooks() {
       fetchUserProfile();
       fetchUserBooks();
     }
-  }, [user_id, page]);
+  }, [user_id, currentPage]);
 
   const fetchUserProfile = () => {
     api
@@ -32,23 +34,25 @@ function UserBooks() {
           firstName: res.data.first_name,
         });
       })
-      .catch((err) => console.error("Error fetching user profile", err));
+      .catch(() => setError("Error loading user profile"));
   };
 
-  const fetchUserBooks = () => {
-    setLoading(true);
-    api
-      .get(`/api/books/?author_id=${user_id}&page=${page}`)
-      .then((res) => {
-        setUserBooks(res.data.results || []);
-        setTotalPages(res.data.total_pages || 1);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Error fetching user books", err);
-        setError("Failed to load user's books.");
-        setLoading(false);
-      });
+  const fetchUserBooks = async () => {
+    try {
+      setLoading(true);
+      const response = await api.get(
+        `/api/books/?author_id=${user_id}&status=public&page=${currentPage}&page_size=28`
+      );
+
+      const data = response.data;
+      setUserBooks(data.results || []);
+      setTotalPages(data.total_pages || 1);
+    } catch (err) {
+      setError("Failed to load user's books");
+      setUserBooks([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleBookClick = (bookId) => {
@@ -87,28 +91,13 @@ function UserBooks() {
             )}
           </div>
         </div>
-
-        {totalPages > 1 && (
-          <div className="pagination">
-            <button
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
-              disabled={page === 1}
-            >
-              Previous
-            </button>
-            <span>
-              Page {page} of {totalPages}
-            </span>
-            <button
-              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-              disabled={page === totalPages}
-            >
-              Next
-            </button>
-          </div>
-        )}
       </div>
 
+      <Pagination
+        totalPages={totalPages}
+        currentPage={currentPage}
+        basePath={`/userprofile/${user_id}/books`}
+      />
       <Footer />
     </div>
   );

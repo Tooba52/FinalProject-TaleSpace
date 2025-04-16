@@ -21,16 +21,13 @@ function ReadBook() {
   const { isLoading, chapters, content, chapterTitle, bookTitle, status } =
     state;
 
-  // Handle all navigation within the book
   const navigateToChapter = (chapterId) => {
     const newPath = `/read/${book_id}/chapters/${chapterId}`;
     window.history.replaceState(null, "", newPath);
     navigate(newPath, { replace: true });
   };
 
-  // Consolidated useEffect for all side effects
   useEffect(() => {
-    // 1. History management
     if (chapter_id) {
       window.history.replaceState(
         null,
@@ -39,7 +36,6 @@ function ReadBook() {
       );
     }
 
-    // 2. Back button handling
     const handleBackButton = (e) => {
       if (window.location.pathname.includes("/read/")) {
         e.preventDefault();
@@ -49,7 +45,6 @@ function ReadBook() {
     };
     window.addEventListener("popstate", handleBackButton);
 
-    // 3. Data fetching
     const fetchData = async () => {
       try {
         const [chaptersRes, contentRes] = await Promise.all([
@@ -84,7 +79,6 @@ function ReadBook() {
           isLoading: false,
         }));
       } catch (err) {
-        console.error("Loading failed:", err);
         setState((prev) => ({ ...prev, isLoading: false }));
       }
     };
@@ -114,7 +108,6 @@ function ReadBook() {
 
       <div className="content-area">
         <div className="chapter-sidebar">
-          <h3>Chapters</h3>
           <ul className="chapter-list">
             {chapters.map((chapter) => (
               <li

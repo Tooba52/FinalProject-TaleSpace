@@ -4,7 +4,7 @@ import api from "../api";
 import debounce from "lodash.debounce";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { ConfirmationModal } from "../components/ConfirmationModal";
+import ConfirmationModal from "../components/ConfirmationModal";
 import "../styles/Writebook.css";
 
 function WriteBook() {
@@ -26,12 +26,11 @@ function WriteBook() {
 
   const [modalState, setModalState] = useState({
     isOpen: false,
-    action: null, // 'delete' or 'publish'
+    action: null,
     chapterId: null,
     chapterTitle: null,
   });
 
-  // Destructure for cleaner access
   const {
     isLoading,
     chapters,
@@ -45,7 +44,6 @@ function WriteBook() {
     saveState,
   } = state;
 
-  // API Operations
   const autoSave = useCallback(
     debounce(async (content) => {
       if (!chapter_id || !content.trim() || status === "published") return;
@@ -71,13 +69,11 @@ function WriteBook() {
         }));
       } catch (err) {
         setState((prev) => ({ ...prev, saveState: "error" }));
-        console.error("Auto-save failed:", err);
       }
     }, 5000),
     [book_id, chapter_id, status]
   );
 
-  // Fetch initial data
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -90,16 +86,13 @@ function WriteBook() {
             : null,
         ]);
 
-        // Get book title from first chapter's book reference
         const bookTitle =
           chaptersRes.data[0]?.book_detail?.title || "Untitled Book";
 
-        // Check if the current chapter exists
         const currentChapterExists = chaptersRes.data.some(
           (ch) => ch.chapter_id == chapter_id
         );
 
-        // If we're on a chapter URL but that chapter doesn't exist, redirect
         if (
           chapter_id &&
           !currentChapterExists &&
@@ -122,10 +115,7 @@ function WriteBook() {
           isLoading: false,
         }));
       } catch (err) {
-        console.error("Loading failed:", err);
         setState((prev) => ({ ...prev, isLoading: false }));
-
-        // If there's an error, redirect to book overview
         navigate(`/books/${book_id}`);
       }
     };
@@ -134,7 +124,6 @@ function WriteBook() {
     return () => autoSave.cancel();
   }, [book_id, chapter_id, autoSave]);
 
-  //Chapter actions
   const handleContentChange = (e) => {
     const newContent = e.target.value;
     setState((prev) => ({ ...prev, content: newContent }));
@@ -162,18 +151,15 @@ function WriteBook() {
       }));
     } catch (err) {
       setState((prev) => ({ ...prev, saveState: "error" }));
-      console.error("Save failed:", err);
     }
   };
 
   const handlePublish = async () => {
     try {
-      // Find current chapter index
       const currentChapterIndex = chapters.findIndex(
         (ch) => ch.chapter_id == chapter_id
       );
 
-      // Check if any previous chapters are unpublished
       const unpublishedPreviousChapters = chapters
         .slice(0, currentChapterIndex)
         .some((ch) => ch.chapter_status !== "published");
@@ -187,7 +173,7 @@ function WriteBook() {
 
       setState((prev) => ({ ...prev, saveState: "saving" }));
 
-      const response = await api.put(
+      await api.put(
         `/api/books/${book_id}/chapters/${chapter_id}/`,
         { chapter_content: content, chapter_status: "published" },
         {
@@ -209,7 +195,6 @@ function WriteBook() {
       }));
     } catch (err) {
       setState((prev) => ({ ...prev, saveState: "error" }));
-      console.error("Publish failed:", err);
     }
   };
 
@@ -243,7 +228,7 @@ function WriteBook() {
         editingId: null,
       }));
     } catch (err) {
-      console.error("Title update failed:", err);
+      alert("Failed to update chapter title");
     }
   };
 
@@ -269,7 +254,7 @@ function WriteBook() {
         chapters: [...prev.chapters, response.data],
       }));
     } catch (err) {
-      console.error("Chapter creation failed:", err);
+      alert("Failed to create new chapter");
     }
   };
 
@@ -284,7 +269,6 @@ function WriteBook() {
   };
 
   const handleDeleteChapter = async (chapterId) => {
-    // Prevent deleting first chapter
     const chapterIndex = chapters.findIndex(
       (ch) => ch.chapter_id === chapterId
     );
@@ -293,7 +277,6 @@ function WriteBook() {
       return;
     }
 
-    // Prevent deleting published chapters
     const chapterToDelete = chapters.find((ch) => ch.chapter_id === chapterId);
     if (chapterToDelete?.chapter_status === "published") {
       alert("Published chapters cannot be deleted");
@@ -307,7 +290,6 @@ function WriteBook() {
         },
       });
 
-      // Remove deleted chapter from state
       const updatedChapters = chapters.filter(
         (ch) => ch.chapter_id !== chapterId
       );
@@ -316,11 +298,10 @@ function WriteBook() {
         chapters: updatedChapters,
       }));
 
-      // Handle navigation if we're currently viewing the deleted chapter
       if (chapter_id == chapterId) {
         if (updatedChapters.length > 0) {
           navigate(
-            `/books/${book_id}/chapters/${updatedChapters[0].chapter_id}`,
+            `/write/books/${book_id}/chapters/${updatedChapters[0].chapter_id}`,
             { replace: true }
           );
         } else {
@@ -328,7 +309,6 @@ function WriteBook() {
         }
       }
     } catch (err) {
-      console.error("Delete failed:", err);
       alert("Failed to delete chapter");
     }
   };
@@ -356,19 +336,16 @@ function WriteBook() {
     });
   };
 
-  // Render
   if (isLoading) return <div className="loading">Loading...</div>;
 
   return (
     <div className="write-book-container">
       <Navbar showWriteButton={false} />
 
-      {/* HEADER SECTION */}
       <div className="book-header">
         <h1 className="write-book-title">{bookTitle}</h1>
       </div>
 
-      {/* CHAPTER HEADER WITH ACTIONS */}
       <div className="chapter-header-container">
         <div className="chapter-header">
           <h2 className="chapter-title">{chapterTitle || "Untitled"}</h2>
@@ -411,9 +388,7 @@ function WriteBook() {
         </div>
       </div>
 
-      {/* MAIN CONTENT AREA */}
       <div className="content-area">
-        {/* CHAPTER SIDEBAR */}
         <div className="chapter-sidebar">
           <ul className="chapter-list">
             {chapters.map((chapter, index) => (
@@ -451,7 +426,6 @@ function WriteBook() {
                       }
                       autoFocus
                     />
-                    {/* Only show delete button if not first chapter AND not published */}
                     {index > 0 && chapter.chapter_status !== "published" && (
                       <button
                         onClick={(e) => {
@@ -488,7 +462,6 @@ function WriteBook() {
                         <span className="chapter-status-draft">• Draft</span>
                       )}
                     </div>
-                    {/* Only show delete button if not first chapter AND not published */}
                     {index > 0 && chapter.chapter_status !== "published" && (
                       <button
                         onClick={(e) => {
@@ -500,7 +473,6 @@ function WriteBook() {
                         🗑️
                       </button>
                     )}
-                    {/* Show explanation if published */}
                     {chapter.chapter_status === "published" && index > 0 && (
                       <span className="cannot-delete-message">
                         (Cannot be edited)
@@ -516,7 +488,6 @@ function WriteBook() {
           </button>
         </div>
 
-        {/* WRITING AREA */}
         <div className="writing-area">
           <textarea
             value={content}
@@ -529,10 +500,8 @@ function WriteBook() {
         </div>
       </div>
 
-      {/* Footer */}
       <Footer />
 
-      {/* CONFIRMATION MODAL */}
       <ConfirmationModal
         isOpen={modalState.isOpen}
         onCancel={handleCancelAction}

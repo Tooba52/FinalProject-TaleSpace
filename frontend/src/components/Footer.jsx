@@ -1,14 +1,12 @@
 import React from "react";
 import "../styles/Footer.css";
-import { useDarkMode } from "./DarkModeContext";
 import { FaGithub, FaTwitter, FaInstagram, FaBook } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 
 const Footer = () => {
-  const { darkMode } = useDarkMode();
 
   return (
-    <footer className={`app-footer ${darkMode ? "dark-mode" : ""}`}>
+    <footer className={`app-footer`}>
       <div className="footer-content">
         <div className="footer-section">
           <h3 className="footer-heading">

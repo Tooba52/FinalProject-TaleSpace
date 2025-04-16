@@ -1,38 +1,36 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import api from "../api";
 import BookCard from "../components/books";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import Pagination from "../components/Pagination";
 
-function FavoriteBooks() {
-  const [favoriteBooks, setFavoriteBooks] = useState([]);
+function FavouriteBooks() {
+  const [favouriteBooks, setFavouriteBooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [page, setPage] = useState(1);
+  const { pageNumber = 1 } = useParams();
+  const currentPage = parseInt(pageNumber, 10);
   const [totalPages, setTotalPages] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchFavoriteBooks();
-  }, [page]);
+  }, [currentPage]);
 
   const fetchFavoriteBooks = async () => {
     try {
       setLoading(true);
       const response = await api.get(
-        `/api/books/favourites/?page=${page}&page_size=28`
-      ); // Added page_size parameter
-      const data = response.data;
-
-      setFavoriteBooks(data.results || data);
-      setTotalPages(
-        data.total_pages || Math.ceil((data.count || data.length) / 28)
+        `/api/books/favourites/?page=${currentPage}&page_size=28`
       );
+      const data = response.data;
+      setFavouriteBooks(data.results);
+      setTotalPages(data.total_pages);
     } catch (err) {
-      console.error("Error fetching favorite books", err);
-      setError("Failed to load favorite books");
-      setFavoriteBooks([]);
+      setError("Failed to load favourite books");
+      setFavouriteBooks([]);
     } finally {
       setLoading(false);
     }
@@ -43,19 +41,19 @@ function FavoriteBooks() {
   };
 
   return (
-    <div className="favorite-books-container">
+    <div className="favourite-books-container">
       <Navbar />
 
       <div className="content-wrapper">
         <div className="genre-header">
-          <h1>Your Favorite Books</h1>
+          <h1>Your Favourite Books</h1>
           <div className="header-divider"></div>
         </div>
 
         <div className="book-grid-container">
           <div className="book-grid">
-            {favoriteBooks.length > 0 ? (
-              favoriteBooks.map((book) => (
+            {favouriteBooks.length > 0 ? (
+              favouriteBooks.map((book) => (
                 <div
                   key={book.book_id}
                   onClick={() => handleBookClick(book.book_id)}
@@ -66,33 +64,17 @@ function FavoriteBooks() {
               ))
             ) : (
               <div className="no-books-message">
-                {!loading && "You haven't favorited any books yet."}
+                {!loading && "You haven't favourited any books yet."}
               </div>
             )}
           </div>
         </div>
 
-        {totalPages > 1 && (
-          <div className="pagination">
-            <button
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
-              disabled={page === 1}
-            >
-              Previous
-            </button>
-
-            <span>
-              Page {page} of {totalPages}
-            </span>
-
-            <button
-              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-              disabled={page === totalPages}
-            >
-              Next
-            </button>
-          </div>
-        )}
+        <Pagination
+          totalPages={totalPages}
+          currentPage={currentPage}
+          basePath="/FavouritedBooks/books"
+        />
       </div>
 
       <Footer />
@@ -100,4 +82,4 @@ function FavoriteBooks() {
   );
 }
 
-export default FavoriteBooks;
+export default FavouriteBooks;

@@ -21,7 +21,7 @@ load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'book_covers')  # Not 'media/book_covers'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'book_covers') 
 MEDIA_URL = '/book_covers/'  # Update URL prefix
 
 # Quick-start development settings - unsuitable for production
@@ -41,6 +41,11 @@ REST_FRAMEWORK = {
     ),
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
+    ],
+    'DEFAULT_PAGINATION_CLASS': [
+        'rest_framework.pagination.PageNumberPagination',
+    ],
+    'PAGE_SIZE': [ 28,
     ],
 }
 

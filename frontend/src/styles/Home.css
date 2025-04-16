@@ -8,7 +8,7 @@ body {
   width: 100%;
 }
 
-/* Layout styles only */
+/* Global layout */
 .home-container {
   display: flex;
   flex-direction: column;
@@ -24,27 +24,25 @@ body {
   flex-direction: column;
   align-items: center;
   width: 100%;
-  overflow-y: auto;
 }
 
+/* Banner */
 .banner {
   width: 100%;
   text-align: center;
   padding: 20px 0;
-  justify-content: center;
-  align-items: center;
 }
 
-/* Section Containers - layout only */
+/* Section Containers */
 .top-books,
 .top-genres,
 .top-authors {
   width: 90%;
-  margin-top: 40px; /* Increased from 30px */
-  margin-bottom: 40px;
+  margin: 40px 0;
   padding: 0 10px;
 }
 
+/* Section Headers */
 .top-books h3,
 .top-genres h3,
 .top-authors h3 {
@@ -65,8 +63,10 @@ body {
   background: linear-gradient(90deg, #486fb6 20%, #e5e7eb 5%);
 }
 
-/* Grid layout only - no card styling */
-.book-list {
+/* Grid Layouts */
+.book-list,
+.genre-list,
+.author-list {
   display: grid;
   width: 100%;
   grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
@@ -74,30 +74,14 @@ body {
   justify-items: center;
 }
 
-/* Genre and Author grids - layout only */
-.genre-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  gap: 80px;
-  width: 100%;
-}
-
-.author-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  gap: 80px;
-  width: 100%;
-}
-
+/* Author Styles */
 .author-item {
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding-left: 40%;
 }
 
-/* Author specific styles */
 .author-card {
   display: flex;
   flex-direction: column;
@@ -112,23 +96,11 @@ body {
 
 .author-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 10px 10px rgba(0, 0, 0, 0.2);
 }
 
 .author-icon {
   width: 140px;
   height: 140px;
-}
-
-.author-name {
-  margin-top: 10px;
-  font-size: 0.95rem;
-  font-weight: 600;
-  text-align: center;
-  overflow: hidden;
-  max-width: 110px;
-  padding: 4px 8px;
-  background-color: rgba(255, 254, 254, 0.03);
 }
 
 .author-profile-img {
@@ -139,17 +111,18 @@ body {
   border: 2px solid #ffffff;
 }
 
-.author-card p {
-  font-size: 0.9rem;
-  margin: 6px 0;
-  font-weight: 500;
+.author-name {
+  margin-top: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-align: center;
+  max-width: 110px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 100px;
 }
 
-/* Responsive adjustments */
+/* Responsive Adjustments */
 @media (max-width: 1024px) {
   .book-list,
   .genre-list,
@@ -167,13 +140,8 @@ body {
   }
 
   .author-icon {
-    width: 40px;
-    height: 40px;
-  }
-
-  .author-card {
-    min-width: 70px;
-    padding: 6px;
+    width: 80px;
+    height: 80px;
   }
 }
 
@@ -187,5 +155,10 @@ body {
 
   .home-container {
     padding: 0 15px;
+  }
+
+  .author-icon {
+    width: 70px;
+    height: 70px;
   }
 }

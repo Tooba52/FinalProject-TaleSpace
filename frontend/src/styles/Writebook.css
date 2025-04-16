@@ -52,13 +52,14 @@
 /* sidebar chapter */
 .chapter-sidebar {
   width: 280px;
-  background-color: #f8f9fa;
+  background-color: #f0f0f0;
   border-radius: 20px;
   padding: 15px;
   display: flex;
   flex-direction: column;
   max-height: 100vh;
   overflow-y: hidden;
+  margin-left: 1%;
 }
 
 .chapter-list li {
@@ -137,16 +138,17 @@
 .writing-area {
   flex: 1;
   min-height: 70vh;
-  background-color: #f8f9fa;
+  background-color: #f0f0f0;
   border-radius: 20px;
   padding: 20px;
   display: flex;
+  width: 450%;
 }
 
 .writing-area textarea {
   border: none;
   padding: 20px;
-  background-color: #f8f9fa;
+  background-color: #f0f0f0;
   flex: 1;
   min-height: 65vh;
 }
@@ -201,7 +203,7 @@
 }
 
 .new-chapter-btn {
-  background: #f8f9fa;
+  background: #f0f0f0;
   color: rgb(51, 51, 51);
   border: none;
   cursor: pointer;

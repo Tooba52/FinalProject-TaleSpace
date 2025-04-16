@@ -13,7 +13,7 @@
 .overview-container {
   display: flex;
   flex: 1;
-  padding: 2rem 3rem; /* Increased side padding */
+  padding: 2rem 3rem; 
   margin: 0 auto;
   gap: 3rem;
   width: 80%;
@@ -173,7 +173,7 @@
   height: 100%;
   max-width: 100%;
   max-height: 100%;
-  object-fit: contain; /* or 'cover' depending on your preference */
+  object-fit: contain;
 }
 
 /* Comment Section */
@@ -194,7 +194,6 @@
   font-weight: 600;
 }
 
-/* Sorting dropdown */
 /* Sort Buttons */
 .sort-buttons {
   display: flex;
@@ -274,7 +273,7 @@
 }
 
 .comment-item {
-  position: relative; /* Ensure that the delete button is positioned relative to this container */
+  position: relative;
   padding: 15px;
   border-bottom: 1px solid #ddd;
   border-top: 1px solid #ddd;
@@ -284,7 +283,7 @@
 }
 
 .delete-comment-btn {
-  position: absolute; /* Position the button absolutely within the comment container */
+  position: absolute;
   top: 10px;
   right: 10px;
   background: transparent;

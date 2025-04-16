@@ -1,39 +1,65 @@
 from django.contrib.auth import get_user_model
-from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from rest_framework.generics import (ListAPIView, RetrieveUpdateAPIView, DestroyAPIView)
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.exceptions import ValidationError
+from rest_framework.generics import (
+    ListCreateAPIView,
+    RetrieveUpdateAPIView,
+    DestroyAPIView,
+    ListAPIView,
+    RetrieveUpdateDestroyAPIView
+)
 from .serializers import UserSerializer, BookSerializer, ChapterSerializer, CommentSerializer
 from .models import Book, Chapter, Favourite, WebsiteUser, Comment, Follow
+from rest_framework.pagination import PageNumberPagination
 from django.core.paginator import Paginator
 from django.db.models import Q, Sum, F
 from collections import defaultdict
 from django.contrib.auth import logout
+import logging
 
 
 User = get_user_model()
 
 
+
+# ========================
+# Pagination 
+# ========================
+class CustomPagination(PageNumberPagination):
+    page_size = 28
+    page_size_query_param = 'page_size'
+    max_page_size = 100
+
+    def get_paginated_response(self, data):
+        return Response({
+            'count': self.page.paginator.count,
+            'next': self.get_next_link(),
+            'previous': self.get_previous_link(),
+            'results': data,
+            'total_pages': self.page.paginator.num_pages,
+            'current_page': self.page.number,
+        })
+
 # ========================
 # user managemnet views
 # ========================
-class CreateUserView(generics.CreateAPIView):
-    """Handle user registration"""
+
+#Handle user registration
+class UserCreateView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [AllowAny]  
+    permission_classes = [AllowAny]  # Allow anyone to register
 
 
-class UserProfileView(APIView):
-    """Retrieve authenticated user's profile"""
+# Retrieve authenticated user's profile
+class UserProfileView(RetrieveUpdateAPIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
         user = request.user
-        print(f"Fetching profile for {user.email}. Dark mode: {user.dark_mode_enabled}")
         serializer = UserSerializer(user)
         return Response(serializer.data) 
     
@@ -64,7 +90,7 @@ class UserProfileView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 
-class PublicUserProfileView(APIView):
+class PublicUserProfileView(generics.RetrieveAPIView):
     """View for retrieving any user's public profile without follower data"""
     permission_classes = [IsAuthenticated]
     
@@ -85,8 +111,7 @@ class PublicUserProfileView(APIView):
 
 
 #delete
-
-class DeleteAccountView(APIView):
+class UserDeleteView(DestroyAPIView):
     permission_classes = [IsAuthenticated]
 
     def delete(self, request):
@@ -119,72 +144,41 @@ class DeleteAccountView(APIView):
 # ========================
 # Book managemnet views
 # ========================
-class BookListCreate(generics.ListCreateAPIView):
+class BookListCreateView(generics.ListCreateAPIView):
     """List and create books (user-specific)"""
     serializer_class = BookSerializer
     permission_classes = [IsAuthenticated]
-    queryset = Book.objects.all()  # Base queryset required for ListCreateAPIView
+    pagination_class = CustomPagination
+    queryset = Book.objects.all()
 
-    def get_filtered_queryset(self, request):
-        """Handle all filtering logic"""
-        queryset = Book.objects.all()
+    def get_queryset(self):
+        """Handle all filtering logic with proper book visibility"""
+        queryset = super().get_queryset()
         
         # Filter by author if author_id parameter exists
-        if author_id := request.query_params.get('author_id'):
-            queryset = queryset.filter(author_id=author_id)
+        if author_id := self.request.query_params.get('author_id'):
+            # Always show ALL books when user is viewing their own books
+            if str(author_id) == str(self.request.user.user_id):  # Changed to user_id
+                return queryset.filter(author_id=author_id).order_by('-created_at')
+            
+            # For other users, only show public books
+            return queryset.filter(
+                author_id=author_id,
+                status='public'
+            ).order_by('-created_at')
         
         # Filter by genre if genre parameter exists - only show public books
-        if genre_name := request.query_params.get('genre'):
+        if genre_name := self.request.query_params.get('genre'):
             genre_lower = genre_name.lower()
-            queryset = queryset.filter(
+            return queryset.filter(
                 (Q(genres__contains=[genre_name.capitalize()]) | 
-                Q(genres__contains=[genre_lower.capitalize()])),
-                status='public'  # Only show public books when filtering by genre
-            )
+                 Q(genres__contains=[genre_lower.capitalize()])),
+                status='public'
+            ).order_by('-created_at')
         
-        
-        return queryset
-    
-    def paginate_queryset(self, queryset, request):
-        """Handle pagination logic separately"""
-        page_number = request.GET.get('page', 1)
-        page_size = 28
-        paginator = Paginator(queryset, page_size)
-        page_obj = paginator.get_page(page_number)
-        
-        return {
-            'results': page_obj.object_list,
-            'pagination_data': {
-                'total_books': paginator.count,
-                'total_pages': paginator.num_pages,
-                'current_page': page_obj.number,
-                'has_next': page_obj.has_next(),
-                'has_previous': page_obj.has_previous()
-            }
-        }
-    
-    def get(self, request):
-        # Get filtered queryset
-        queryset = self.get_filtered_queryset(request)
-        
-        # Apply pagination
-        paginated_data = self.paginate_queryset(queryset, request)
-        
-        # Serialize results
-        serializer = BookSerializer(
-            paginated_data['results'], 
-            many=True
-        )
-        
-        # Return response with pagination metadata
-        return Response({
-            'results': serializer.data,
-            'count': paginated_data['pagination_data']['total_books'],
-            'total_pages': paginated_data['pagination_data']['total_pages'],
-            'current_page': paginated_data['pagination_data']['current_page'],
-            'next': paginated_data['pagination_data']['has_next'],
-            'previous': paginated_data['pagination_data']['has_previous']
-        })
+        # Default case: show all public books if no filters
+        return queryset.filter(status='public').order_by('-created_at')
+
 
     def perform_create(self, serializer):
         book = serializer.save(
@@ -197,7 +191,7 @@ class BookListCreate(generics.ListCreateAPIView):
         """Create default first chapter for new books"""
         default_chapter_data = {
             'chapter_number': 1,
-            'chapter_title': ' ',
+            'chapter_title': 'Chapter 1',
             'chapter_content': ' ',
             'chapter_status': 'draft',
             'book': book.book_id
@@ -206,11 +200,19 @@ class BookListCreate(generics.ListCreateAPIView):
         if default_chapter_serializer.is_valid():
             default_chapter_serializer.save()
         else:
-            raise Exception("Error creating default chapter: " + str(default_chapter_serializer.errors))
+            raise ValidationError(
+                "Error creating default chapter: " + 
+                str(default_chapter_serializer.errors)
+            )
+
+    # Optional: Override list() if you need special handling
+    def list(self, request, *args, **kwargs):
+        # You can add debug prints here if needed
+        return super().list(request, *args, **kwargs)
             
 
 
-class BookRetrieveUpdate(RetrieveUpdateAPIView):
+class BookRetrieveUpdateView(RetrieveUpdateAPIView):
     """
     Retrieve or update a book instance.
     """
@@ -234,7 +236,7 @@ class BookRetrieveUpdate(RetrieveUpdateAPIView):
     
 
 
-class BookDelete(generics.DestroyAPIView):
+class BookDeleteView(DestroyAPIView):
     """Delete books (author-only)"""
     serializer_class = BookSerializer
     permission_classes = [IsAuthenticated]
@@ -250,14 +252,14 @@ class BookDelete(generics.DestroyAPIView):
 # Favourite managemnet views
 # ========================
 
-class CheckFavouriteView(APIView):
+class FavouriteCheckView(generics.RetrieveAPIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, book_id):
         is_favourite = Favourite.objects.filter(user=request.user, book_id=book_id).exists()
         return Response({"is_favourite": is_favourite})
 
-class AddFavouriteView(APIView):
+class FavouriteAddView(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, book_id):
@@ -269,7 +271,7 @@ class AddFavouriteView(APIView):
             return Response({"status": "added"})
         return Response({"status": "already_exists"})
 
-class RemoveFavouriteView(APIView):
+class FavouriteRemoveView(DestroyAPIView):
     permission_classes = [IsAuthenticated]
 
     def delete(self, request, book_id):
@@ -282,21 +284,50 @@ class RemoveFavouriteView(APIView):
         return Response({"status": "not_found"})
     
 
-class FavouriteBooksView(APIView):
+class FavouriteListView(ListAPIView):
+    serializer_class = BookSerializer
     permission_classes = [IsAuthenticated]
+    pagination_class = CustomPagination
 
-    def get(self, request):
-        favorites = Favourite.objects.filter(user=request.user).select_related('book')
-        books = [fav.book for fav in favorites]
-        serializer = BookSerializer(books, many=True)
-        return Response(serializer.data)
+    def get_queryset(self):
+        print(f"\n=== FavouriteListView Debug ===")
+        print(f"Requested page: {self.request.GET.get('page', '1')}")
+        print(f"User: {self.request.user}")
+        
+        # More efficient query using values_list
+        book_ids = Favourite.objects.filter(
+            user=self.request.user
+        ).values_list('book_id', flat=True)
+        
+        queryset = Book.objects.filter(
+            book_id__in=book_ids,
+            status='public'
+        ).order_by('book_id')
+        
+        print(f"Total favorited books found: {queryset.count()}")
+        return queryset
+
+    def paginate_queryset(self, queryset):
+        print("\n=== Pagination Debug ===")
+        page = super().paginate_queryset(queryset)
+        
+        if page is not None:
+            # Correct way to access pagination info
+            print(f"Page number: {self.paginator.page.number}")
+            print(f"Items on page: {len(page)}")
+            print(f"Total pages: {self.paginator.page.paginator.num_pages}")  # Fixed this line
+            if page:
+                print(f"First item ID: {page[0].book_id}")
+                print(f"Last item ID: {page[-1].book_id}")
+        
+        return page
     
 
 
 # ========================
 # Chapter managemnet views
 # ========================
-class ChapterListCreateView(APIView):
+class ChapterListCreateView(ListCreateAPIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
@@ -342,7 +373,7 @@ class ChapterListCreateView(APIView):
             return Response({"detail": "Book not found."}, status=status.HTTP_404_NOT_FOUND)
 
 
-class ChapterDetailView(APIView):
+class ChapterRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
     """Retrieve, update and delete individual chapters"""
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
@@ -399,7 +430,7 @@ class ChapterDetailView(APIView):
 # ========================
 # Leaderboard managemnet views
 # ========================
-class TopBooksView(APIView):
+class TopBooksListView(ListAPIView):
     """Top 10 most-viewed public books"""
     permission_classes = [AllowAny]  # Public access
 
@@ -409,7 +440,7 @@ class TopBooksView(APIView):
         return Response(serializer.data)
 
 
-class TopAuthorsView(APIView):
+class TopAuthorsListView(ListAPIView):
     def get(self, request):
         top_authors = (
             Book.objects.filter(status='public')
@@ -430,7 +461,7 @@ class TopAuthorsView(APIView):
         
         return Response(formatted_authors)
 
-class TopGenresView(APIView):
+class TopGenresListView(ListAPIView):
     """Top 10 genres by total book views (handles JSONField)"""
     permission_classes = [AllowAny]
 
@@ -447,27 +478,29 @@ class TopGenresView(APIView):
 # ========================
 # Search managemnet views
 # ========================
-class BookSearch(ListAPIView):
+class BookSearchListView(ListAPIView):
     serializer_class = BookSerializer
     permission_classes = [AllowAny]
+    pagination_class = CustomPagination  # Add your custom pagination
     
     def get_queryset(self):
-        search_query = self.request.query_params.get('q')
-        queryset = Book.objects.filter(status='public')
-        
-        if search_query:
-            queryset = queryset.filter(
-                Q(title__icontains=search_query) | 
-                Q(author_name__icontains=search_query)
-            )
-        return queryset
+        search_query = self.request.query_params.get('q', '').strip()
+        if not search_query:
+            return Book.objects.none()  # Return empty if no query
+            
+        return Book.objects.filter(
+            Q(title__icontains=search_query) | 
+            Q(author_name__icontains=search_query) |
+            Q(description__icontains=search_query),
+            status='public'
+        ).order_by('-created_at').distinct()
     
 
 
 # ========================
 # Comment managemnet views
 # ========================
-class CommentListView(APIView):
+class CommentListView(ListAPIView):
     """Fetch all comments for a specific book."""
     permission_classes = [IsAuthenticated]
 
@@ -484,7 +517,7 @@ class CommentListView(APIView):
     
 
 
-class CommentCreateView(APIView):
+class CommentCreateView(generics.CreateAPIView):
     """Create a new comment for a book."""
     permission_classes = [IsAuthenticated]
 
@@ -505,7 +538,7 @@ class CommentCreateView(APIView):
             # Log the errors from serializer
             return Response({'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
     
-class CommentDeleteView(APIView):
+class CommentDeleteView(DestroyAPIView):
     """Delete an existing comment."""
     permission_classes = [IsAuthenticated]
 
@@ -529,7 +562,7 @@ class CommentDeleteView(APIView):
 # ========================
 # Follow managemnet views
 # ========================
-class FollowUserView(APIView):
+class FollowCreateView(generics.CreateAPIView):
     """Follow another user"""
     permission_classes = [IsAuthenticated]
 
@@ -562,7 +595,7 @@ class FollowUserView(APIView):
             )
 
 
-class UnfollowUserView(APIView):
+class FollowDestroyView(DestroyAPIView):
     """Unfollow a user"""
     permission_classes = [IsAuthenticated]
 
@@ -593,7 +626,7 @@ class UnfollowUserView(APIView):
             )
 
 
-class CheckFollowStatusView(APIView):
+class FollowStatusView(generics.RetrieveAPIView):
     """Check if current user follows another user"""
     permission_classes = [IsAuthenticated]
 
@@ -617,7 +650,7 @@ class CheckFollowStatusView(APIView):
             )
 
 
-class UserFollowersListView(APIView):
+class FollowerListView(ListAPIView):
     """List all followers of a user"""
     permission_classes = [IsAuthenticated]
 
@@ -644,7 +677,7 @@ class UserFollowersListView(APIView):
             )
 
 
-class UserFollowingListView(APIView):
+class FollowingListView(ListAPIView):
     """List all users a person is following"""
     permission_classes = [IsAuthenticated]
 
@@ -669,3 +702,40 @@ class UserFollowingListView(APIView):
                 {"detail": "User not found."},
                 status=status.HTTP_404_NOT_FOUND
             )
+        
+
+
+
+
+class GenreBookListView(ListAPIView):
+    """
+    Specialized view for browsing books by genre
+    """
+    serializer_class = BookSerializer
+    permission_classes = [IsAuthenticated]
+    pagination_class = CustomPagination
+
+    def get_queryset(self):
+        queryset = Book.objects.filter(status='public').order_by('book_id')
+
+        genre_name = self.kwargs.get('genreName')
+        if genre_name:
+            genre_lower = genre_name.lower()
+            queryset = queryset.filter(
+                Q(genres__contains=[genre_name.capitalize()]) | 
+                Q(genres__contains=[genre_lower.capitalize()])
+            )
+        return queryset
+
+    def paginate_queryset(self, queryset):
+        # Get page number from URL kwargs
+        page_number = self.kwargs.get('pageNumber', 1)
+
+        # Create a new request with the modified page number
+        request = self.request._request
+        request.GET = request.GET.copy()
+        request.GET._mutable = True
+        request.GET['page'] = str(page_number)
+
+        # Let DRF handle the pagination
+        return super().paginate_queryset(queryset)

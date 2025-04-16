@@ -7,10 +7,7 @@
   font-family: "Roboto", sans-serif;
 }
 
-.settings-page.dark-mode {
-  background-color: #222;
-  color: #fff;
-}
+
 
 .settings-container {
   max-width: 900px;
@@ -22,9 +19,6 @@
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-.settings-page.dark-mode .settings-container {
-  background-color: #333;
-}
 
 .settings-container h2 {
   font-size: 2.4rem;
@@ -33,9 +27,7 @@
   color: var(--text-color);
 }
 
-.settings-page.dark-mode .settings-container h2 {
-  color: #fff;
-}
+
 
 .settings-section {
   background-color: var(--card-bg);
@@ -46,11 +38,7 @@
   border: 1px solid var(--border-color);
 }
 
-.settings-page.dark-mode .settings-section {
-  background-color: #444;
-  border-color: #555;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-}
+
 
 .settings-section h3 {
   font-size: 1.6rem;
@@ -59,28 +47,24 @@
   color: var(--text-color);
 }
 
-.settings-page.dark-mode .settings-section h3 {
-  color: #fff;
-}
 
-.form-group {
+
+.settings-form-group {
   margin-bottom: 1.6rem;
 }
 
-.form-group label {
+.settings-form-group label {
   display: block;
   margin-bottom: 0.8rem;
   font-weight: 500;
   font-size: 1.1rem;
 }
 
-.settings-page.dark-mode .form-group label {
-  color: #ddd;
-}
 
-.form-group input,
-.form-group textarea,
-.form-group select {
+
+.settings-form-group input,
+.settings-form-group textarea,
+.settings-form-group select {
   width: 100%;
   padding: 1rem;
   border: 1px solid #ccc;
@@ -91,22 +75,15 @@
   transition: border-color 0.3s ease;
 }
 
-.settings-page.dark-mode .form-group input,
-.settings-page.dark-mode .form-group textarea,
-.settings-page.dark-mode .form-group select {
-  background-color: #555;
-  color: #fff;
-  border-color: #666;
-}
 
-.form-group input:focus,
-.form-group textarea:focus,
-.form-group select:focus {
+.settings-form-group input:focus,
+.settings-form-group textarea:focus,
+.settings-form-group select:focus {
   border-color: #0066cc;
   outline: none;
 }
 
-.form-group textarea {
+.settings-form-group textarea {
   resize: vertical;
 }
 
@@ -130,9 +107,6 @@
   background-color: white;
 }
 
-.settings-page.dark-mode .action-link {
-  color: #4dabf7;
-}
 
 .action-link:hover {
   text-decoration: underline;
@@ -142,10 +116,7 @@
 .Settings-delete {
   color: #cc0000;
   background-color: white;
-}
-
-.settings-page.dark-mode .Settings-delete {
-  color: #ff6b6b;
+  margin-left: -22px;
 }
 
 .Settings-delete:hover {
@@ -172,13 +143,7 @@
   transform: translateY(-2px);
 }
 
-.settings-page.dark-mode .save-button {
-  background-color: #1a7fda;
-}
 
-.settings-page.dark-mode .save-button:hover {
-  background-color: #166dbf;
-}
 
 .settings-page .error-message,
 .settings-page .password-error-message {
@@ -190,11 +155,7 @@
   font-weight: 500;
 }
 
-.settings-page.dark-mode .error-message,
-.settings-page.dark-mode .password-error-message {
-  background-color: #ff4d4d;
-  color: white;
-}
+
 
 .settings-page .password-error-message {
   margin-top: 1rem;

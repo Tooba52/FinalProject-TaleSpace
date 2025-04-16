@@ -1,8 +1,9 @@
 import os  
 import sys
 
+
+#Entry point for Django's command-line utility.
 def main():
-    """Entry point for Django's command-line utility."""
     # Configure Django environment
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend.settings')
     

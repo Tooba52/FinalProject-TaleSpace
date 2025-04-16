@@ -3,7 +3,7 @@ import { Link, useParams, useNavigate } from "react-router-dom";
 import api from "../api";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { ConfirmationModal } from "../components/ConfirmationModal";
+import ConfirmationModal from "../components/ConfirmationModal";
 import "../styles/BookSettings.css";
 import Book from "../components/books";
 
@@ -38,7 +38,7 @@ function BookSettings() {
           mature: res.data.mature || false,
         });
       })
-      .catch((err) => console.error("Error fetching book details", err));
+      .catch(() => alert("Error loading book details"));
   };
 
   const handleInputChange = (e) => {
@@ -58,7 +58,7 @@ function BookSettings() {
     } else if (currentGenres.length < 3) {
       updatedGenres = [...currentGenres, genre];
     } else {
-      return; // Already at max genres
+      return;
     }
 
     setFormData({
@@ -91,11 +91,11 @@ function BookSettings() {
         });
       })
       .catch((err) => {
-        console.error("Update error:", {
-          error: err,
-          response: err.response?.data,
-        });
-        alert(`Failed to update: ${err.response?.data?.detail || err.message}`);
+        alert(
+          `Failed to update: ${
+            err.response?.data?.detail || "Please try again"
+          }`
+        );
       });
   };
 
@@ -105,7 +105,7 @@ function BookSettings() {
       .then(() => {
         navigate("/profile");
       })
-      .catch((err) => console.error("Error deleting book", err));
+      .catch(() => alert("Error deleting book"));
   };
 
   if (!book) return <div>Loading...</div>;
@@ -145,12 +145,10 @@ function BookSettings() {
       <Navbar />
 
       <div className="book-settings-container">
-        {/* Left Side - Book Card */}
         <div className="book-card-view">
           <Book book={book} />
         </div>
 
-        {/* Right Side - Book Details Form */}
         <div className="book-settings-form">
           {isEditing ? (
             <>
@@ -243,7 +241,6 @@ function BookSettings() {
             </>
           )}
 
-          {/* Action Buttons */}
           <div className="action-buttons">
             <div className="left-buttons">
               {isEditing ? (
@@ -254,7 +251,6 @@ function BookSettings() {
                   <button
                     onClick={() => {
                       setIsEditing(false);
-                      // Reset to original book data
                       setFormData({
                         title: book.title,
                         description: book.description,
@@ -291,7 +287,6 @@ function BookSettings() {
         </div>
       </div>
 
-      {/* Delete Confirmation Modal */}
       <ConfirmationModal
         isOpen={showDeleteModal}
         onConfirm={handleDelete}

@@ -35,7 +35,7 @@ function Home() {
     Promise.all([
       api.get("/api/leaderboard/books/", {
         params: {
-          include_covers: true, // If your API supports this
+          include_covers: true,
         },
       }),
       api.get("/api/leaderboard/authors/"),
@@ -45,17 +45,8 @@ function Home() {
         setTopBooks(booksRes.data);
         setTopAuthors(authorsRes.data);
         setTopGenres(genresRes.data);
-
-        // Debugging code
-        console.log("First book in list:", {
-          id: booksRes.data[0]?.book_id,
-          cover_photo: booksRes.data[0]?.cover_photo,
-          cover_url: booksRes.data[0]?.cover_url,
-          rawCover: booksRes.data[0],
-        });
       })
-      .catch((err) => {
-        console.error("Error fetching leaderboards:", err);
+      .catch(() => {
         setError("Failed to load leaderboard data");
       })
       .finally(() => {
@@ -67,7 +58,6 @@ function Home() {
     <div className="home-page">
       <Navbar variant="transparent" />
       <div className="home-container">
-        {/* Banner Section */}
         <div className="banner">
           <h2>Welcome to TaleSpace – Where Stories Come to Life!</h2>
           <p>
@@ -80,7 +70,6 @@ function Home() {
       </div>
 
       <div className="book-container">
-        {/* Top 10 Books Section */}
         <section className="top-books">
           <h3>Top Books</h3>
           <div className="book-list">
@@ -101,7 +90,6 @@ function Home() {
           </div>
         </section>
 
-        {/* Top Genres Section */}
         <section className="top-genres">
           <h3>Top Genres</h3>
           <div className="genre-list">
@@ -122,7 +110,6 @@ function Home() {
           </div>
         </section>
 
-        {/* Top Authors Section */}
         <section className="top-authors">
           <h3>Top Authors</h3>
           <div className="author-list">

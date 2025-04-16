@@ -10,7 +10,7 @@ const FormFields = ({
 }) => {
   // If the method is "login", return null
   if (method === "login") {
-    return null; 
+    return null;
   }
 
   // If the method is "register", return  fields for first name, last name, and date of birth
@@ -23,7 +23,7 @@ const FormFields = ({
       <input
         className="loginform-input"
         type="text"
-        value={firstName} 
+        value={firstName}
         onChange={(e) => setFirstName(e.target.value)}
       />
 
@@ -34,8 +34,8 @@ const FormFields = ({
       <input
         className="loginform-input"
         type="text"
-        value={lastName} 
-        onChange={(e) => setLastName(e.target.value)} 
+        value={lastName}
+        onChange={(e) => setLastName(e.target.value)}
       />
 
       {/* Date of Birth Input */}
@@ -46,8 +46,10 @@ const FormFields = ({
         className="loginform-input dob-input"
         id="dob"
         type="date"
-        value={dateOfBirth} 
-        onChange={(e) => setDateOfBirth(e.target.value)} 
+        value={dateOfBirth}
+        onChange={(e) => setDateOfBirth(e.target.value)}
+        max={new Date().toISOString().split("T")[0]}
+        min="1900-01-01"
       />
     </>
   );

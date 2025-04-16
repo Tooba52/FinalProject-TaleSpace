@@ -69,10 +69,10 @@ const Navbar = ({
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      navigate(`/search?q=${encodeURIComponent(searchQuery)}&type=books`);
-      setSearchQuery("");
+      navigate(`/search/page/1?q=${encodeURIComponent(searchQuery.trim())}`);
     }
   };
+
   return (
     <nav className={`navbar navbar--${variant}`}>
       <Link to="/" className="navbar__logo">
@@ -95,7 +95,9 @@ const Navbar = ({
             {genres.map((genre) => (
               <Link
                 key={genre}
-                to={`/browse/${genre.toLowerCase().replace(/\s+/g, "-")}`}
+                to={`/browse/${genre
+                  .toLowerCase()
+                  .replace(/\s+/g, "-")}/page/1`}
                 className="navbar__genre-item"
                 onClick={() => setIsGenreDropdownOpen(false)}
               >

@@ -67,7 +67,7 @@
   padding: 0;
   width: 24px;
   height: 24px;
-  font-size: 14px; /* Control icon size */
+  font-size: 14px; 
 }
 
 .navbar__search:focus {
@@ -192,8 +192,8 @@
   top: 100%;
   left: 0;
   background: white;
-  min-width: 180px; /* Reduced from 200px */
-  max-width: 300px; /* Added max-width for better control */
+  min-width: 180px; 
+  max-width: 300px; 
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
   border-radius: 4px;
   z-index: 1000;
@@ -201,23 +201,23 @@
   grid-template-columns: repeat(
     auto-fill,
     minmax(120px, 1fr)
-  ); /* Narrower columns */
-  gap: 0.3rem; /* Reduced gap */
-  padding: 0.5rem; /* Reduced padding */
-  max-height: 60vh; /* Prevent menu from being too tall */
-  overflow-y: auto; /* Add scroll if too many genres */
+  ); 
+  gap: 0.3rem; 
+  padding: 0.5rem;
+  max-height: 60vh; 
+  overflow-y: auto;
 }
 
 .navbar__genre-item {
-  padding: 0.3rem 0.5rem; /* Tighter padding */
+  padding: 0.3rem 0.5rem;
   color: #333;
   text-decoration: none;
   border-radius: 3px;
   transition: background 0.2s;
-  font-size: 0.9rem; /* Slightly smaller font */
-  white-space: nowrap; /* Prevent text wrapping */
+  font-size: 0.9rem;
+  white-space: nowrap; 
   overflow: hidden;
-  text-overflow: ellipsis; /* Add ellipsis if text too long */
+  text-overflow: ellipsis;
 }
 
 .navbar__genre-item:hover {
@@ -227,21 +227,21 @@
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .navbar__genre-menu {
-    grid-template-columns: repeat(2, 1fr); /* Two columns on mobile */
-    min-width: 200px; /* Wider on mobile for touch targets */
+    grid-template-columns: repeat(2, 1fr);
+    min-width: 200px; 
     gap: 0.25rem;
     padding: 0.5rem;
   }
 
   .navbar__genre-item {
-    padding: 0.4rem 0.5rem; /* Slightly larger for mobile touch */
+    padding: 0.4rem 0.5rem; 
   }
 }
 
 /* For very small screens */
 @media (max-width: 480px) {
   .navbar__genre-menu {
-    grid-template-columns: 1fr; /* Single column */
+    grid-template-columns: 1fr;
     min-width: 160px;
   }
 }

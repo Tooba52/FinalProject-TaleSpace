@@ -58,12 +58,12 @@ const genreImages = {
   Thriller: Thriller,
 };
 
-const GenreIcon = ({ genre, className = "", onClick }) => {
+const GenreIcon = ({ genre, onClick }) => {
   const imageSrc = genreImages[genre];
 
   return (
     <div className="genre-container">
-      <div className={`genre-card ${className}`} onClick={onClick}>
+      <div className={`genre-card`} onClick={onClick}>
         <div className="genre-icon-container">
           {imageSrc ? (
             <img src={imageSrc} alt={genre} className="genre-image" />

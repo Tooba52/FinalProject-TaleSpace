@@ -8,7 +8,8 @@ import { validatePassword } from "./utils";
 import PasswordField from "./PasswordField";
 import FormFields from "./FormFields";
 
-function Form({ route, method }) {
+// Form component for login or registration
+const Form = ({ route, method }) => {
   // Form state
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -111,10 +112,8 @@ function Form({ route, method }) {
         />
         {/* Login options */}
         {method === "login" && (
-          <div className="loginoptions-container">
-            <div className="forgot-password">
-              <Link to="/forgot-password">Forgot password?</Link>
-            </div>
+          <div className="forgot-password">
+            <Link to="/forgot-password">Forgot password?</Link>
           </div>
         )}
         {/* Submit button */}
@@ -136,6 +135,6 @@ function Form({ route, method }) {
       </form>
     </div>
   );
-}
+};
 
 export default Form;
