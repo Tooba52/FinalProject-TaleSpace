@@ -1,3 +1,4 @@
+/* Layout */
 .write-book-container {
   display: flex;
   flex-direction: column;
@@ -12,7 +13,7 @@
   min-height: 80vh;
 }
 
-/* title headers */
+/* Titles */
 .write-book-title {
   font-size: 120%;
   font-weight: 700;
@@ -36,20 +37,21 @@
 }
 
 .chapter-header-container {
-  padding: 0 40px;
+  position: relative;
+  width: 100%;
 }
 
 .chapter-header {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  position: relative;
-  padding: 10px 0;
-  max-width: 1200px;
-  margin: 0 auto;
+  padding: 10px 40px;
+  margin: 0;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-/* sidebar chapter */
+/* Sidebar */
 .chapter-sidebar {
   width: 280px;
   background-color: #f0f0f0;
@@ -73,10 +75,6 @@
   font-weight: bold;
 }
 
-.chapter-list li.active .chapter-text {
-  font-weight: bold;
-}
-
 .chapter-item {
   display: flex;
   justify-content: space-between;
@@ -96,6 +94,7 @@
   color: inherit;
 }
 
+/* Delete button */
 .delete-chapter-btn {
   background: none;
   border: none;
@@ -113,7 +112,6 @@
   font-style: italic;
 }
 
-/* Hide delete button for published chapters */
 .chapter-item .delete-chapter-btn,
 .chapter-item-editing .delete-chapter-btn {
   display: none;
@@ -124,6 +122,7 @@
   display: inline-block;
 }
 
+/* Status tags */
 .chapter-status-published {
   font-size: 11px;
   color: #4caf50;
@@ -134,7 +133,7 @@
   color: #af9d4c;
 }
 
-/* writing area */
+/* Writing area */
 .writing-area {
   flex: 1;
   min-height: 70vh;
@@ -158,7 +157,7 @@
   box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
 }
 
-/* buttons */
+/* Buttons */
 .chapter-actions {
   display: flex;
   align-items: center;
@@ -202,6 +201,7 @@
   margin-top: 5px;
 }
 
+/* Extra buttons */
 .new-chapter-btn {
   background: #f0f0f0;
   color: rgb(51, 51, 51);
@@ -211,4 +211,21 @@
   font-size: 14px;
   font-weight: 600;
   text-align: left;
+}
+
+.back-to-home-button {
+  padding: 8px 16px;
+  background-color: #f0f0f0;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+  display: flex;
+  gap: 5px;
+  margin-right: 20%;
+}
+
+.back-to-home-button:hover {
+  background-color: #e0e0e0;
 }

@@ -1,4 +1,4 @@
-/* src/styles/Navbar.css */
+/* Navbar Styles */
 .navbar {
   position: relative;
   display: flex;
@@ -9,7 +9,7 @@
   gap: 1.5rem;
 }
 
-/* Logo container */
+/* Logo Container */
 .navbar__logo {
   display: flex;
   align-items: center;
@@ -18,7 +18,7 @@
   color: inherit;
 }
 
-/* Logo image sizing */
+/* Logo Image */
 .navbar__logo img {
   width: 40px;
   height: 40px;
@@ -26,19 +26,21 @@
   border-radius: 4px;
 }
 
-/* Logo text */
+/* Logo Text */
 .navbar__logo span {
   font-weight: bold;
   font-size: 1.25rem;
   color: #486fb6;
 }
 
+/* Search Bar Container */
 .navbar__search-container {
   flex-grow: 1;
   max-width: 350px;
   margin: 0 1rem;
 }
 
+/* Search Bar */
 .navbar__search-wrapper {
   position: relative;
   display: flex;
@@ -54,6 +56,7 @@
   font-size: 0.95rem;
 }
 
+/* Search Button (Magnifying Glass) */
 .navbar__search-button {
   position: absolute;
   right: 0.5rem;
@@ -67,13 +70,15 @@
   padding: 0;
   width: 24px;
   height: 24px;
-  font-size: 14px; 
+  font-size: 14px;
 }
 
+/* Search Focused State */
 .navbar__search:focus {
   border-color: #4a90e2;
 }
-/* Right-side links container */
+
+/* Links Section (Right-side links) */
 .navbar__links {
   display: flex;
   gap: 1rem;
@@ -81,7 +86,7 @@
   margin-left: auto;
 }
 
-/* Start Writing button */
+/* Start Writing Button */
 .navbar__button {
   padding: 0.5rem 1.25rem;
   background: #486fb6;
@@ -96,7 +101,7 @@
   background: #3860a8;
 }
 
-/* Profile section */
+/* Profile Section */
 .navbar__profile {
   display: flex;
   align-items: center;
@@ -120,7 +125,7 @@
   font-weight: 500;
 }
 
-/* Dropdown styles */
+/* Dropdown Menu for Profile */
 .navbar__dropdown-container {
   position: relative;
   display: inline-block;
@@ -133,11 +138,12 @@
   top: 100%;
   background-color: white;
   min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
   border-radius: 4px;
   z-index: 1000;
 }
 
+/* Dropdown Item Styles */
 .navbar__dropdown-item {
   color: #333;
   padding: 12px 16px;
@@ -150,6 +156,7 @@
   background-color: #f5f5f5;
 }
 
+/* Logout Item */
 .navbar__dropdown-item--logout {
   background: none;
   border: none;
@@ -165,13 +172,14 @@
   color: #ff4444;
 }
 
-/* Genre Dropdown Styles */
+/* Genre Dropdown Section */
 .navbar__genre-dropdown {
   position: relative;
   margin-right: auto;
   margin-left: 2rem;
 }
 
+/* Genre Button */
 .navbar__genre-button {
   background: none;
   border: none;
@@ -187,27 +195,27 @@
 .navbar__genre-button span {
   font-size: 0.7rem;
 }
+
+/* Genre Dropdown Menu */
 .navbar__genre-menu {
   position: absolute;
   top: 100%;
   left: 0;
   background: white;
-  min-width: 180px; 
-  max-width: 300px; 
+  min-width: 180px;
+  max-width: 300px;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
   border-radius: 4px;
   z-index: 1000;
   display: grid;
-  grid-template-columns: repeat(
-    auto-fill,
-    minmax(120px, 1fr)
-  ); 
-  gap: 0.3rem; 
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 0.3rem;
   padding: 0.5rem;
-  max-height: 60vh; 
+  max-height: 60vh;
   overflow-y: auto;
 }
 
+/* Genre Item Styles */
 .navbar__genre-item {
   padding: 0.3rem 0.5rem;
   color: #333;
@@ -215,7 +223,7 @@
   border-radius: 3px;
   transition: background 0.2s;
   font-size: 0.9rem;
-  white-space: nowrap; 
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
@@ -224,21 +232,21 @@
   background: #f0f0f0;
 }
 
-/* Responsive adjustments */
+/* Responsive Adjustments */
 @media (max-width: 768px) {
   .navbar__genre-menu {
     grid-template-columns: repeat(2, 1fr);
-    min-width: 200px; 
+    min-width: 200px;
     gap: 0.25rem;
     padding: 0.5rem;
   }
 
   .navbar__genre-item {
-    padding: 0.4rem 0.5rem; 
+    padding: 0.4rem 0.5rem;
   }
 }
 
-/* For very small screens */
+/* Very Small Screen Adjustments */
 @media (max-width: 480px) {
   .navbar__genre-menu {
     grid-template-columns: 1fr;

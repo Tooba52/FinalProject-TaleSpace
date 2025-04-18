@@ -13,7 +13,7 @@
 .overview-container {
   display: flex;
   flex: 1;
-  padding: 2rem 3rem; 
+  padding: 2rem 3rem;
   margin: 0 auto;
   gap: 3rem;
   width: 80%;
@@ -158,6 +158,7 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
+/* Book Card View */
 .book-card-view {
   width: 100%;
   height: 100%;

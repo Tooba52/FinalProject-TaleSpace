@@ -8,9 +8,11 @@ import ConfirmationModal from "../components/ConfirmationModal";
 import "../styles/Writebook.css";
 
 function WriteBook() {
+  // Component state and routing
   const { book_id, chapter_id } = useParams();
   const navigate = useNavigate();
 
+  // Main state for book/chapter data and UI
   const [state, setState] = useState({
     isLoading: true,
     chapters: [],
@@ -24,6 +26,7 @@ function WriteBook() {
     saveState: "idle",
   });
 
+  // Modal state for confirmations
   const [modalState, setModalState] = useState({
     isOpen: false,
     action: null,
@@ -31,6 +34,7 @@ function WriteBook() {
     chapterTitle: null,
   });
 
+  // Destructure state for easier access
   const {
     isLoading,
     chapters,
@@ -44,23 +48,17 @@ function WriteBook() {
     saveState,
   } = state;
 
+  // Auto-save function with debounce
   const autoSave = useCallback(
     debounce(async (content) => {
       if (!chapter_id || !content.trim() || status === "published") return;
 
       try {
         setState((prev) => ({ ...prev, saveState: "saving" }));
-
-        await api.put(
-          `/api/books/${book_id}/chapters/${chapter_id}/`,
-          { chapter_content: content, chapter_status: "draft" },
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
-            },
-          }
-        );
-
+        await api.put(`/api/books/${book_id}/chapters/${chapter_id}/`, {
+          chapter_content: content,
+          chapter_status: "draft",
+        });
         setState((prev) => ({
           ...prev,
           saveState: "saved",
@@ -74,6 +72,7 @@ function WriteBook() {
     [book_id, chapter_id, status]
   );
 
+  // Fetch book and chapter data on mount
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -88,11 +87,11 @@ function WriteBook() {
 
         const bookTitle =
           chaptersRes.data[0]?.book_detail?.title || "Untitled Book";
-
         const currentChapterExists = chaptersRes.data.some(
           (ch) => ch.chapter_id == chapter_id
         );
 
+        // Redirect if chapter doesn't exist
         if (
           chapter_id &&
           !currentChapterExists &&
@@ -124,26 +123,20 @@ function WriteBook() {
     return () => autoSave.cancel();
   }, [book_id, chapter_id, autoSave]);
 
+  // Handle content changes with auto-save
   const handleContentChange = (e) => {
     const newContent = e.target.value;
     setState((prev) => ({ ...prev, content: newContent }));
     autoSave(newContent);
   };
 
+  // Manual save draft function
   const handleSaveDraft = async () => {
     try {
       setState((prev) => ({ ...prev, saveState: "saving" }));
-
-      await api.put(
-        `/api/books/${book_id}/chapters/${chapter_id}/`,
-        { chapter_content: content },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
-          },
-        }
-      );
-
+      await api.put(`/api/books/${book_id}/chapters/${chapter_id}/`, {
+        chapter_content: content,
+      });
       setState((prev) => ({
         ...prev,
         saveState: "saved",
@@ -154,12 +147,12 @@ function WriteBook() {
     }
   };
 
+  // Publish chapter function
   const handlePublish = async () => {
     try {
       const currentChapterIndex = chapters.findIndex(
         (ch) => ch.chapter_id == chapter_id
       );
-
       const unpublishedPreviousChapters = chapters
         .slice(0, currentChapterIndex)
         .some((ch) => ch.chapter_status !== "published");
@@ -172,16 +165,10 @@ function WriteBook() {
       }
 
       setState((prev) => ({ ...prev, saveState: "saving" }));
-
-      await api.put(
-        `/api/books/${book_id}/chapters/${chapter_id}/`,
-        { chapter_content: content, chapter_status: "published" },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
-          },
-        }
-      );
+      await api.put(`/api/books/${book_id}/chapters/${chapter_id}/`, {
+        chapter_content: content,
+        chapter_status: "published",
+      });
 
       setState((prev) => ({
         ...prev,
@@ -198,6 +185,7 @@ function WriteBook() {
     }
   };
 
+  // Show publish confirmation modal
   const showPublishConfirmation = () => {
     const chapter = chapters.find((ch) => ch.chapter_id == chapter_id);
     setModalState({
@@ -208,18 +196,12 @@ function WriteBook() {
     });
   };
 
+  // Update chapter title
   const handleTitleUpdate = async (chapterId) => {
     try {
-      await api.put(
-        `/api/books/${book_id}/chapters/${chapterId}/`,
-        { chapter_title: tempTitle },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
-          },
-        }
-      );
-
+      await api.put(`/api/books/${book_id}/chapters/${chapterId}/`, {
+        chapter_title: tempTitle,
+      });
       setState((prev) => ({
         ...prev,
         chapters: prev.chapters.map((ch) =>
@@ -232,23 +214,15 @@ function WriteBook() {
     }
   };
 
+  // Create new chapter
   const createChapter = async () => {
     try {
-      const response = await api.post(
-        `/api/books/${book_id}/chapters/`,
-        {
-          chapter_title: "Untitled",
-          chapter_content: "",
-          chapter_status: "draft",
-          book: book_id,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
-          },
-        }
-      );
-
+      const response = await api.post(`/api/books/${book_id}/chapters/`, {
+        chapter_title: "Untitled",
+        chapter_content: "",
+        chapter_status: "draft",
+        book: book_id,
+      });
       setState((prev) => ({
         ...prev,
         chapters: [...prev.chapters, response.data],
@@ -258,6 +232,7 @@ function WriteBook() {
     }
   };
 
+  // Show delete confirmation modal
   const showDeleteConfirmation = (chapterId) => {
     const chapter = chapters.find((ch) => ch.chapter_id === chapterId);
     setModalState({
@@ -268,6 +243,7 @@ function WriteBook() {
     });
   };
 
+  // Delete chapter function
   const handleDeleteChapter = async (chapterId) => {
     const chapterIndex = chapters.findIndex(
       (ch) => ch.chapter_id === chapterId
@@ -284,20 +260,13 @@ function WriteBook() {
     }
 
     try {
-      await api.delete(`/api/books/${book_id}/chapters/${chapterId}/`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
-        },
-      });
-
+      await api.delete(`/api/books/${book_id}/chapters/${chapterId}/`);
       const updatedChapters = chapters.filter(
         (ch) => ch.chapter_id !== chapterId
       );
-      setState((prev) => ({
-        ...prev,
-        chapters: updatedChapters,
-      }));
+      setState((prev) => ({ ...prev, chapters: updatedChapters }));
 
+      // Redirect if current chapter was deleted
       if (chapter_id == chapterId) {
         if (updatedChapters.length > 0) {
           navigate(
@@ -313,6 +282,7 @@ function WriteBook() {
     }
   };
 
+  // Handle modal confirm/cancel
   const handleConfirmAction = async () => {
     if (modalState.action === "delete") {
       await handleDeleteChapter(modalState.chapterId);
@@ -342,12 +312,17 @@ function WriteBook() {
     <div className="write-book-container">
       <Navbar showWriteButton={false} />
 
+      {/* Book header */}
       <div className="book-header">
         <h1 className="write-book-title">{bookTitle}</h1>
       </div>
 
+      {/* Chapter header with actions */}
       <div className="chapter-header-container">
         <div className="chapter-header">
+          <button onClick={() => navigate("/")} className="back-to-home-button">
+            ← Back to Home
+          </button>
           <h2 className="chapter-title">{chapterTitle || "Untitled"}</h2>
           <div className="chapter-actions">
             <div className="action-buttons">
@@ -388,7 +363,9 @@ function WriteBook() {
         </div>
       </div>
 
+      {/* Main content area */}
       <div className="content-area">
+        {/* Chapter sidebar */}
         <div className="chapter-sidebar">
           <ul className="chapter-list">
             {chapters.map((chapter, index) => (
@@ -398,9 +375,7 @@ function WriteBook() {
                 onClick={() =>
                   navigate(
                     `/write/books/${book_id}/chapters/${chapter.chapter_id}`,
-                    {
-                      replace: true,
-                    }
+                    { replace: true }
                   )
                 }
               >
@@ -488,6 +463,7 @@ function WriteBook() {
           </button>
         </div>
 
+        {/* Writing area */}
         <div className="writing-area">
           <textarea
             value={content}
@@ -502,6 +478,7 @@ function WriteBook() {
 
       <Footer />
 
+      {/* Confirmation modal */}
       <ConfirmationModal
         isOpen={modalState.isOpen}
         onCancel={handleCancelAction}

@@ -1,4 +1,4 @@
-/* BookSettings.css */
+/* Main Layout */
 .book-settings {
   display: flex;
   flex-direction: column;
@@ -15,33 +15,49 @@
   position: relative;
 }
 
-/* Left Side - Book Card */
+/* Book Card Section */
 .book-card-view {
   flex: 0 0 300px;
-  height: fit-content; 
+  height: fit-content;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 1rem;
   position: sticky;
-  top: 1rem; 
-  overflow: hidden;
+  top: 1rem;
   background: white;
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Right Side - Book Settings Form */
+.cover-upload-container {
+  width: 100%;
+  max-width: 300px;
+  height: auto;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.cover-preview {
+  max-width: 100%;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+/* Settings Form Section */
 .book-settings-form {
-  flex: 1; 
-  min-width: 0; 
+  flex: 1;
+  min-width: 0;
   padding: 1.5rem;
   background: white;
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
-  padding-right: 5%;
+  max-height: 100vh;
+  overflow-y: auto;
 }
 
 .book-settings-form h2 {
@@ -49,27 +65,7 @@
   color: #333;
 }
 
-.book-description {
-  white-space: pre-line;
-  line-height: 1.6;
-  color: #444;
-  margin: 1rem 0;
-}
-
-.book-meta {
-  margin: 1.5rem 0;
-}
-
-.book-meta div {
-  margin-bottom: 0.5rem;
-  color: #555;
-}
-
-.book-meta strong {
-  color: #333;
-}
-
-/* Form Styles */
+/* Form Elements */
 .form-group {
   margin-bottom: 1.5rem;
 }
@@ -104,6 +100,7 @@
   resize: vertical;
 }
 
+/* Genre Selection */
 .genre-checkboxes {
   display: flex;
   flex-wrap: wrap;
@@ -130,12 +127,7 @@
   margin-top: 0.5rem;
 }
 
-/* Style disabled checkboxes */
-.genre-checkboxes input[type="checkbox"]:disabled + span {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
+/* Mature Content Section */
 .mature-status {
   margin-top: 0.3rem;
 }
@@ -149,10 +141,8 @@
   padding: 0.25rem 0.5rem;
   border-radius: 4px;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
 }
 
-/* Mature Content Toggle Styles */
 .mature-toggle {
   display: flex;
   align-items: center;
@@ -169,11 +159,6 @@
 .mature-toggle-label {
   font-weight: bold;
   color: #333;
-}
-
-/* When mature is checked */
-.mature-toggle input[type="checkbox"]:checked + .mature-toggle-label {
-  color: #ff4757;
 }
 
 /* Action Buttons */
@@ -203,11 +188,6 @@ button,
 .cancel-btn {
   background-color: #f0f0f0;
   color: #333;
-  margin-left: 1rem;
-}
-
-.cancel-btn:hover {
-  background-color: #ddd;
 }
 
 .edit-btn,
@@ -216,27 +196,29 @@ button,
   color: white;
 }
 
-.edit-btn:hover,
-.save-btn:hover {
-  background-color: #45a049;
-}
-
 .delete-btn {
   background-color: #f44336;
   color: white;
-}
-
-.delete-btn:hover {
-  background-color: #d32f2f;
 }
 
 .continue-writing-btn {
   background-color: #486fb6;
   color: white;
   text-decoration: none;
-  display: inline-block;
-  text-align: center;
-  border-radius: 10px;
+}
+
+/* Hover States */
+.cancel-btn:hover {
+  background-color: #ddd;
+}
+
+.edit-btn:hover,
+.save-btn:hover {
+  background-color: #45a049;
+}
+
+.delete-btn:hover {
+  background-color: #d32f2f;
 }
 
 .continue-writing-btn:hover {
@@ -250,6 +232,6 @@ button,
   }
 
   .book-card-view {
-    max-width: 100%;
+    position: static;
   }
 }

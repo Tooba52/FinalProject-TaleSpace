@@ -1,3 +1,4 @@
+/* Footer Container */
 .app-footer {
   background-color: #e1e7f5;
   color: #333;
@@ -6,6 +7,7 @@
   width: 100%;
 }
 
+/* Footer Content */
 .footer-content {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -14,6 +16,7 @@
   padding-left: 5%;
 }
 
+/* Footer Heading */
 .footer-heading {
   font-size: 120%;
   display: flex;
@@ -21,6 +24,7 @@
   gap: 2%;
 }
 
+/* Footer Links */
 .footer-links {
   list-style: none;
   padding: 0;
@@ -41,6 +45,7 @@
   color: #486fb6;
 }
 
+/* Social Icons */
 .social-icons {
   display: flex;
   gap: 5%;
@@ -48,6 +53,7 @@
   font-size: 150%;
 }
 
+/* Contact Info */
 .contact-info {
   display: flex;
   flex-direction: column;
@@ -61,12 +67,14 @@
   margin: 0;
 }
 
+/* Footer Bottom */
 .footer-bottom {
   text-align: center;
   padding-top: 3%;
   margin-top: 1%;
 }
 
+/* Responsive Adjustments */
 @media (max-width: 768px) {
   .footer-content {
     grid-template-columns: 1fr;

@@ -36,11 +36,28 @@ class BookSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Book
-        fields = ["book_id", "title", "description", "genres", "language", "mature", "cover_url", "author", "author_name", "created_at", "status", "view_count"]
+        fields = ["book_id", "title", "description", "genres", "language", "mature", "cover_photo", "cover_url", "author", "author_name", "created_at", "status"]
         extra_kwargs = {
-            "author": {"read_only": True}, # Author is assigned automatically
-            "cover_photo": {"write_only": True}  # Only for uploads, not in responses
-            }  
+            "author": {"read_only": True},
+            "cover_photo": {"required": False}  # Make cover photo optional
+        }
+
+    def update(self, instance, validated_data):
+        # Handle cover photo separately
+        cover_photo = validated_data.pop('cover_photo', None)
+        
+        # Update other fields
+        instance = super().update(instance, validated_data)
+        
+        # Update cover photo if provided
+        if cover_photo is not None:
+            # Delete old cover photo if exists
+            if instance.cover_photo:
+                instance.cover_photo.delete(save=False)
+            instance.cover_photo = cover_photo
+            instance.save()
+        
+        return instance
 
     # Return author's first name if author exists and has a name
     def get_author_name(self, obj):
@@ -51,11 +68,11 @@ class BookSerializer(serializers.ModelSerializer):
     #Returns full URL for cover photo if available
     def get_cover_url(self, obj):
         if obj.cover_photo:
-            request = self.context.get('request')
-            return request.build_absolute_uri(obj.cover_photo.url) if request else obj.cover_photo.url
+            if 'request' in self.context:
+                return self.context['request'].build_absolute_uri(obj.cover_photo.url)
+            return obj.cover_photo.url
         return None
-
-
+    
 # ========================
 
 

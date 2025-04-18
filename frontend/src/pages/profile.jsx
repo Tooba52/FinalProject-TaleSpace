@@ -8,16 +8,19 @@ import Footer from "../components/Footer";
 import "../styles/Profile.css";
 
 function Profile() {
+  // User data state
   const [firstName, setFirstName] = useState("");
-  const [userBooks, setUserBooks] = useState([]);
   const [userId, setUserId] = useState(null);
+  const [userBooks, setUserBooks] = useState([]);
   const [favouriteBooks, setFavouriteBooks] = useState([]);
   const [followStats, setFollowStats] = useState({
     followers: 0,
     following: 0,
   });
+
   const navigate = useNavigate();
 
+  // Fetch data when userId changes
   useEffect(() => {
     if (userId) {
       fetchUserBooks();
@@ -27,6 +30,7 @@ function Profile() {
     fetchUserProfile();
   }, [userId]);
 
+  // Fetch basic user profile info
   const fetchUserProfile = () => {
     api
       .get("/api/user/profile/")
@@ -37,6 +41,7 @@ function Profile() {
       .catch((err) => console.error("Error fetching user profile", err));
   };
 
+  // Fetch books written by the user
   const fetchUserBooks = () => {
     if (!userId) return;
     api
@@ -48,6 +53,7 @@ function Profile() {
       .catch(() => setUserBooks([]));
   };
 
+  // Fetch user's favorite books
   const fetchFavouriteBooks = () => {
     if (!userId) return;
     api
@@ -59,6 +65,7 @@ function Profile() {
       .catch(() => setFavouriteBooks([]));
   };
 
+  // Fetch follower/following counts
   const fetchFollowStats = () => {
     if (!userId) return;
     Promise.all([
@@ -74,6 +81,7 @@ function Profile() {
       .catch((err) => console.error("Error fetching follow stats", err));
   };
 
+  // Handle book click navigation
   const handleBookClick = (bookId) => {
     navigate(`/overview/books/${bookId}`);
   };
@@ -83,10 +91,13 @@ function Profile() {
       <Navbar />
 
       <div className="profile-container">
+        {/* Profile header section */}
         <div className="profile-header">
           <img src={profile} alt="Profile" className="profile-icon" />
           <div className="profile-info">
             <h2>{firstName || "Username"}</h2>
+
+            {/* Follow stats */}
             <div className="follow-stats">
               <div className="stat-item">
                 <strong>Followers</strong>
@@ -100,6 +111,7 @@ function Profile() {
           </div>
         </div>
 
+        {/* User's books section */}
         {userBooks.length > 0 && (
           <section className="books-section">
             <h3>Your Books</h3>
@@ -110,12 +122,15 @@ function Profile() {
                 </Link>
               ))}
             </div>
-            <Link to="/YourBooks/books/page/1" className="view-all">
-              View All ➤
-            </Link>
+            {userBooks.length > 7 && (
+              <Link to="/YourBooks/books/page/1" className="view-all">
+                View All ➤
+              </Link>
+            )}
           </section>
         )}
 
+        {/* Favorite books section */}
         <section className="books-section">
           <div className="section-header">
             <h3>Favourited Books</h3>
@@ -135,9 +150,11 @@ function Profile() {
               <p className="no-favourites">No favourited books yet</p>
             )}
           </div>
-          <Link to="/FavouritedBooks/books/page/1" className="view-all">
-            View All ➤
-          </Link>
+          {favouriteBooks.length > 7 && (
+            <Link to="/FavouritedBooks/books/page/1" className="view-all">
+              View All ➤
+            </Link>
+          )}
         </section>
       </div>
 

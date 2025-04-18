@@ -17,6 +17,7 @@ import FavouritedBooks from "./pages/FavouritedBooks";
 import UserProfile from "./pages/UserProfile";
 import UserBooks from "./pages/UserBooks";
 import SearchResults from "./pages/SearchResults";
+import About from "./pages/About";
 
 function Logout() {
   localStorage.clear(); // Remove user session data
@@ -158,6 +159,14 @@ function App() {
           element={
             <ProtectedRoute>
               <SearchResults />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/about"
+          element={
+            <ProtectedRoute>
+              <About />
             </ProtectedRoute>
           }
         />

@@ -83,7 +83,7 @@ class Book(models.Model):
     genres = models.JSONField() 
     language = models.CharField(max_length=50)
     mature = models.BooleanField(default=False)  
-    cover_photo = models.ImageField(upload_to='book_covers/', null=True, blank=True)  
+    cover_photo = models.ImageField(upload_to='', null=True, blank=True)  
     author = models.ForeignKey(WebsiteUser, on_delete=models.CASCADE) 
     author_name = models.CharField(max_length=100, blank=True)
     created_at = models.DateTimeField(auto_now_add=True) 

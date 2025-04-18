@@ -16,7 +16,7 @@ const Navbar = ({
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Sample genres - replace with your actual genres or fetch from API
+  // genres
   const genres = [
     "Action",
     "Adventure",
@@ -95,9 +95,7 @@ const Navbar = ({
             {genres.map((genre) => (
               <Link
                 key={genre}
-                to={`/browse/${genre
-                  .toLowerCase()
-                  .replace(/\s+/g, "-")}/page/1`}
+                to={`/browse/${encodeURIComponent(genre)}/page/1`}
                 className="navbar__genre-item"
                 onClick={() => setIsGenreDropdownOpen(false)}
               >

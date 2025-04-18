@@ -28,11 +28,12 @@ const Form = ({ route, method }) => {
 
   // Handle form submission
   const handleSubmit = async (e) => {
-    setLoading(true); //
     e.preventDefault();
+    setLoading(true); // Start loading immediately when the form is submitted
 
     // Password validation check using the imported utility function
     if (!validatePassword(password)) {
+      setLoading(false); // Stop loading if password is invalid
       alert(
         "Password must be at least 8 characters long and include uppercase, lowercase, a number, and a special character."
       );
@@ -52,20 +53,33 @@ const Form = ({ route, method }) => {
           };
 
     try {
+      // Start the API request
       const res = await api.post(route, payload);
+
+      // Stop loading when API request finishes
+      setLoading(false);
+
       if (method === "login") {
+        // If login is successful, store tokens
         localStorage.setItem(ACCESS_TOKEN, res.data.access);
         localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
-
         navigate("/"); // Redirect to the home page after login
       } else {
         navigate("/login"); // Redirect to the login page after successful registration
       }
     } catch (error) {
+      setLoading(false); // Stop loading after API call ends (error or success)
+
       if (error.response) {
         const errorData = error.response.data;
-        if (errorData.email) {
-          alert(errorData.email[0]);
+
+        if (error.response.status === 401) {
+          alert("Incorrect email or password.");
+        } else if (
+          errorData.email &&
+          errorData.email[0] === "Account with this email does not exist."
+        ) {
+          alert("Account does not exist.");
         } else if (errorData.detail) {
           alert(errorData.detail);
         } else {

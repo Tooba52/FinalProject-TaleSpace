@@ -5,6 +5,7 @@ import BookCard from "../components/books";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import Pagination from "../components/Pagination";
+// Import genre-specific images
 import Action from "../images/action.png";
 import Adventure from "../images/adventure.png";
 import Animal from "../images/animal.png";
@@ -35,14 +36,19 @@ import Thriller from "../images/thriller.png";
 import "../styles/BrowseGenre.css";
 
 function BrowseGenre() {
+  // Extract genre name and page number from URL parameters
   const { genreName, pageNumber = 1 } = useParams();
   const currentPage = parseInt(pageNumber, 10) || 1;
+
+  // State to manage books, loading status, error, and pagination
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [totalPages, setTotalPages] = useState(0);
+
   const navigate = useNavigate();
 
+  // Object to map genres to their respective images
   const genreImages = {
     Action,
     Adventure,
@@ -73,6 +79,7 @@ function BrowseGenre() {
     Thriller,
   };
 
+  // Descriptions for each genre
   const genreDescriptions = {
     Action: "High-stakes plots filled with daring feats and explosive moments.",
     Adventure: "Exciting journeys and quests across uncharted territories.",
@@ -106,10 +113,12 @@ function BrowseGenre() {
     Thriller: "Fast-paced, suspenseful stories with twists and tension.",
   };
 
+  // Fetch books when genreName or pageNumber changes
   useEffect(() => {
     fetchBooks();
   }, [genreName, currentPage]);
 
+  // Fetch books for a specific genre and page
   const fetchBooks = async () => {
     try {
       setLoading(true);
@@ -132,44 +141,51 @@ function BrowseGenre() {
     }
   };
 
+  // Handle pagination change
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
       navigate(`/browse/${genreName}/page/${newPage}`);
-      window.scrollTo(0, 0);
+      window.scrollTo(0, 0); // Scroll to top after page change
     }
   };
 
+  // Navigate to the book overview page when a book is clicked
   const handleBookClick = (bookId) => {
     navigate(`/overview/books/${bookId}`);
   };
 
+  // Get the correct genre icon for display
   const getGenreIcon = (genre) => {
-    if (!genre) return Fiction;
-    if (genreImages[genre]) return genreImages[genre];
+    if (!genre) return Fiction; // Default to Fiction if no genre
+    if (genreImages[genre]) return genreImages[genre]; // Return icon if found
     const matchedKey = Object.keys(genreImages).find(
       (key) => key.toLowerCase() === genre.toLowerCase()
     );
-    return matchedKey ? genreImages[matchedKey] : Fiction;
+    return matchedKey ? genreImages[matchedKey] : Fiction; // Return default if not found
   };
 
+  // Get the correct genre description for display
   const getGenreDescription = (genre) => {
-    if (!genre) return genreDescriptions.default;
-    if (genreDescriptions[genre]) return genreDescriptions[genre];
+    if (!genre) return genreDescriptions.default; // Default description
+    if (genreDescriptions[genre]) return genreDescriptions[genre]; // Return description if found
     const matchedKey = Object.keys(genreDescriptions).find(
       (key) => key.toLowerCase() === genre.toLowerCase()
     );
     return matchedKey
       ? genreDescriptions[matchedKey]
-      : genreDescriptions.default;
+      : genreDescriptions.default; // Return default if not found
   };
 
   return (
     <div className="browse-genre-container">
+      {/* Render the Navbar */}
       <Navbar />
 
       <div className="content-wrapper">
+        {/* Genre Header Section */}
         <div className="genre-header">
           <div className="genre-title-container">
+            {/* Display genre icon and description */}
             <img
               src={getGenreIcon(genreName)}
               alt={`${genreName} icon`}
@@ -183,6 +199,7 @@ function BrowseGenre() {
           <div className="header-divider"></div>
         </div>
 
+        {/* Book Grid Section */}
         <div className="book-grid-container">
           <div className="book-grid">
             {books.length > 0 ? (
@@ -203,6 +220,7 @@ function BrowseGenre() {
           </div>
         </div>
 
+        {/* Pagination Component */}
         <Pagination
           totalPages={totalPages}
           currentPage={currentPage}
@@ -210,6 +228,7 @@ function BrowseGenre() {
         />
       </div>
 
+      {/* Render the Footer */}
       <Footer />
     </div>
   );

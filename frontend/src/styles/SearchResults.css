@@ -1,3 +1,4 @@
+/* Container and Layout */
 .search-results-container {
   max-width: 1300px;
   margin: 0 auto;
@@ -11,6 +12,7 @@
   flex-direction: column;
 }
 
+/* Tabs */
 .search-type-tabs {
   display: flex;
   justify-content: center;
@@ -38,6 +40,7 @@
   font-weight: 500;
 }
 
+/* Header */
 .search-header {
   margin-bottom: 2rem;
   text-align: center;
@@ -49,10 +52,12 @@
   margin-bottom: 0.5rem;
 }
 
+/* Cards */
 .book-card-wrapper:hover {
   transform: translateY(-5px);
 }
 
+/* No Results */
 .no-results-message {
   text-align: center;
   grid-column: 1 / -1;
@@ -61,11 +66,19 @@
   color: #666;
 }
 
+/* Grid */
+
+.search-container {
+  margin-left: 3%;
+}
+
 .book-grid-container {
-  margin-left: 2%;
+  margin-left: 1%;
+  margin-right: 2%;
   margin-top: 1%;
 }
 
+/* Divider */
 .search-divider {
   height: 2px;
   width: 100%;
@@ -74,6 +87,7 @@
   margin-bottom: 5%;
 }
 
+/* Results Heading */
 .search-results-heading {
   text-align: center;
   margin: 2rem 0 1.5rem;
@@ -83,7 +97,7 @@
   padding-bottom: 0.5rem;
 }
 
-/* Optional decorative underline */
+/* Decorative underline */
 .search-results-heading::after {
   content: "";
   display: block;
@@ -94,6 +108,7 @@
   border-radius: 3px;
 }
 
+/* Loading and Error */
 .loading {
   text-align: center;
   padding: 2rem;
@@ -111,6 +126,7 @@
   color: #d32f2f;
 }
 
+/* Responsive */
 @media (max-width: 768px) {
   .search-results-heading {
     font-size: 1.5rem;

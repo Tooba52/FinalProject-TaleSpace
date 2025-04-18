@@ -7,18 +7,19 @@ import Footer from "../components/Footer";
 import Pagination from "../components/Pagination";
 
 function UserBooks() {
-  const { user_id } = useParams();
-  const [userData, setUserData] = useState({
-    firstName: "",
-  });
+  // State and routing setup
+  const { user_id, pageNumber = 1 } = useParams();
+  const navigate = useNavigate();
+  const currentPage = parseInt(pageNumber, 10);
+
+  // Component state
+  const [userData, setUserData] = useState({ firstName: "" });
   const [userBooks, setUserBooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { pageNumber = 1 } = useParams();
-  const currentPage = parseInt(pageNumber, 10);
   const [totalPages, setTotalPages] = useState(0);
-  const navigate = useNavigate();
 
+  // Fetch data when user_id or page changes
   useEffect(() => {
     if (user_id) {
       fetchUserProfile();
@@ -26,6 +27,7 @@ function UserBooks() {
     }
   }, [user_id, currentPage]);
 
+  // Fetch user's basic profile info
   const fetchUserProfile = () => {
     api
       .get(`/api/public/profile/${user_id}/`)
@@ -37,6 +39,7 @@ function UserBooks() {
       .catch(() => setError("Error loading user profile"));
   };
 
+  // Fetch user's published books with pagination
   const fetchUserBooks = async () => {
     try {
       setLoading(true);
@@ -55,10 +58,12 @@ function UserBooks() {
     }
   };
 
+  // Handle book click navigation
   const handleBookClick = (bookId) => {
     navigate(`/overview/books/${bookId}`);
   };
 
+  // Loading and error states
   if (loading) return <div className="loading-spinner">Loading...</div>;
   if (error) return <div className="error-message">{error}</div>;
 
@@ -66,12 +71,15 @@ function UserBooks() {
     <div className="user-books-container">
       <Navbar />
 
+      {/* Main content area */}
       <div className="content-wrapper">
+        {/* Page header */}
         <div className="genre-header">
           <h1>{userData.firstName}'s Books</h1>
           <div className="header-divider"></div>
         </div>
 
+        {/* Books grid */}
         <div className="book-grid-container">
           <div className="book-grid">
             {userBooks.length > 0 ? (
@@ -93,11 +101,13 @@ function UserBooks() {
         </div>
       </div>
 
+      {/* Pagination controls */}
       <Pagination
         totalPages={totalPages}
         currentPage={currentPage}
         basePath={`/userprofile/${user_id}/books`}
       />
+
       <Footer />
     </div>
   );

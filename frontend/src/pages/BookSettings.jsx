@@ -13,6 +13,8 @@ function BookSettings() {
   const [book, setBook] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [coverPreview, setCoverPreview] = useState(null);
+  const [coverFile, setCoverFile] = useState(null);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -49,6 +51,16 @@ function BookSettings() {
     });
   };
 
+  const handleCoverChange = (e) => {
+    const file = e.target.files[0];
+    if (file && (file.type === "image/jpeg" || file.type === "image/png")) {
+      setCoverFile(file);
+      setCoverPreview(URL.createObjectURL(file));
+    } else {
+      alert("Please upload a valid image (JPEG or PNG)");
+    }
+  };
+
   const handleGenreClick = (genre) => {
     const currentGenres = formData.genres;
     let updatedGenres;
@@ -68,32 +80,45 @@ function BookSettings() {
   };
 
   const handleSave = () => {
-    const updateData = {
-      title: formData.title,
-      description: formData.description,
-      genres: formData.genres,
-      status: formData.status,
-      mature: formData.mature,
-      language: book.language,
-    };
+    const data = new FormData();
+
+    // Use the component's formData STATE, not the new FormData object
+    data.append("title", formData.title);
+    data.append("description", formData.description);
+    data.append("genres", JSON.stringify(formData.genres));
+    data.append("status", formData.status);
+    data.append("mature", formData.mature);
+    data.append("language", book.language);
+
+    if (coverFile) {
+      data.append("cover_photo", coverFile);
+    }
+
+    // Debug what's being sent
+    for (let [key, value] of data.entries()) {
+      console.log(key, value);
+    }
 
     api
-      .put(`/api/books/${book_id}/`, updateData)
+      .put(`/api/books/${book_id}/`, data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${localStorage.getItem("access")}`,
+        },
+      })
       .then((res) => {
         setBook(res.data);
         setIsEditing(false);
-        setFormData({
-          title: res.data.title,
-          description: res.data.description,
-          genres: res.data.genres,
-          status: res.data.status,
-          mature: res.data.mature,
-        });
+        setCoverFile(null);
+        setCoverPreview(null);
+        fetchBookDetails();
       })
       .catch((err) => {
+        console.error("Full error:", err);
+        console.error("Error details:", err.response?.data);
         alert(
           `Failed to update: ${
-            err.response?.data?.detail || "Please try again"
+            JSON.stringify(err.response?.data) || "Please try again"
           }`
         );
       });
@@ -146,7 +171,48 @@ function BookSettings() {
 
       <div className="book-settings-container">
         <div className="book-card-view">
-          <Book book={book} />
+          {isEditing ? (
+            <div className="cover-upload-container">
+              <label className="cover-upload-label">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleCoverChange}
+                  className="cover-upload-input"
+                />
+                {coverPreview ? (
+                  <img
+                    src={coverPreview}
+                    alt="New Cover Preview"
+                    className="cover-preview"
+                  />
+                ) : book.cover_url ? (
+                  <img
+                    src={book.cover_url}
+                    alt="Current Cover"
+                    className="cover-preview"
+                  />
+                ) : (
+                  <div className="cover-upload-placeholder">
+                    Click to upload new cover
+                  </div>
+                )}
+              </label>
+              {coverPreview && (
+                <button
+                  onClick={() => {
+                    setCoverPreview(null);
+                    setCoverFile(null);
+                  }}
+                  className="remove-cover-btn"
+                >
+                  Remove
+                </button>
+              )}
+            </div>
+          ) : (
+            <Book book={book} />
+          )}
         </div>
 
         <div className="book-settings-form">

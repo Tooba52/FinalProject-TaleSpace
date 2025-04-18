@@ -8,7 +8,11 @@ import Footer from "../components/Footer";
 import "../styles/Profile.css";
 
 function UserProfile() {
+  // State and routing setup
   const { user_id } = useParams();
+  const navigate = useNavigate();
+
+  // User data state
   const [userData, setUserData] = useState({
     firstName: "",
     lastName: "",
@@ -19,8 +23,8 @@ function UserProfile() {
   const [userBooks, setUserBooks] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isFollowing, setIsFollowing] = useState(false);
-  const navigate = useNavigate();
 
+  // Fetch data on component mount
   useEffect(() => {
     if (!user_id) return;
     fetchUserProfile();
@@ -29,6 +33,7 @@ function UserProfile() {
     checkFollowStatus();
   }, [user_id, navigate]);
 
+  // Fetch basic user profile info
   const fetchUserProfile = () => {
     setIsLoading(true);
     api
@@ -42,12 +47,11 @@ function UserProfile() {
           following: res.data.following_count || 0,
         });
       })
-      .catch(() => {
-        navigate("/error");
-      })
+      .catch(() => navigate("/error"))
       .finally(() => setIsLoading(false));
   };
 
+  // Fetch user's published books
   const fetchUserBooks = () => {
     api.get(`/api/books/?author_id=${user_id}`).then((res) => {
       const books = res.data.results || res.data;
@@ -58,10 +62,7 @@ function UserProfile() {
     });
   };
 
-  const handleBookClick = (bookId) => {
-    navigate(`/overview/books/${bookId}`);
-  };
-
+  // Get follower/following counts
   const fetchFollowStats = () => {
     Promise.all([
       api.get(`/api/followers/${user_id}/`),
@@ -75,12 +76,14 @@ function UserProfile() {
     });
   };
 
+  // Check if current user follows this profile
   const checkFollowStatus = () => {
     api
       .get(`/api/check-follow/${user_id}/`)
       .then((res) => setIsFollowing(res.data.is_following));
   };
 
+  // Handle follow/unfollow action
   const handleFollow = () => {
     const action = isFollowing
       ? api.delete(`/api/unfollow/${user_id}/`)
@@ -101,11 +104,15 @@ function UserProfile() {
           following: followingRes.data.count,
         }));
       })
-      .catch(() => {
-        setIsFollowing(isFollowing);
-      });
+      .catch(() => setIsFollowing(isFollowing));
   };
 
+  // Handle book click navigation
+  const handleBookClick = (bookId) => {
+    navigate(`/overview/books/${bookId}`);
+  };
+
+  // Loading state
   if (isLoading) return <div className="loading">Loading profile...</div>;
 
   return (
@@ -113,6 +120,7 @@ function UserProfile() {
       <Navbar />
 
       <div className="profile-container">
+        {/* Profile header section */}
         <div className="profile-header">
           <img src={profile} alt="Profile" className="profile-icon" />
           <div className="profile-info">
@@ -120,6 +128,8 @@ function UserProfile() {
               {userData.firstName} {userData.lastName}
             </h2>
             {userData.bio && <p className="user-bio">{userData.bio}</p>}
+
+            {/* Follow stats */}
             <div className="follow-stats">
               <div className="stat-item">
                 <strong>Followers</strong>
@@ -130,6 +140,8 @@ function UserProfile() {
                 <span>{userData.following}</span>
               </div>
             </div>
+
+            {/* Follow button */}
             <button
               className={`follow-button ${isFollowing ? "following" : ""}`}
               onClick={handleFollow}
@@ -139,6 +151,7 @@ function UserProfile() {
           </div>
         </div>
 
+        {/* User's books section */}
         <section className="books-section">
           <h3>{userData.firstName}'s Books</h3>
           <div className="book-list">
@@ -156,6 +169,8 @@ function UserProfile() {
               <p>No books published yet</p>
             )}
           </div>
+
+          {/* View all link if more than 7 books */}
           {userBooks.length > 7 && (
             <Link
               to={`/userprofile/${user_id}/books/page/1`}

@@ -1,0 +1,52 @@
+/* Container */
+.about-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* About Section */
+.about-section {
+  padding: 30px 20px;
+  margin-bottom: 40px;
+  background-color: #fff;
+  border-radius: 8px;
+  position: relative;
+  width: 100%;
+  max-width: 1300px;
+  margin: 0 auto;
+}
+
+/* Gradient Line Between Sections */
+.about-section:before {
+  content: "";
+  position: absolute;
+  top: -10px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, #486fb6 20%, #e5e7eb 5%);
+}
+
+/* Section Titles */
+.about-section h3 {
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+
+/* Section Paragraph and List Styles */
+.about-section p {
+  color: #000000;
+  line-height: 1.6;
+}
+
+.about-section ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.about-section li {
+  color: #000000;
+  margin-bottom: 10px;
+}

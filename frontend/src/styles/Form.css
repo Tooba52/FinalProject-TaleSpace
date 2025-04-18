@@ -1,4 +1,4 @@
-/* Form layout container */
+/* Form Layout Structure */
 .loginform-layout {
   display: flex;
   width: 100%;
@@ -12,23 +12,21 @@
   padding-bottom: 10%;
 }
 
-/* Form container styling */
 .loginform-container {
   flex: 1;
   max-width: 320px;
   display: flex;
   flex-direction: column;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  box-shadow: none;
+  padding: 10px 0;
 }
 
+/* Form Elements */
 .loginform-label {
   display: block;
   color: #808080;
   font-size: 0.9rem;
 }
-/* Input field styling */
+
 .loginform-input {
   width: 100%;
   padding: 10px;
@@ -38,24 +36,7 @@
   background-color: #f5f5f5;
 }
 
-/* Button styling */
-.loginform-button {
-  margin-top: 5%;
-  width: 100%;
-  padding: 12px;
-  background-color: #6495ed;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.2s ease-in-out;
-}
-
-.loginform-button:hover {
-  background-color: #537bc5;
-}
-
-/* Password visibility toggle */
+/* Password Field */
 .password-container {
   position: relative;
   width: 100%;
@@ -75,13 +56,28 @@
   color: #6495ed;
 }
 
+/* Button Styles */
+.loginform-button {
+  margin-top: 5%;
+  width: 107%;
+  padding: 12px;
+  background-color: #6495ed;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.loginform-button:hover {
+  background-color: #537bc5;
+}
+
+/* Remember Me Toggle */
 .remember-me label {
   display: flex;
   align-items: center;
   gap: 10px;
-  text-align: left;
-  white-space: nowrap;
-  font-weight: normal;
   font-size: 90%;
   color: #5f5f5f;
 }
@@ -131,6 +127,7 @@ input:checked + .loginslider:before {
   transform: translateX(14px);
 }
 
+/* Links */
 .forgot-password {
   margin-left: auto;
 }
@@ -150,6 +147,7 @@ input:checked + .loginslider:before {
   color: #5f5f5f;
 }
 
+/* Date of Birth Picker */
 .dob-input {
   color: #5f5f5f;
   cursor: pointer;

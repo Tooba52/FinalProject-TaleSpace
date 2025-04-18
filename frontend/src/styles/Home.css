@@ -1,3 +1,4 @@
+/* Base Styles */
 html,
 body {
   margin: 0;
@@ -8,7 +9,7 @@ body {
   width: 100%;
 }
 
-/* Global layout */
+/* Main Containers */
 .home-container {
   display: flex;
   flex-direction: column;
@@ -33,7 +34,7 @@ body {
   padding: 20px 0;
 }
 
-/* Section Containers */
+/* Content Sections */
 .top-books,
 .top-genres,
 .top-authors {
@@ -74,7 +75,7 @@ body {
   justify-items: center;
 }
 
-/* Author Styles */
+/* Author Cards */
 .author-item {
   display: flex;
   flex-direction: column;
@@ -122,7 +123,7 @@ body {
   text-overflow: ellipsis;
 }
 
-/* Responsive Adjustments */
+/* Responsive Design */
 @media (max-width: 1024px) {
   .book-list,
   .genre-list,
@@ -138,7 +139,6 @@ body {
     grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
     gap: 15px;
   }
-
   .author-icon {
     width: 80px;
     height: 80px;
@@ -152,11 +152,9 @@ body {
     grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
     gap: 12px;
   }
-
   .home-container {
     padding: 0 15px;
   }
-
   .author-icon {
     width: 70px;
     height: 70px;

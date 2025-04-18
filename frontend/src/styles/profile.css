@@ -1,4 +1,4 @@
-/* Profile Page Layout */
+/* Main Layout */
 .profile-page {
   display: flex;
   flex-direction: column;
@@ -13,7 +13,7 @@
   flex: 1;
 }
 
-/* Profile Header Section */
+/* Header Section */
 .profile-header {
   display: flex;
   align-items: center;
@@ -33,6 +33,7 @@
   border: 3px solid #f0f0f0;
 }
 
+/* Profile Info */
 .profile-info {
   display: flex;
   flex-direction: column;
@@ -45,6 +46,7 @@
   color: #333;
 }
 
+/* Stats */
 .follow-stats {
   display: flex;
   gap: 30px;
@@ -84,6 +86,7 @@
   color: #333;
 }
 
+/* Links */
 .view-all {
   color: #4a6fa5;
   text-decoration: none;
@@ -94,6 +97,7 @@
   text-decoration: underline;
 }
 
+/* Empty States */
 .no-books {
   color: #666;
   font-style: italic;

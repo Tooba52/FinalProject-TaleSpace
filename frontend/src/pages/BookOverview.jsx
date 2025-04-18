@@ -46,16 +46,33 @@ function BookOverview() {
     api
       .get(`/api/books/${book_id}/`)
       .then((res) => {
-        setBook(res.data);
+        const bookData = res.data;
+
+        // If author info is missing, try to fetch it separately
+        if (!bookData.author_id && !bookData.author) {
+          return api
+            .get(`/api/books/${book_id}/author/`)
+            .then((authorRes) => {
+              return {
+                ...bookData,
+                author_id: authorRes.data.user_id,
+                author_name: authorRes.data.name,
+              };
+            })
+            .catch(() => bookData); // Fallback if author fetch fails
+        }
+        return bookData;
+      })
+      .then((finalBookData) => {
+        setBook(finalBookData);
       })
       .catch((err) => {
-        if (err.response && err.response.status === 404) {
+        console.error("Error fetching book:", err);
+        if (err.response?.status === 404) {
           navigate("/not-found");
         }
       })
-      .finally(() => {
-        setIsLoading(false);
-      });
+      .finally(() => setIsLoading(false));
   };
 
   const checkIfFavourite = () => {
@@ -65,6 +82,10 @@ function BookOverview() {
         setIsFavourite(res.data.is_favourite);
       })
       .catch((err) => console.error("Error checking favourite status", err));
+  };
+
+  const handleAuthorClick = () => {
+    navigate(`/userprofile/${book.author}`);
   };
 
   const fetchComments = () => {
@@ -169,18 +190,22 @@ function BookOverview() {
             </button>
           </div>
           <div className="overview-author">
-            By {book.author_name || "Unknown Author"}
+            By{" "}
+            <span
+              className="author-link"
+              onClick={handleAuthorClick}
+              style={{ cursor: "pointer", textDecoration: "underline" }}
+            >
+              {book.author_name || "Unknown Author"}
+            </span>
           </div>
           <div className="overview-meta">
             <div>
               <strong>Genres:</strong> {book.genres.join(", ")}
             </div>
-            {book.status === "mature" && (
-              <div className="mature-label-container">
-                <span className="mature-label">
-                  <FaExclamationTriangle className="mature-icon" /> Mature
-                  Content
-                </span>
+            {book.mature && (
+              <div className="mature-status">
+                <span className="mature-badge">Mature</span>
               </div>
             )}
           </div>

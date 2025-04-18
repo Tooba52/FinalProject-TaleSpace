@@ -14,11 +14,12 @@ from rest_framework.generics import (
 from .serializers import UserSerializer, BookSerializer, ChapterSerializer, CommentSerializer
 from .models import Book, Chapter, Favourite, WebsiteUser, Comment, Follow
 from rest_framework.pagination import PageNumberPagination
-from django.core.paginator import Paginator
 from django.db.models import Q, Sum, F
 from collections import defaultdict
 from django.contrib.auth import logout
-import logging
+from datetime import date
+from dateutil.relativedelta import relativedelta
+
 
 
 User = get_user_model()
@@ -209,7 +210,6 @@ class BookListCreateView(generics.ListCreateAPIView):
     def list(self, request, *args, **kwargs):
         # You can add debug prints here if needed
         return super().list(request, *args, **kwargs)
-            
 
 
 class BookRetrieveUpdateView(RetrieveUpdateAPIView):
@@ -234,7 +234,19 @@ class BookRetrieveUpdateView(RetrieveUpdateAPIView):
         # For updates, only show user's own books
         return Book.objects.filter(author=self.request.user)
     
-
+    def put(self, request, *args, **kwargs):
+        print("Incoming data:", request.data)  # Log incoming data
+        print("Files:", request.FILES)  # Log files
+        
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        
+        print("Serializer data:", serializer.initial_data)  # Log initial data
+        serializer.is_valid(raise_exception=True)  # This will show validation errors
+        self.perform_update(serializer)
+        
+        return Response(serializer.data)
+    
 
 class BookDeleteView(DestroyAPIView):
     """Delete books (author-only)"""
@@ -720,11 +732,26 @@ class GenreBookListView(ListAPIView):
 
         genre_name = self.kwargs.get('genreName')
         if genre_name:
-            genre_lower = genre_name.lower()
-            queryset = queryset.filter(
-                Q(genres__contains=[genre_name.capitalize()]) | 
-                Q(genres__contains=[genre_lower.capitalize()])
-            )
+            # Convert URL-encoded name back to display format
+            genre_name = genre_name.replace('-', ' ')
+            
+            # Handle special cases
+            genre_mapping = {
+                'sci fi': 'Sci-Fi',
+                'fairy tale': 'Fairy Tale',
+                'post apocalyptic': 'Post-Apocalyptic',
+                'slice of life': 'Slice of Life'
+            }
+            
+            # Check if the decoded name matches any special cases
+            normalized_name = genre_name.lower()
+            if normalized_name in genre_mapping:
+                genre_name = genre_mapping[normalized_name]
+            else:
+                # Capitalize normally for other genres
+                genre_name = ' '.join(word.capitalize() for word in genre_name.split())
+            
+            queryset = queryset.filter(genres__contains=[genre_name])
         return queryset
 
     def paginate_queryset(self, queryset):

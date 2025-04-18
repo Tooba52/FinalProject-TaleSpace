@@ -7,6 +7,7 @@ import Footer from "../components/Footer";
 import Pagination from "../components/Pagination";
 
 function YourBooks() {
+  // State management for books, loading, errors, etc.
   const [userBooks, setUserBooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -16,16 +17,19 @@ function YourBooks() {
   const [totalPages, setTotalPages] = useState(0);
   const navigate = useNavigate();
 
+  // Fetch user profile on component mount
   useEffect(() => {
     fetchUserProfile();
   }, []);
 
+  // Fetch user books when userId or page changes
   useEffect(() => {
     if (userId) {
       fetchUserBooks();
     }
   }, [userId, currentPage]);
 
+  // Get current user's ID
   const fetchUserProfile = () => {
     api
       .get("/api/user/profile/")
@@ -38,10 +42,10 @@ function YourBooks() {
       });
   };
 
+  // Fetch books written by the user
   const fetchUserBooks = async () => {
     try {
       setLoading(true);
-
       const response = await api.get(
         `/api/books/?author_id=${userId}&page=${currentPage}&page_size=28`
       );
@@ -59,47 +63,58 @@ function YourBooks() {
     }
   };
 
+  // Handle book click - navigate to settings
   const handleBookClick = (bookId) => {
     navigate(`/settings/books/${bookId}`);
   };
 
+  // Loading and error states
   if (loading) return <div className="loading-spinner">Loading...</div>;
   if (error) return <div className="error-message">{error}</div>;
 
+  // Main component render
   return (
     <div className="your-books-container">
       <Navbar />
+
+      {/* Page header */}
       <div className="content-wrapper">
         <div className="genre-header">
           <h1>Your Books</h1>
           <div className="header-divider"></div>
         </div>
       </div>
-      <div className="book-grid-container">
-        <div className="book-grid">
-          {userBooks.length > 0 ? (
-            userBooks.map((book) => (
-              <div
-                key={book.book_id}
-                onClick={() => handleBookClick(book.book_id)}
-                className="book-card-wrapper"
-              >
-                <BookCard book={book} />
+
+      {/* Books grid */}
+      <div className="search-container">
+        <div className="book-grid-container">
+          <div className="book-grid">
+            {userBooks.length > 0 ? (
+              userBooks.map((book) => (
+                <div
+                  key={book.book_id}
+                  onClick={() => handleBookClick(book.book_id)}
+                  className="book-card-wrapper"
+                >
+                  <BookCard book={book} />
+                </div>
+              ))
+            ) : (
+              <div className="no-books-message">
+                {!loading && "You haven't written any books yet."}
               </div>
-            ))
-          ) : (
-            <div className="no-books-message">
-              {!loading && "You haven't written any books yet."}
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
-      {/* Pagination Component */}
+
+      {/* Pagination */}
       <Pagination
         totalPages={totalPages}
         currentPage={currentPage}
         basePath="/YourBooks/books"
       />
+
       <Footer />
     </div>
   );

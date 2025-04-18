@@ -2,9 +2,9 @@ import React from "react";
 import "../styles/Footer.css";
 import { FaGithub, FaTwitter, FaInstagram, FaBook } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
+import { Link } from "react-router-dom"; // Import Link to use React Router for navigation
 
 const Footer = () => {
-
   return (
     <footer className={`app-footer`}>
       <div className="footer-content">
@@ -32,13 +32,17 @@ const Footer = () => {
           <h3 className="footer-heading">Quick Links</h3>
           <ul className="footer-links">
             <li>
-              <a href="/">Home</a>
+              <Link to="/">Home</Link>{" "}
+              {/* Updated to use Link for React Router */}
             </li>
             <li>
-              <a href="/profile">Profile</a>
+              <Link to="/profile">Profile</Link>
             </li>
             <li>
-              <a href="/settings">Settings</a>
+              <Link to="/settings">Settings</Link>
+            </li>
+            <li>
+              <Link to="/about">About Us</Link> {/* Added About Us link */}
             </li>
           </ul>
         </div>

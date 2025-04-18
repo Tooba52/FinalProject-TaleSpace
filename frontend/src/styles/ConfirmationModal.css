@@ -1,3 +1,4 @@
+/* Confirmation Modal Overlay */
 .confirmation-modal-overlay {
   position: fixed;
   top: 0;
@@ -11,6 +12,7 @@
   z-index: 1000;
 }
 
+/* Confirmation Modal Content */
 .confirmation-modal-content {
   background: white;
   padding: 2rem;
@@ -20,6 +22,7 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
+/* Confirmation Modal Message */
 .confirmation-modal-message {
   margin: 0 0 1.5rem 0;
   font-size: 1rem;
@@ -27,12 +30,14 @@
   color: #333;
 }
 
+/* Confirmation Modal Buttons */
 .confirmation-modal-buttons {
   display: flex;
   justify-content: flex-end;
   gap: 1rem;
 }
 
+/* Cancel Button */
 .confirmation-modal-cancel-btn {
   padding: 0.5rem 1rem;
   background: #f0f0f0;
@@ -47,6 +52,7 @@
   background: #e0e0e0;
 }
 
+/* Confirm Button */
 .confirmation-modal-confirm-btn {
   padding: 0.5rem 1rem;
   background: #ff4444;

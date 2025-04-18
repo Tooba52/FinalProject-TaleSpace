@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import api from "../api";
 import "../styles/Home.css";
 import Navbar from "../components/Navbar";
@@ -9,6 +9,7 @@ import GenreIcon from "../components/GenreIcons";
 import profile from "../images/profile.png";
 
 function Home() {
+  // State management for leaderboard data
   const [topBooks, setTopBooks] = useState([]);
   const [topAuthors, setTopAuthors] = useState([]);
   const [topGenres, setTopGenres] = useState([]);
@@ -16,27 +17,32 @@ function Home() {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
+  // Fetch leaderboard data on component mount
   useEffect(() => {
     fetchLeaderboards();
   }, []);
 
+  // Navigation handlers
   const handleBookClick = (bookId) => {
     navigate(`/overview/books/${bookId}`);
   };
 
   const handleGenreClick = (genre) => {
-    navigate(`/browse/${genre.toLowerCase().replace(/\s+/g, "-")}`);
+    navigate(`/browse/${encodeURIComponent(genre)}/page/1`);
   };
 
+  const handleAuthorClick = (author) => {
+    navigate(`/userprofile/${author.author_id}`);
+  };
+
+  // Data fetching function
   const fetchLeaderboards = () => {
     setLoading(true);
     setError(null);
 
     Promise.all([
       api.get("/api/leaderboard/books/", {
-        params: {
-          include_covers: true,
-        },
+        params: { include_covers: true },
       }),
       api.get("/api/leaderboard/authors/"),
       api.get("/api/leaderboard/genres/"),
@@ -54,9 +60,15 @@ function Home() {
       });
   };
 
+  // Loading and error states
+  if (loading) return <div className="loading-spinner">Loading...</div>;
+  if (error) return <div className="error-message">{error}</div>;
+
   return (
     <div className="home-page">
       <Navbar variant="transparent" />
+
+      {/* Hero banner section */}
       <div className="home-container">
         <div className="banner">
           <h2>Welcome to TaleSpace – Where Stories Come to Life!</h2>
@@ -69,7 +81,9 @@ function Home() {
         </div>
       </div>
 
+      {/* Main content container */}
       <div className="book-container">
+        {/* Top Books section */}
         <section className="top-books">
           <h3>Top Books</h3>
           <div className="book-list">
@@ -90,6 +104,7 @@ function Home() {
           </div>
         </section>
 
+        {/* Top Genres section */}
         <section className="top-genres">
           <h3>Top Genres</h3>
           <div className="genre-list">
@@ -110,15 +125,17 @@ function Home() {
           </div>
         </section>
 
+        {/* Top Authors section */}
         <section className="top-authors">
           <h3>Top Authors</h3>
           <div className="author-list">
             {topAuthors.length > 0 ? (
               topAuthors.map((author) => (
                 <div key={author.author_id} className="author-item">
-                  <Link
-                    to={`/userprofile/${author.author_id}`}
+                  <div
                     className="author-card"
+                    onClick={() => handleAuthorClick(author)}
+                    style={{ cursor: "pointer" }}
                   >
                     <div className="author-icon">
                       <img
@@ -127,7 +144,7 @@ function Home() {
                         className="author-profile-img"
                       />
                     </div>
-                  </Link>
+                  </div>
                   <p className="author-name">
                     {author.author_name || "Unknown Author"}
                   </p>

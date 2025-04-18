@@ -1,3 +1,4 @@
+/* Page Layout */
 .settings-page {
   display: flex;
   flex-direction: column;
@@ -7,8 +8,7 @@
   font-family: "Roboto", sans-serif;
 }
 
-
-
+/* Main Container */
 .settings-container {
   max-width: 900px;
   margin: 3rem auto;
@@ -19,7 +19,6 @@
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-
 .settings-container h2 {
   font-size: 2.4rem;
   margin-bottom: 1.5rem;
@@ -27,8 +26,7 @@
   color: var(--text-color);
 }
 
-
-
+/* Sections */
 .settings-section {
   background-color: var(--card-bg);
   border-radius: 8px;
@@ -38,8 +36,6 @@
   border: 1px solid var(--border-color);
 }
 
-
-
 .settings-section h3 {
   font-size: 1.6rem;
   margin-bottom: 1.5rem;
@@ -47,8 +43,7 @@
   color: var(--text-color);
 }
 
-
-
+/* Form Elements */
 .settings-form-group {
   margin-bottom: 1.6rem;
 }
@@ -59,8 +54,6 @@
   font-weight: 500;
   font-size: 1.1rem;
 }
-
-
 
 .settings-form-group input,
 .settings-form-group textarea,
@@ -75,7 +68,6 @@
   transition: border-color 0.3s ease;
 }
 
-
 .settings-form-group input:focus,
 .settings-form-group textarea:focus,
 .settings-form-group select:focus {
@@ -87,6 +79,7 @@
   resize: vertical;
 }
 
+/* Checkboxes */
 .checkbox-group {
   display: flex;
   align-items: center;
@@ -97,6 +90,7 @@
   margin-right: 1rem;
 }
 
+/* Links */
 .action-link {
   display: inline-block;
   padding: 0.5rem 0;
@@ -106,7 +100,6 @@
   transition: color 0.3s ease;
   background-color: white;
 }
-
 
 .action-link:hover {
   text-decoration: underline;
@@ -123,6 +116,7 @@
   color: #ff4d4d;
 }
 
+/* Buttons */
 .save-button {
   background-color: #486fb6;
   color: white;
@@ -143,8 +137,7 @@
   transform: translateY(-2px);
 }
 
-
-
+/* Error Messages */
 .settings-page .error-message,
 .settings-page .password-error-message {
   margin-top: 1rem;
@@ -154,8 +147,6 @@
   border-radius: 6px;
   font-weight: 500;
 }
-
-
 
 .settings-page .password-error-message {
   margin-top: 1rem;
