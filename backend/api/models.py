@@ -30,9 +30,10 @@ class WebsiteUserManager(BaseUserManager):
 
 
 # Function to validate strong passwords
-#Validate password meets complexity requirements
 def validate_strong_password(value):
-    if not re.match(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$', value):
+    value = value.strip()
+    pattern = r"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#\?!@\$%\^&\*-]).{8,}$"
+    if not re.match(pattern, value):
         raise ValidationError(
             "Password must be at least 8 characters long and include uppercase, lowercase, a number, and a special character."
         )

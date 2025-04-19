@@ -18,7 +18,7 @@ urlpatterns = [
     path('books/favourites/', views.FavouriteListView.as_view(), name='user-favourite-books'), # users favourited books
 
     #Profile Endpoints
-    path('user/profile/<int:user_id>/', views.UserProfileView.as_view(), name='current-user-profile'),  # Current user
+    path('user/profile/', views.UserProfileView.as_view(), name='current-user-profile'),  # Current user
     path('public/profile/<int:user_id>/', views.PublicUserProfileView.as_view(), name='public-user-profile'), #other users profile
     path('user/delete-account/', views.UserDeleteView.as_view(), name='delete-account'), # delete user
 

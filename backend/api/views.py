@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework import generics, status
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated, AllowAny, IsAuthenticatedOrReadOnly
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import (
     ListCreateAPIView,
@@ -58,6 +58,7 @@ class UserCreateView(generics.CreateAPIView):
 # Retrieve authenticated user's profile
 class UserProfileView(RetrieveUpdateAPIView):
     permission_classes = [IsAuthenticated]
+    
 
     def get(self, request):
         user = request.user
@@ -148,7 +149,7 @@ class UserDeleteView(DestroyAPIView):
 class BookListCreateView(generics.ListCreateAPIView):
     """List and create books (user-specific)"""
     serializer_class = BookSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrReadOnly]
     pagination_class = CustomPagination
     queryset = Book.objects.all()
 

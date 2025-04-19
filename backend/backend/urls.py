@@ -13,7 +13,6 @@ urlpatterns = [
     path("api/token/refresh/", TokenRefreshView.as_view(), name="refresh"),
     path("api-auth/", include("rest_framework.urls")),
     path('api/', include('api.urls')),
-    path("api/user/profile/", UserProfileView.as_view(), name="user-profile"),
 ]
 
 if settings.DEBUG:

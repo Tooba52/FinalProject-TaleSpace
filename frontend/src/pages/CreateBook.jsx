@@ -170,22 +170,24 @@ function CreateBook() {
 
           <div className="createbook-form-fields">
             {/* Title field */}
-            <label>Title</label>
+            <label htmlFor="title-input">Title</label>
             <input
+              id="title-input"
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
             />
 
             {/* Description field */}
-            <label>Description</label>
+            <label htmlFor="description-textarea">Description</label>
             <textarea
+              id="description-textarea"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
             ></textarea>
 
             {/* Genre selection */}
-            <label>Select Genres (Choose up to 3)</label>
+            <label htmlFor="genre-select">Select Genres (Choose up to 3)</label>
             <div className="createbook-genres">
               {genres.map((genre) => (
                 <button
@@ -199,8 +201,9 @@ function CreateBook() {
             </div>
 
             {/* Language selection */}
-            <label>Language</label>
+            <label htmlFor="language-select">Language</label>
             <select
+              id="language-select"
               value={language}
               onChange={(e) => setLanguage(e.target.value)}
             >
@@ -211,7 +214,7 @@ function CreateBook() {
             </select>
 
             {/* Mature rating */}
-            <label>Rating</label>
+            <label htmlFor="rating-select">Rating</label>
             <div className="mature-rating">
               <span>Mature</span>
               <input

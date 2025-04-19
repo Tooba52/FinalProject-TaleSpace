@@ -10,3 +10,6 @@ psycopg2-binary
 python-dotenv
 Pillow
 python-dateutil>=2.8.2
+pytest
+pytest-mock
+pytest-django
