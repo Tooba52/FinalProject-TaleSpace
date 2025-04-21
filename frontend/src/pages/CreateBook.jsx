@@ -6,10 +6,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
 function CreateBook() {
-  // Navigate function for routing
   const navigate = useNavigate();
-
-  // State variables for handling input fields and form data
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [selectedGenres, setSelectedGenres] = useState([]);
@@ -19,7 +16,7 @@ function CreateBook() {
   const [coverFile, setCoverFile] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // List of available genres to choose from
+  // available genres
   const genres = [
     "Action",
     "Adventure",
@@ -50,37 +47,36 @@ function CreateBook() {
     "Thriller",
   ];
 
-  // Empty useEffect to keep the initial setup
   useEffect(() => {}, []);
 
-  // Handle click on a genre button
+  // handle genre selection
   const handleGenreClick = (genre) => {
     if (selectedGenres.includes(genre)) {
-      // Remove genre if already selected
+      // remove if already selected
       setSelectedGenres(selectedGenres.filter((g) => g !== genre));
     } else if (selectedGenres.length < 3) {
-      // Add genre if fewer than 3 genres are selected
+      // add if less than 3 selected
       setSelectedGenres([...selectedGenres, genre]);
     }
   };
 
-  // Handle the cover photo upload
+  // handle cover photo upload
   const handleCoverPhotoChange = (e) => {
     const file = e.target.files[0];
-    // Check if the file is an image and less than 5MB in size
+    // check file type and size
     if (
       file &&
       file.size <= 5 * 1024 * 1024 &&
       (file.type === "image/jpeg" || file.type === "image/png")
     ) {
-      setCoverPhoto(URL.createObjectURL(file)); // Set preview URL for the cover photo
-      setCoverFile(file); // Store the file itself for submission
+      setCoverPhoto(URL.createObjectURL(file));
+      setCoverFile(file);
     } else {
       alert("Please upload a valid image (JPEG or PNG) under 5MB.");
     }
   };
 
-  // Handle saving the book data
+  // save book data
   const handleSave = async () => {
     // Validate required fields
     if (!title || !description || selectedGenres.length === 0 || !language) {
@@ -88,8 +84,9 @@ function CreateBook() {
       return;
     }
 
-    setIsLoading(true); // Start loading
+    setIsLoading(true);
 
+    // prepare from data
     const formData = new FormData();
     formData.append("title", title);
     formData.append("description", description);
@@ -97,12 +94,9 @@ function CreateBook() {
     formData.append("language", language);
     formData.append("mature", mature);
     if (coverFile) {
-      formData.append("cover_photo", coverFile); // Add cover photo if provided
+      formData.append("cover_photo", coverFile);
     }
-
-    // Get the user's token for authorization
     const token = localStorage.getItem("access");
-
     try {
       const response = await api.post("/api/books/", formData, {
         headers: {
@@ -111,10 +105,9 @@ function CreateBook() {
         },
       });
 
-      // If book is created successfully, navigate to the book's chapter creation page
       if (response.status === 201) {
         alert("Book created successfully!");
-        // Reset the form fields
+        // reset form
         setTitle("");
         setDescription("");
         setSelectedGenres([]);
@@ -123,12 +116,13 @@ function CreateBook() {
         setCoverPhoto(null);
         setCoverFile(null);
 
+        // go to chapter creation
         navigate(`/write/books/${response.data.book_id}/chapters/`, {
-          replace: true, // Prevents the user from navigating back to this form after successful submission
+          replace: true, // prevent going back
         });
       }
     } catch (error) {
-      // Handle different error types
+      // handle errors
       if (error.response) {
         alert(
           `Failed to create book: ${
@@ -141,18 +135,18 @@ function CreateBook() {
         alert("Error setting up request");
       }
     } finally {
-      setIsLoading(false); // Stop loading after the request
+      setIsLoading(false);
     }
   };
 
   return (
     <div className="create-book-container">
-      {/* Render Navbar component without search and write button */}
-      <Navbar showSearch={false} showWriteButton={false} />
+      {/* render Navbar component without write button */}
+      <Navbar showWriteButton={false} />
 
       <div className="createbook-container">
         <div className="createbook-form">
-          {/* Display cover photo if uploaded, or show placeholder */}
+          {/* display cover photo if uploaded, or show placeholder */}
           <div className="cover-photo">
             {coverPhoto ? (
               <img src={coverPhoto} alt="Cover Preview" />
@@ -169,7 +163,7 @@ function CreateBook() {
           </div>
 
           <div className="createbook-form-fields">
-            {/* Title field */}
+            {/* title field */}
             <label htmlFor="title-input">Title</label>
             <input
               id="title-input"
@@ -178,7 +172,7 @@ function CreateBook() {
               onChange={(e) => setTitle(e.target.value)}
             />
 
-            {/* Description field */}
+            {/* description field */}
             <label htmlFor="description-textarea">Description</label>
             <textarea
               id="description-textarea"
@@ -186,7 +180,7 @@ function CreateBook() {
               onChange={(e) => setDescription(e.target.value)}
             ></textarea>
 
-            {/* Genre selection */}
+            {/* genre selection */}
             <label htmlFor="genre-select">Select Genres (Choose up to 3)</label>
             <div className="createbook-genres">
               {genres.map((genre) => (
@@ -200,7 +194,7 @@ function CreateBook() {
               ))}
             </div>
 
-            {/* Language selection */}
+            {/* language selection */}
             <label htmlFor="language-select">Language</label>
             <select
               id="language-select"
@@ -213,7 +207,7 @@ function CreateBook() {
               <option value="French">French</option>
             </select>
 
-            {/* Mature rating */}
+            {/* mature rating */}
             <label htmlFor="rating-select">Rating</label>
             <div className="mature-rating">
               <span>Mature</span>
@@ -224,11 +218,11 @@ function CreateBook() {
               />
             </div>
 
-            {/* Save button */}
+            {/* save button */}
             <button
               className="createbook-save-button"
               onClick={handleSave}
-              disabled={isLoading} // Disable button while saving
+              disabled={isLoading}
               aria-live="polite"
             >
               {isLoading ? "Saving..." : "Save"}
@@ -237,7 +231,7 @@ function CreateBook() {
         </div>
       </div>
 
-      {/* Render Footer component */}
+      {/* footer */}
       <Footer />
     </div>
   );

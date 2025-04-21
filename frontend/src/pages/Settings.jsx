@@ -8,7 +8,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
 function Settings() {
-  // State for user profile data and UI handling
   const [userData, setUserData] = useState({
     first_name: "",
     last_name: "",
@@ -27,16 +26,16 @@ function Settings() {
   });
   const [passwordError, setPasswordError] = useState(null);
 
-  // Fetch user profile data when component mounts
+  // Fetch user profile
   useEffect(() => {
     fetchUserProfile();
   }, []);
 
-  // Function to fetch user's profile data from API
+  // get user data
   const fetchUserProfile = async () => {
     try {
       const token = localStorage.getItem("access");
-      if (!token) return; // If no token, don't fetch
+      if (!token) return;
       const res = await api.get("/api/user/profile/");
       setUserData({
         first_name: res.data.first_name || "",
@@ -46,17 +45,17 @@ function Settings() {
     } catch {
       setError("Failed to load profile data.");
     } finally {
-      setLoading(false); // Stop loading after data fetch
+      setLoading(false);
     }
   };
 
-  // Handle form submission, updating profile or password
+  // handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
     setPasswordError(null);
 
-    // If password fields are shown, validate password
+    // validate new password if shown
     if (showPasswordFields && passwordData.new_password) {
       if (!validatePassword(passwordData.new_password)) {
         setPasswordError("Password must be stronger.");
@@ -68,23 +67,22 @@ function Settings() {
       }
     }
 
-    // Data to send to the backend
+    // data to update
     const dataToSend = {
       first_name: userData.first_name,
       last_name: userData.last_name,
       email: userData.email,
     };
 
-    // If password fields are shown, include password data
+    // add password fields if user is changing password
     if (showPasswordFields) {
       dataToSend.current_password = passwordData.current_password;
       dataToSend.new_password = passwordData.new_password;
     }
 
     try {
-      // API call to update user profile data
       await api.put("/api/user/profile/", dataToSend);
-      setShowPasswordFields(false); // Hide password fields after update
+      setShowPasswordFields(false);
       setPasswordData({
         current_password: "",
         new_password: "",
@@ -102,7 +100,7 @@ function Settings() {
     }
   };
 
-  // Handle input changes for user profile fields
+  // handle changes in profile fields
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setUserData((prev) => ({
@@ -111,7 +109,7 @@ function Settings() {
     }));
   };
 
-  // Handle input changes for password fields
+  // handle changes in password fields
   const handlePasswordChange = (e) => {
     const { name, value } = e.target;
     setPasswordData((prev) => ({
@@ -120,7 +118,7 @@ function Settings() {
     }));
   };
 
-  // Function to handle account deletion
+  // delete account with confirmation
   const handleDeleteAccount = async () => {
     const confirmed = window.confirm("Delete account permanently?");
     if (!confirmed) return;
@@ -153,7 +151,7 @@ function Settings() {
     }
   };
 
-  // Toggle visibility of password fields
+  // show or hide password fields
   const togglePasswordFields = () => {
     setShowPasswordFields(!showPasswordFields);
     setPasswordError(null);
@@ -177,12 +175,12 @@ function Settings() {
       <div className="settings-container">
         <h2>Account Settings</h2>
 
-        {/* Display error message if there's an error */}
+        {/* show error if any */}
         {error && <div className="error-message">{error}</div>}
 
-        {/* Settings form */}
+        {/* settings form */}
         <form onSubmit={handleSubmit} className="settings-form">
-          {/* Profile information section */}
+          {/* profile fields */}
           <section className="settings-section">
             <h3>Profile Information</h3>
             <div className="settings-form-group">
@@ -219,7 +217,7 @@ function Settings() {
             </div>
           </section>
 
-          {/* Account actions section */}
+          {/* account actions */}
           <section className="settings-section">
             <h3>Account Actions</h3>
             <div className="settings-form-group">
@@ -234,10 +232,10 @@ function Settings() {
               </button>
             </div>
 
-            {/* Show password change fields if toggled */}
+            {/* show password fields if user toggled */}
             {showPasswordFields && (
               <>
-                {/* Current password field */}
+                {/* current password */}
                 <div className="form-group password-container">
                   <label htmlFor="current_password">Current Password</label>
                   <div className="password-input-wrapper">
@@ -261,7 +259,7 @@ function Settings() {
                   </div>
                 </div>
 
-                {/* New password field */}
+                {/* new password */}
                 <div className="form-group password-container">
                   <label htmlFor="new_password">New Password</label>
                   <div className="password-input-wrapper">
@@ -283,7 +281,7 @@ function Settings() {
                   </div>
                 </div>
 
-                {/* Confirm new password field */}
+                {/* confirm new password */}
                 <div className="form-group password-container">
                   <label htmlFor="confirm_password">Confirm New Password</label>
                   <div className="password-input-wrapper">
@@ -307,14 +305,14 @@ function Settings() {
                   </div>
                 </div>
 
-                {/* Display password errors */}
+                {/* password error message */}
                 {passwordError && (
                   <div className="password-error-message">{passwordError}</div>
                 )}
               </>
             )}
 
-            {/* Delete account button */}
+            {/* delete account button */}
             <div className="settings-form-group">
               <button
                 type="button"
@@ -326,13 +324,12 @@ function Settings() {
             </div>
           </section>
 
-          {/* Submit button */}
+          {/* save changes button */}
           <button type="submit" className="save-button">
             Save Changes
           </button>
         </form>
       </div>
-
       <Footer />
     </div>
   );

@@ -1,3 +1,10 @@
+# Code resued from: 
+# Author: Tech With Tim
+# Video Title: Django & React Web App Tutorial - Authentication, Databases, Deployment & More...
+# Video Link:  https://www.youtube.com/watch?v=c-QsfbznSXI 
+# Code reused for models were based of Tims model template, most models were mostly editted and changed to suit my site
+
+
 from django.db import models 
 from django.contrib.auth.models import AbstractUser 
 from django.core.exceptions import ValidationError
@@ -6,12 +13,28 @@ from django.contrib.auth.models import BaseUserManager
 import re 
 
 
+
 # ========================
+# Password validation function
+def validate_strong_password(value):
+        pattern = r"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#\?!@\$%\^&\*-]).{8,}$"
+        if not re.match(pattern, value):
+            raise ValidationError(
+                "Password must be at least 8 characters long and include uppercase, lowercase, a number, and a special character."
+            )
+
+
+# ================================================
+# Code resued from: 
+# Author: veryacademy
+# Github Repository: YT-Django-Theory-Create-Custom-User-Models-Admin-Testing
+# Github Link - https://github.com/veryacademy/YT-Django-Theory-Create-Custom-User-Models-Admin-Testing/tree/master
+# # Code reused Lines - 31-38 
 
 # creates a custom WebsiteUser 
 class WebsiteUserManager(BaseUserManager):
 
-    # Creates and returns a regular user with an email and password.
+   # Create and return a regular user with an email and password
     def create_user(self, email, password=None, **extra_fields):
         if not email:
             raise ValueError("The Email field must be set") 
@@ -21,57 +44,32 @@ class WebsiteUserManager(BaseUserManager):
         user.save(using=self._db)  
         return user
 
-    # Creates and returns a superuser with all admin privileges.
-    def create_superuser(self, email, password=None, **extra_fields):
-        extra_fields.setdefault("is_staff", True)  
-        extra_fields.setdefault("is_superuser", True) 
-
-        return self.create_user(email, password, **extra_fields) 
-
-
-# Function to validate strong passwords
-def validate_strong_password(value):
-    value = value.strip()
-    pattern = r"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#\?!@\$%\^&\*-]).{8,}$"
-    if not re.match(pattern, value):
-        raise ValidationError(
-            "Password must be at least 8 characters long and include uppercase, lowercase, a number, and a special character."
-        )
-
 
 #Extended user model using email as primary identifier
 class WebsiteUser(AbstractUser):
-    # Remove default username field and use email instead
-    username = None  
-    email = models.EmailField(unique=True)
 
-    # User fields
+    username = None   # Use email instead of username
+    email = models.EmailField(unique=True)
     user_id = models.AutoField(primary_key=True)
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
     date_of_birth = models.DateField(null=True, blank=True)
-
-    # Password field with validation
     password = models.CharField(validators=[validate_strong_password], max_length=128)  # Enforce strong password rules
 
-    # Authentication configuration
-    EMAIL_FIELD = "email"  # Define email as the primary authentication field
-    USERNAME_FIELD = "email"  # Use email instead of username for login
-    REQUIRED_FIELDS = []  # No additional required fields
+    EMAIL_FIELD = "email"  # Set email as the primary identifier for login
+    USERNAME_FIELD = "email"  # Use email for login instead of username
+    REQUIRED_FIELDS = [] 
 
-    objects = WebsiteUserManager()  # Use custom user manager
+    objects = WebsiteUserManager() 
 
     def __str__(self):
-        return self.email  # Return email as string representation
+        return self.email  
 
-
-# ========================
-
-
+# ================================================
 # Model representing a published book
 class Book(models.Model):
 
-    # status choices for books
+    # Choices for book status (public or private)
     BOOK_STATUS_CHOICES = [
         ('public', 'Public'),
         ('private', 'Private'),
@@ -96,9 +94,7 @@ class Book(models.Model):
         return self  
     
     
-# ========================
-
-
+# ================================================
 #Model representing a book chapter
 class Chapter(models.Model):
 
@@ -126,9 +122,7 @@ class Chapter(models.Model):
         return f"Chapter {self.chapter_number}: {self.chapter_title or ' '} of {self.book.title}"
     
 
-# ========================
-
-
+# ================================================
 #Model representing a favourite
 class Favourite(models.Model):
 
@@ -142,9 +136,7 @@ class Favourite(models.Model):
         unique_together = ('user', 'book')
 
 
-# ========================
-
-
+# ================================================
 #Model representing a comment on a book
 class Comment(models.Model):
 
@@ -159,10 +151,8 @@ class Comment(models.Model):
         return f"Comment by {self.comment_user.email} on {self.comment_book.title}"
     
 
-# ========================
-
-
-#Tracks who follows whom (simple follow/unfollow)"""
+# ================================================
+#Tracks who follows whom (simple follow/unfollow)
 class Follow(models.Model):
 
     #fields for follow

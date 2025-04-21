@@ -1,3 +1,10 @@
+# Code resued from: 
+# Author: Tech With Tim
+# Video Title: Django & React Web App Tutorial - Authentication, Databases, Deployment & More...
+# Video Link:  https://www.youtube.com/watch?v=c-QsfbznSXI 
+# Code reused for url were based of Tims url template, most url were mostly editted and changed to suit my site
+
+ 
 from django.urls import path
 from . import views
 
@@ -30,18 +37,18 @@ urlpatterns = [
     #Search Endpoint
     path('books/search/', views.BookSearchListView.as_view(), name='book-search'),  # search for book
 
-    # Comments Endpoints
+    #Comments Endpoints
     path('books/<int:book_id>/comments/', views.CommentListView.as_view(), name='book-comments'),  # List comments for a book
     path('books/<int:book_id>/comments/create/', views.CommentCreateView.as_view(), name='create-comment'),  # Create a comment for a book
     path('comments/<int:comment_id>/delete/', views.CommentDeleteView.as_view(), name='delete-comment'),  # Delete a comment
 
-    # Follow  Endpoints
+    #Follow  Endpoints
     path('follow/<int:user_id>/', views.FollowCreateView.as_view(), name='follow-user'), # follow user
     path('unfollow/<int:user_id>/', views.FollowDestroyView.as_view(), name='unfollow-user'), # unfollow user
     path('check-follow/<int:user_id>/', views.FollowStatusView.as_view(), name='check-follow'), # check if following
     path('followers/<int:user_id>/', views.FollowerListView.as_view(), name='user-followers'), # follower count
     path('following/<int:user_id>/', views.FollowingListView.as_view(), name='user-following'), # following count
 
-    #genre endpoints
-    path('browse/<str:genreName>/page/<int:pageNumber>', views.GenreBookListView.as_view(), name='browse-genre'),
+    #Genre Endpoints
+    path('browse/<str:genreName>/page/<int:pageNumber>', views.GenreBookListView.as_view(), name='browse-genre'), # browse books by genre
 ]

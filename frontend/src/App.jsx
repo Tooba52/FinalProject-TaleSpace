@@ -1,3 +1,9 @@
+// Code resued from: 
+// Author: Tech With Tim
+// Video Title: Django & React Web App Tutorial - Authentication, Databases, Deployment & More...
+// Video Link:  https://www.youtube.com/watch?v=c-QsfbznSXI 
+// Code reused Lines - 7-191, changes made include adding more routes
+
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";

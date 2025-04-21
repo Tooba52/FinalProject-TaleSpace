@@ -1,16 +1,22 @@
+// Code resued from: 
+// Author: Tech With Tim
+// Video Title: Django & React Web App Tutorial - Authentication, Databases, Deployment & More...
+// Video Link:  https://www.youtube.com/watch?v=c-QsfbznSXI 
+// Code reused Lines - 7-84
+
 import { Navigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import api from "../api";
 import { REFRESH_TOKEN, ACCESS_TOKEN } from "../constants";
 import { useState, useEffect } from "react";
 
-// Utility function to get token from localStorage
+// get token from local storage
 const getToken = (key) => localStorage.getItem(key);
 
 function ProtectedRoute({ children }) {
-  const [authStatus, setAuthStatus] = useState("loading"); // "loading", "authorized", "unauthorized"
+  const [authStatus, setAuthStatus] = useState("loading");
 
-  // Refresh JWT token using the refresh token
+  // try to refresh the access token
   const refreshToken = async () => {
     const refreshToken = getToken(REFRESH_TOKEN);
     if (!refreshToken) {
@@ -37,7 +43,7 @@ function ProtectedRoute({ children }) {
     }
   };
 
-  // Check if the user is authenticated
+  // check if user has valid token
   const auth = async () => {
     const token = getToken(ACCESS_TOKEN);
     if (!token) {
@@ -50,6 +56,7 @@ function ProtectedRoute({ children }) {
       const tokenExpiration = decoded.exp;
       const now = Date.now() / 1000;
 
+      // if token expired, try to refresh it
       if (tokenExpiration < now) {
         await refreshToken();
       } else {
@@ -65,11 +72,12 @@ function ProtectedRoute({ children }) {
     auth();
   }, []);
 
+  // show loading while checking auth
   if (authStatus === "loading") {
-    return <div>Loading...</div>; // Loading state
+    return <div>Loading...</div>;
   }
 
-  // If the user is authorized, render the protected route's children
+  // show protected content or redirect to login
   return authStatus === "authorized" ? children : <Navigate to="/login" />;
 }
 

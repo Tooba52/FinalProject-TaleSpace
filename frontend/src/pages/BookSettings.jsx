@@ -27,6 +27,7 @@ function BookSettings() {
     fetchBookDetails();
   }, [book_id]);
 
+  // fetch book details
   const fetchBookDetails = () => {
     api
       .get(`/api/books/${book_id}/`)
@@ -43,6 +44,7 @@ function BookSettings() {
       .catch(() => alert("Error loading book details"));
   };
 
+  // handle input chnages
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -51,6 +53,7 @@ function BookSettings() {
     });
   };
 
+  //handle image upload
   const handleCoverChange = (e) => {
     const file = e.target.files[0];
     if (file && (file.type === "image/jpeg" || file.type === "image/png")) {
@@ -61,6 +64,7 @@ function BookSettings() {
     }
   };
 
+  //handle genre selection
   const handleGenreClick = (genre) => {
     const currentGenres = formData.genres;
     let updatedGenres;
@@ -79,17 +83,17 @@ function BookSettings() {
     });
   };
 
+  // save changes
   const handleSave = () => {
     const data = new FormData();
 
-    // Use the component's formData STATE, not the new FormData object
+    // prepare from data
     data.append("title", formData.title);
     data.append("description", formData.description);
     data.append("genres", JSON.stringify(formData.genres));
     data.append("status", formData.status);
     data.append("mature", formData.mature);
     data.append("language", book.language);
-
     if (coverFile) {
       data.append("cover_photo", coverFile);
     }
@@ -124,6 +128,7 @@ function BookSettings() {
       });
   };
 
+  // delete book
   const handleDelete = () => {
     api
       .delete(`/api/books/delete/${book_id}/`)
@@ -135,6 +140,7 @@ function BookSettings() {
 
   if (!book) return <div>Loading...</div>;
 
+  //available genres
   const genres = [
     "Action",
     "Adventure",
@@ -170,8 +176,10 @@ function BookSettings() {
       <Navbar />
 
       <div className="book-settings-container">
+        {/* book cover section */}
         <div className="book-card-view">
           {isEditing ? (
+            // cover upload in edit mode
             <div className="cover-upload-container">
               <label className="cover-upload-label">
                 <input
@@ -183,18 +191,18 @@ function BookSettings() {
                 {coverPreview ? (
                   <img
                     src={coverPreview}
-                    alt="New Cover Preview"
+                    alt="new cover preview"
                     className="cover-preview"
                   />
                 ) : book.cover_url ? (
                   <img
                     src={book.cover_url}
-                    alt="Current Cover"
+                    alt="current cover"
                     className="cover-preview"
                   />
                 ) : (
                   <div className="cover-upload-placeholder">
-                    Click to upload new cover
+                    click to upload new cover
                   </div>
                 )}
               </label>
@@ -206,20 +214,23 @@ function BookSettings() {
                   }}
                   className="remove-cover-btn"
                 >
-                  Remove
+                  remove
                 </button>
               )}
             </div>
           ) : (
+            // display book cover in view mode
             <Book book={book} />
           )}
         </div>
 
+        {/* book details form */}
         <div className="book-settings-form">
           {isEditing ? (
+            // edit form
             <>
               <div className="form-group">
-                <label>Title</label>
+                <label>title</label>
                 <input
                   type="text"
                   name="title"
@@ -229,7 +240,7 @@ function BookSettings() {
               </div>
 
               <div className="form-group">
-                <label>Description</label>
+                <label>description</label>
                 <textarea
                   name="description"
                   value={formData.description}
@@ -238,7 +249,7 @@ function BookSettings() {
               </div>
 
               <div className="form-group">
-                <label>Genres (max 3)</label>
+                <label>genres (max 3)</label>
                 <div className="createbook-genres">
                   {genres.map((genre) => (
                     <button
@@ -258,14 +269,14 @@ function BookSettings() {
               </div>
 
               <div className="form-group">
-                <label>Status</label>
+                <label>status</label>
                 <select
                   name="status"
                   value={formData.status}
                   onChange={handleInputChange}
                 >
-                  <option value="public">Public</option>
-                  <option value="private">Private</option>
+                  <option value="public">public</option>
+                  <option value="private">private</option>
                 </select>
               </div>
 
@@ -282,41 +293,44 @@ function BookSettings() {
                       });
                     }}
                   />
-                  <span className="mature-toggle-label">Mature Content</span>
+                  <span className="mature-toggle-label">mature content</span>
                 </label>
               </div>
             </>
           ) : (
+            // view mode
             <>
               <h2>{book.title}</h2>
               <p className="book-description">{book.description}</p>
 
               <div className="book-meta">
                 <div>
-                  <strong>Genres:</strong> {book.genres.join(", ")}
+                  <strong>genres:</strong> {book.genres.join(", ")}
                 </div>
                 <div>
-                  <strong>Status:</strong> {book.status}
+                  <strong>status:</strong> {book.status}
                 </div>
                 {book.mature && (
                   <div className="mature-status">
-                    <span className="mature-badge">Mature</span>
+                    <span className="mature-badge">mature</span>
                   </div>
                 )}
               </div>
             </>
           )}
 
+          {/* action buttons */}
           <div className="action-buttons">
             <div className="left-buttons">
               {isEditing ? (
                 <>
                   <button onClick={handleSave} className="save-btn">
-                    Save Changes
+                    save changes
                   </button>
                   <button
                     onClick={() => {
                       setIsEditing(false);
+                      // reset form to original book data
                       setFormData({
                         title: book.title,
                         description: book.description,
@@ -326,12 +340,12 @@ function BookSettings() {
                     }}
                     className="cancel-btn"
                   >
-                    Cancel
+                    cancel
                   </button>
                 </>
               ) : (
                 <button onClick={() => setIsEditing(true)} className="edit-btn">
-                  Edit Book
+                  edit book
                 </button>
               )}
 
@@ -339,7 +353,7 @@ function BookSettings() {
                 onClick={() => setShowDeleteModal(true)}
                 className="delete-btn"
               >
-                Delete Book
+                delete book
               </button>
             </div>
 
@@ -347,21 +361,22 @@ function BookSettings() {
               to={`/write/books/${book.book_id}/chapters`}
               className="continue-writing-btn"
             >
-              Continue Writing
+              continue writing
             </Link>
           </div>
         </div>
       </div>
 
+      {/* delete confirmation modal */}
       <ConfirmationModal
         isOpen={showDeleteModal}
         onConfirm={handleDelete}
         onCancel={() => setShowDeleteModal(false)}
-        title="Delete Book"
-        confirmText="Delete"
+        title="delete book"
+        confirmText="delete"
       >
         <p>
-          Are you sure you want to delete this book? This action cannot be
+          are you sure you want to delete this book? this action cannot be
           undone.
         </p>
       </ConfirmationModal>

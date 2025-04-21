@@ -8,11 +8,8 @@ import Footer from "../components/Footer";
 import "../styles/Profile.css";
 
 function UserProfile() {
-  // State and routing setup
   const { user_id } = useParams();
   const navigate = useNavigate();
-
-  // User data state
   const [userData, setUserData] = useState({
     firstName: "",
     lastName: "",
@@ -24,7 +21,7 @@ function UserProfile() {
   const [isLoading, setIsLoading] = useState(true);
   const [isFollowing, setIsFollowing] = useState(false);
 
-  // Fetch data on component mount
+  // Fetch data
   useEffect(() => {
     if (!user_id) return;
     fetchUserProfile();
@@ -33,7 +30,7 @@ function UserProfile() {
     checkFollowStatus();
   }, [user_id, navigate]);
 
-  // Fetch basic user profile info
+  // get user profile data
   const fetchUserProfile = () => {
     setIsLoading(true);
     api
@@ -51,7 +48,7 @@ function UserProfile() {
       .finally(() => setIsLoading(false));
   };
 
-  // Fetch user's published books
+  // get all books by user and filter public ones
   const fetchUserBooks = () => {
     api.get(`/api/books/?author_id=${user_id}`).then((res) => {
       const books = res.data.results || res.data;
@@ -62,7 +59,7 @@ function UserProfile() {
     });
   };
 
-  // Get follower/following counts
+  // get follower and following counts
   const fetchFollowStats = () => {
     Promise.all([
       api.get(`/api/followers/${user_id}/`),
@@ -76,14 +73,14 @@ function UserProfile() {
     });
   };
 
-  // Check if current user follows this profile
+  // check if current user follows this profile
   const checkFollowStatus = () => {
     api
       .get(`/api/check-follow/${user_id}/`)
       .then((res) => setIsFollowing(res.data.is_following));
   };
 
-  // Handle follow/unfollow action
+  // follow or unfollow the user
   const handleFollow = () => {
     const action = isFollowing
       ? api.delete(`/api/unfollow/${user_id}/`)
@@ -107,7 +104,7 @@ function UserProfile() {
       .catch(() => setIsFollowing(isFollowing));
   };
 
-  // Handle book click navigation
+  // open book overview when a book is clicked
   const handleBookClick = (bookId) => {
     navigate(`/overview/books/${bookId}`);
   };
@@ -120,7 +117,7 @@ function UserProfile() {
       <Navbar />
 
       <div className="profile-container">
-        {/* Profile header section */}
+        {/* profile info */}
         <div className="profile-header">
           <img src={profile} alt="Profile" className="profile-icon" />
           <div className="profile-info">
@@ -129,7 +126,7 @@ function UserProfile() {
             </h2>
             {userData.bio && <p className="user-bio">{userData.bio}</p>}
 
-            {/* Follow stats */}
+            {/* follow stats */}
             <div className="follow-stats">
               <div className="stat-item">
                 <strong>Followers</strong>
@@ -141,7 +138,7 @@ function UserProfile() {
               </div>
             </div>
 
-            {/* Follow button */}
+            {/* follow/unfollow button */}
             <button
               className={`follow-button ${isFollowing ? "following" : ""}`}
               onClick={handleFollow}
@@ -151,7 +148,7 @@ function UserProfile() {
           </div>
         </div>
 
-        {/* User's books section */}
+        {/* book list section */}
         <section className="books-section">
           <h3>{userData.firstName}'s Books</h3>
           <div className="book-list">
@@ -170,7 +167,7 @@ function UserProfile() {
             )}
           </div>
 
-          {/* View all link if more than 7 books */}
+          {/* view all link */}
           {userBooks.length > 7 && (
             <Link
               to={`/userprofile/${user_id}/books/page/1`}

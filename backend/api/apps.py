@@ -1,4 +1,4 @@
-from django.apps import AppConfig # Import the base class for app configurations
+from django.apps import AppConfig
 
 
 class ApiConfig(AppConfig): # Define a configuration class for the "api" app

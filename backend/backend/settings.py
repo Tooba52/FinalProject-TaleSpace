@@ -9,7 +9,13 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
+# Code resued from: 
+# Author: Tech With Tim
+# Video Title: https://www.youtube.com/watch?v=c-QsfbznSXI
+# Video Link - Django & React Web App Tutorial - Authentication, Databases, Deployment & More...
+# Lines reused specified below
 
+# Code reused Lines - 18 - 25 
 from pathlib import Path
 from datetime import timedelta
 from dotenv import load_dotenv
@@ -33,6 +39,7 @@ SECRET_KEY = 'django-insecure-upefj3wohc$4$%s9u2ob-gsbqb7e)1%mbepdz2(y+3e$pz5c)n
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+# Code reused Lines - 43-65, added pagination myself
 ALLOWED_HOSTS = ["*"]
 
 REST_FRAMEWORK = {
@@ -55,10 +62,10 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=30),    # Refresh token expires in 30 days
     'USER_ID_FIELD': 'user_id',  # This tells simplejwt to use 'user_id' instead of 'id'
     'SIGNING_KEY': SECRET_KEY,
-
 }
-# Application definition
 
+
+# Code reused Lines - 76-78
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -89,6 +96,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# Code reused Lines - 108
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -181,5 +189,6 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Code reused Lines - 193-194
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True

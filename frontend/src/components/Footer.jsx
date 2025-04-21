@@ -2,7 +2,7 @@ import React from "react";
 import "../styles/Footer.css";
 import { FaGithub, FaTwitter, FaInstagram, FaBook } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
-import { Link } from "react-router-dom"; // Import Link to use React Router for navigation
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
@@ -15,6 +15,7 @@ const Footer = () => {
           <p>
             Your platform for discovering and sharing stories with the world.
           </p>
+          {/* social links */}
           <div className="social-icons">
             <span aria-label="GitHub">
               <FaGithub />
@@ -28,12 +29,12 @@ const Footer = () => {
           </div>
         </div>
 
+        {/* other links */}
         <div className="footer-section">
           <h3 className="footer-heading">Quick Links</h3>
           <ul className="footer-links">
             <li>
               <Link to="/">Home</Link>{" "}
-              {/* Updated to use Link for React Router */}
             </li>
             <li>
               <Link to="/profile">Profile</Link>
@@ -47,6 +48,7 @@ const Footer = () => {
           </ul>
         </div>
 
+        {/* info */}
         <div className="footer-section">
           <h3 className="footer-heading">Contact Us</h3>
           <div className="contact-info">

@@ -7,7 +7,6 @@ import Footer from "../components/Footer";
 import Pagination from "../components/Pagination";
 
 function YourBooks() {
-  // State management for books, loading, errors, etc.
   const [userBooks, setUserBooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -17,19 +16,19 @@ function YourBooks() {
   const [totalPages, setTotalPages] = useState(0);
   const navigate = useNavigate();
 
-  // Fetch user profile on component mount
+  // fetch user profile once
   useEffect(() => {
-    fetchUserProfile();
-  }, []);
+    const fetchData = async () => {
+      await fetchUserProfile(); 
+      if (userId) {
+        await fetchUserBooks(); 
+      }
+    };
 
-  // Fetch user books when userId or page changes
-  useEffect(() => {
-    if (userId) {
-      fetchUserBooks();
-    }
+    fetchData();
   }, [userId, currentPage]);
 
-  // Get current user's ID
+  // get logged-in user's id
   const fetchUserProfile = () => {
     api
       .get("/api/user/profile/")
@@ -42,7 +41,7 @@ function YourBooks() {
       });
   };
 
-  // Fetch books written by the user
+  // get books written by user
   const fetchUserBooks = async () => {
     try {
       setLoading(true);
@@ -63,12 +62,12 @@ function YourBooks() {
     }
   };
 
-  // Handle book click - navigate to settings
+  // go to book settings page
   const handleBookClick = (bookId) => {
     navigate(`/settings/books/${bookId}`);
   };
 
-  // Loading and error states
+  // show loading state
   if (loading) return <div className="loading-spinner">Loading...</div>;
   if (error) return <div className="error-message">{error}</div>;
 
@@ -77,15 +76,15 @@ function YourBooks() {
     <div className="your-books-container">
       <Navbar />
 
-      {/* Page header */}
+      {/* heading */}
       <div className="content-wrapper">
         <div className="genre-header">
-          <h1>Your Books</h1>
+          <h1>your books</h1>
           <div className="header-divider"></div>
         </div>
       </div>
 
-      {/* Books grid */}
+      {/* book grid */}
       <div className="search-container">
         <div className="book-grid-container">
           <div className="book-grid">
@@ -101,14 +100,14 @@ function YourBooks() {
               ))
             ) : (
               <div className="no-books-message">
-                {!loading && "You haven't written any books yet."}
+                {!loading && "you haven't written any books yet."}
               </div>
             )}
           </div>
         </div>
       </div>
 
-      {/* Pagination */}
+      {/* pagination */}
       <Pagination
         totalPages={totalPages}
         currentPage={currentPage}

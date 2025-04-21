@@ -1,6 +1,6 @@
 import "../styles/LoadingIndicator.css";
 
-// LoadingIndicator component that displays
+// loadingIndicator component that displays on form
 const LoadingIndicator = () => {
   return (
     <div className="loading-container">

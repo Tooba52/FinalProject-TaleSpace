@@ -48,24 +48,26 @@ const Navbar = ({
   ];
 
   useEffect(() => {
-    // Fetch user profile when component mounts
-    const fetchUserProfile = () => {
-      api
-        .get("/api/user/profile/")
-        .then((res) => {
-          setFirstName(res.data.first_name);
-        })
-        .catch((err) => console.error("Error fetching user profile", err));
-    };
-
     fetchUserProfile();
   }, []);
 
+  //fetch users first name
+  const fetchUserProfile = () => {
+    api
+      .get("/api/user/profile/")
+      .then((res) => {
+        setFirstName(res.data.first_name);
+      })
+      .catch((err) => console.error("Error fetching user profile", err));
+  };
+
+  //clear tokens and logout
   const handleLogout = () => {
     localStorage.clear();
     navigate("/login");
   };
 
+  //search function and direct to search page
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
@@ -75,12 +77,13 @@ const Navbar = ({
 
   return (
     <nav className={`navbar navbar--${variant}`}>
+      {/* logo */}
       <Link to="/" className="navbar__logo">
         <img src={logo} alt="TaleSpace Logo" />
         <span>TaleSpace</span>
       </Link>
 
-      {/* Genre Dropdown remains unchanged */}
+      {/* genre dropdown*/}
       <div
         className="navbar__genre-dropdown"
         onMouseEnter={() => setIsGenreDropdownOpen(true)}
@@ -89,7 +92,6 @@ const Navbar = ({
         <button className="navbar__genre-button">
           Browse <span>▼</span>
         </button>
-
         {isGenreDropdownOpen && (
           <div className="navbar__genre-menu">
             {genres.map((genre) => (
@@ -106,6 +108,7 @@ const Navbar = ({
         )}
       </div>
 
+      {/* search bar */}
       {showSearch && (
         <form onSubmit={handleSearch} className="navbar__search-container">
           <div className="navbar__search-wrapper">
@@ -123,7 +126,7 @@ const Navbar = ({
         </form>
       )}
 
-      {/* Rest of the navbar remains unchanged */}
+      {/* creat book button and profile drop down options*/}
       <div className="navbar__links">
         {showWriteButton && (
           <Link to="/create-book" className="navbar__button">

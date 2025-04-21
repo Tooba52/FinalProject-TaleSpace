@@ -2,23 +2,22 @@ import React from "react";
 import "../styles/Books.css";
 import defaultCover from "../images/defaultCoverPhoto.jpeg";
 
-
-// Displays a single book card with its cover and title
+// displays for a single book card
 const Book = ({ book }) => {
-  // Returns the image URL for the book cover
+  // returns the image URL for cover
   const getCoverImage = () => {
-    // if provided
     if (book.cover_url) {
       if (book.cover_url.startsWith("/")) {
         return `http://127.0.0.1:8000${book.cover_url}`;
       }
       return book.cover_url;
     }
-    // Fallback to default
+    // fallback to default cover
     return defaultCover;
   };
 
   return (
+    //book photo
     <div className="book-card">
       <div className="cover-container">
         <img
@@ -31,6 +30,7 @@ const Book = ({ book }) => {
           }}
         />
       </div>
+      {/* book title */}
       <p className="book-title">{book.title}</p>
     </div>
   );

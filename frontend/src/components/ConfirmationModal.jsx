@@ -1,16 +1,17 @@
 import "../styles/ConfirmationModal.css";
 import React from "react";
 
-// Reusable confirmation modal with customisable text and actions
+// confirmation modal
 const ConfirmationModal = ({
-  isOpen, // Controls visibility
-  onConfirm, // Callback for confirmation
-  onCancel, // Callback for cancellation
-  title, // Optional modal title
-  confirmText = "Confirm", // Button text (default: Confirm)
-  children, // Custom message or content inside modal
+  isOpen, 
+  onConfirm, 
+  onCancel, 
+  title, 
+  confirmText = "Confirm", 
+  children,
 }) => {
-  // If modal is not open, render nothing
+
+  // if modal isn't open, show nothing
   if (!isOpen) return null;
 
   return (

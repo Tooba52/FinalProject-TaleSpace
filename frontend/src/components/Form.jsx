@@ -1,3 +1,9 @@
+// Code resued from: 
+// Author: Tech With Tim
+// Video Title: Django & React Web App Tutorial - Authentication, Databases, Deployment & More...
+// Video Link:  https://www.youtube.com/watch?v=c-QsfbznSXI 
+// Code reused Lines - 7-156, changes made include ??
+
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../api";
@@ -8,9 +14,8 @@ import { validatePassword } from "./utils";
 import PasswordField from "./PasswordField";
 import FormFields from "./FormFields";
 
-// Form component for login or registration
+// form for login or registration
 const Form = ({ route, method }) => {
-  // Form state
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -21,26 +26,26 @@ const Form = ({ route, method }) => {
   const [isPasswordStarted, setIsPasswordStarted] = useState(false);
   const navigate = useNavigate();
 
-  // Determine form title based on method (login or register)
+  // determine form based on method (login or register)
   const name = method === "login" ? "Login" : "Register";
   const formTitle =
     method === "login" ? "Welcome Back!" : "Welcome To TaleSpace!";
 
-  // Handle form submission
+  // handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true); // Start loading immediately when the form is submitted
+    setLoading(true);
 
-    // Password validation check using the imported utility function
+    // password validation check
     if (!validatePassword(password)) {
-      setLoading(false); // Stop loading if password is invalid
+      setLoading(false);
       alert(
         "Password must be at least 8 characters long and include uppercase, lowercase, a number, and a special character."
       );
       return;
     }
 
-    // Create the payload based on the method (login or register)
+    // create payload based on method (login or register)
     const payload =
       method === "login"
         ? { email, password }
@@ -53,33 +58,36 @@ const Form = ({ route, method }) => {
           };
 
     try {
-      // Start the API request
+      // start API request
       const res = await api.post(route, payload);
-
-      // Stop loading when API request finishes
       setLoading(false);
 
       if (method === "login") {
-        // If login is successful, store tokens
+        // iif login is successful, store tokens
         localStorage.setItem(ACCESS_TOKEN, res.data.access);
         localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
-        navigate("/"); // Redirect to the home page after login
+        navigate("/"); // redirect to the home page
       } else {
-        navigate("/login"); // Redirect to the login page after successful registration
+        navigate("/login"); // redirect to the login page after registration
       }
     } catch (error) {
-      setLoading(false); // Stop loading after API call ends (error or success)
+      setLoading(false); // stop loading after API call ends (error or success)
 
+      // error handeling
       if (error.response) {
         const errorData = error.response.data;
 
         if (error.response.status === 401) {
           alert("Incorrect email or password.");
-        } else if (
-          errorData.email &&
-          errorData.email[0] === "Account with this email does not exist."
-        ) {
-          alert("Account does not exist.");
+        } else if (errorData.email) {
+          const emailError = errorData.email[0];
+          if (emailError === "Account with this email does not exist.") {
+            alert("Account does not exist.");
+          } else if (emailError === "user with this email already exists.") {
+            alert("An account with this email already exists.");
+          } else {
+            alert(emailError);
+          }
         } else if (errorData.detail) {
           alert(errorData.detail);
         } else {
@@ -95,7 +103,7 @@ const Form = ({ route, method }) => {
     <div className="loginform-layout">
       <form onSubmit={handleSubmit} className="loginform-container">
         <h1>{formTitle}</h1>
-        {/* Registration fields (only shown for register) */}
+        {/* registration fields (only shown for register) */}
         <FormFields
           method={method}
           firstName={firstName}
@@ -105,7 +113,7 @@ const Form = ({ route, method }) => {
           dateOfBirth={dateOfBirth}
           setDateOfBirth={setDateOfBirth}
         />
-        {/* Email field */}
+        {/* email field */}
         <label htmlFor="email" className="loginform-label">
           Email
         </label>
@@ -116,7 +124,7 @@ const Form = ({ route, method }) => {
           onChange={(e) => setEmail(e.target.value)}
           placeholder=""
         />
-        {/* Password field */}
+        {/* password field */}
         <PasswordField
           showPassword={showPassword}
           setShowPassword={setShowPassword}
@@ -124,18 +132,12 @@ const Form = ({ route, method }) => {
           setPassword={setPassword}
           setIsPasswordStarted={setIsPasswordStarted}
         />
-        {/* Login options */}
-        {method === "login" && (
-          <div className="forgot-password">
-            <Link to="/forgot-password">Forgot password?</Link>
-          </div>
-        )}
-        {/* Submit button */}
+        {/* submit button */}
         <button className="loginform-button" type="submit">
           {name}
         </button>
         {loading && <LoadingIndicator />}
-        {/* Form footer links */}
+        {/* form footer links */}
         {method === "login" && (
           <p className="login-links">
             Don't have an account? <Link to="/register">Sign up now</Link>

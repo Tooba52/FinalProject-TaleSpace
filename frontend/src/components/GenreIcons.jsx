@@ -28,6 +28,7 @@ import Supernatural from "../images/supernatural.png";
 import Thriller from "../images/thriller.png";
 import "../styles/GenreIcons.css";
 
+//assigning image to genre
 const genreImages = {
   Action: Action,
   Adventure: Adventure,
@@ -63,6 +64,7 @@ const GenreIcon = ({ genre, onClick }) => {
 
   return (
     <div className="genre-container">
+      {/* genre image */}
       <div className={`genre-card`} onClick={onClick}>
         <div className="genre-icon-container">
           {imageSrc ? (
@@ -72,6 +74,7 @@ const GenreIcon = ({ genre, onClick }) => {
           )}
         </div>
       </div>
+      {/* genre name */}
       <p className="genre-name">{genre}</p>
     </div>
   );

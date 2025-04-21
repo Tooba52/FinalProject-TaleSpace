@@ -10,6 +10,7 @@ function About() {
     fetchCurrentUser();
   }, []);
 
+  // get current user info 
   const fetchCurrentUser = async () => {
     try {
       const response = await api.get("/api/auth/user/");
@@ -23,10 +24,11 @@ function About() {
     <div className="about-page">
       <Navbar />
       <div className="about-container">
+        {/* main banner section */}
         <div className="banner">
           <h2>About TaleSpace</h2>
           <p>
-            TaleSpace is more than just a writing platform – it’s a space where
+            TaleSpace is more than just a writing platform – it's a space where
             imagination, expression, and community come together. Whether you're
             an aspiring author or an enthusiastic reader, TaleSpace offers you a
             welcoming, creative environment to explore and grow.
@@ -34,7 +36,9 @@ function About() {
         </div>
       </div>
 
+      {/* content sections container */}
       <div className="book-container">
+        {/* mission section */}
         <section className="about-section">
           <h3>Our Mission</h3>
           <p>
@@ -45,6 +49,7 @@ function About() {
           </p>
         </section>
 
+        {/* features section */}
         <section className="about-section">
           <h3>Why TaleSpace?</h3>
           <ul>
@@ -58,15 +63,17 @@ function About() {
           </ul>
         </section>
 
+        {/* join us section */}
         <section className="about-section">
           <h3>Join the Journey</h3>
           <p>
             Whether you're here to write your first novel or binge-read fantasy
-            adventures, TaleSpace welcomes you. We’re constantly evolving — and
-            you’re part of the story.
+            adventures, TaleSpace welcomes you. We're constantly evolving — and
+            you're part of the story.
           </p>
         </section>
 
+        {/* copyright section */}
         <section className="about-section">
           <h3>Copyright & Intellectual Property</h3>
           <p>

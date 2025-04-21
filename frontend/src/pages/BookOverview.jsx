@@ -5,7 +5,6 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import Book from "../components/books";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
-import { FaExclamationTriangle } from "react-icons/fa";
 import { FaTrash } from "react-icons/fa";
 import "../styles/BookOverview.css";
 
@@ -29,6 +28,7 @@ function BookOverview() {
     checkIfFavourite();
   }, [book_id]);
 
+  // get current user's profile data
   const fetchUserProfile = () => {
     api
       .get("/api/user/profile/")
@@ -41,26 +41,13 @@ function BookOverview() {
       .catch((err) => console.error("Error fetching user profile", err));
   };
 
+  // get book details
   const fetchBookDetails = () => {
     setIsLoading(true);
     api
       .get(`/api/books/${book_id}/`)
       .then((res) => {
         const bookData = res.data;
-
-        // If author info is missing, try to fetch it separately
-        if (!bookData.author_id && !bookData.author) {
-          return api
-            .get(`/api/books/${book_id}/author/`)
-            .then((authorRes) => {
-              return {
-                ...bookData,
-                author_id: authorRes.data.user_id,
-                author_name: authorRes.data.name,
-              };
-            })
-            .catch(() => bookData); // Fallback if author fetch fails
-        }
         return bookData;
       })
       .then((finalBookData) => {
@@ -75,6 +62,7 @@ function BookOverview() {
       .finally(() => setIsLoading(false));
   };
 
+  // check if book is in user's favorites
   const checkIfFavourite = () => {
     api
       .get(`/api/books/${book_id}/is_favourite/`)
@@ -84,10 +72,12 @@ function BookOverview() {
       .catch((err) => console.error("Error checking favourite status", err));
   };
 
+  // navigate to author's profile
   const handleAuthorClick = () => {
     navigate(`/userprofile/${book.author}`);
   };
 
+  // fetch comments for this book
   const fetchComments = () => {
     api
       .get(`/api/books/${book_id}/comments/`)
@@ -97,6 +87,7 @@ function BookOverview() {
       .catch((err) => console.error("Error fetching comments", err));
   };
 
+  // add new comment
   const handleAddComment = () => {
     if (newComment.trim() === "") return;
     const payload = {
@@ -115,6 +106,7 @@ function BookOverview() {
       });
   };
 
+  // delete a comment
   const handleDeleteComment = (commentId) => {
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this comment?"
@@ -132,6 +124,7 @@ function BookOverview() {
       });
   };
 
+  // toggle favourite status
   const toggleFavourite = () => {
     if (isFavourite) {
       api
@@ -150,10 +143,12 @@ function BookOverview() {
     }
   };
 
+  // start reading first chapter
   const startReading = () => {
     navigate(`/read/${book_id}/chapters/1`);
   };
 
+  // sort comments by date
   const sortedComments = comments.sort((a, b) => {
     if (sortOrder === "newest") {
       return new Date(b.comment_created_at) - new Date(a.comment_created_at);
@@ -169,9 +164,12 @@ function BookOverview() {
     <div className="overview">
       <Navbar />
       <div className="overview-container">
+        {/* book cover and basic info */}
         <div className="book-card-view">
           <Book book={book} />
         </div>
+
+        {/* book details section */}
         <div className="overview-content">
           <div className="overview-header">
             <div className="title-container">
@@ -183,84 +181,96 @@ function BookOverview() {
                 isFavourite ? "active" : ""
               }`}
               aria-label={
-                isFavourite ? "Remove from favourites" : "Add to favourites"
+                isFavourite ? "remove from favorites" : "add to favorites"
               }
             >
               {isFavourite ? <FaHeart /> : <FaRegHeart />}
             </button>
           </div>
+
+          {/* author info */}
           <div className="overview-author">
-            By{" "}
+            by{" "}
             <span
               className="author-link"
               onClick={handleAuthorClick}
               style={{ cursor: "pointer", textDecoration: "underline" }}
             >
-              {book.author_name || "Unknown Author"}
+              {book.author_name || "unknown author"}
             </span>
           </div>
+
+          {/* book data */}
           <div className="overview-meta">
             <div>
-              <strong>Genres:</strong> {book.genres.join(", ")}
+              <strong>genres:</strong> {book.genres.join(", ")}
             </div>
             {book.mature && (
               <div className="mature-status">
-                <span className="mature-badge">Mature</span>
+                <span className="mature-badge">mature</span>
               </div>
             )}
           </div>
+
+          {/* book description */}
           <div className="overview-description">
-            <h3>Description</h3>
+            <h3>description</h3>
             <p>{book.description}</p>
           </div>
+
+          {/* action buttons */}
           <div className="overview-action-buttons">
             <button
               onClick={startReading}
               className="overview-start-reading-btn"
             >
-              Start Reading
+              start reading
             </button>
           </div>
         </div>
       </div>
 
+      {/* comments section */}
       <div className="comments-section">
-        <h3>Comments</h3>
+        <h3>comments</h3>
         <div className="sort-buttons">
           <button
             onClick={() => setSortOrder("newest")}
             className={sortOrder === "newest" ? "active" : ""}
           >
-            Newest
+            newest
           </button>
           <button
             onClick={() => setSortOrder("oldest")}
             className={sortOrder === "oldest" ? "active" : ""}
           >
-            Oldest
+            oldest
           </button>
         </div>
 
+        {/* add new comment */}
         <div className="add-comment">
           <textarea
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
-            placeholder="Write a comment..."
+            placeholder="write a comment..."
           ></textarea>
           <button onClick={handleAddComment} className="add-comment-btn">
-            Add Comment
+            add comment
           </button>
         </div>
 
+        {/* comments list */}
         <div className="comments-list">
           {sortedComments.length > 0 ? (
             sortedComments.map((comment) => (
               <div key={comment.comment_id} className="comment-item">
+                {/* show delete button for user's own comments */}
                 {comment.comment_user === userId && (
                   <button
                     onClick={() => handleDeleteComment(comment.comment_id)}
                     className="delete-comment-btn"
-                    aria-label="Delete Comment"
+                    aria-label="delete comment"
                   >
                     <FaTrash />
                   </button>
@@ -277,7 +287,7 @@ function BookOverview() {
               </div>
             ))
           ) : (
-            <p>No comments yet. Be the first to comment!</p>
+            <p>no comments yet. be the first to comment!</p>
           )}
         </div>
       </div>

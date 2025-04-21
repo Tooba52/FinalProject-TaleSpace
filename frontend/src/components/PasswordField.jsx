@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
-// PasswordField component
+// passwordField component
 const PasswordField = ({
   showPassword,
   setShowPassword,
@@ -10,11 +10,11 @@ const PasswordField = ({
   setIsPasswordStarted,
 }) => (
   <div className="password-container">
-    {/* Label for the password input field */}
+    {/* label for password input field */}
     <label htmlFor="password" className="loginform-label">
       Password
     </label>
-    {/* Password input field */}
+    {/* password input field */}
     <input
       className="loginform-input"
       type={showPassword ? "text" : "password"}
@@ -24,12 +24,12 @@ const PasswordField = ({
         setIsPasswordStarted(true);
       }}
     />
-    {/* Password visibility toggle button */}
+    {/* password visibility toggle button */}
     <span
       className="password-toggle"
       onClick={() => setShowPassword(!showPassword)}
     >
-      {/* Display the appropriate icon*/}
+      {/* display correct icon*/}
       <FontAwesomeIcon icon={showPassword ? faEye : faEyeSlash} />
     </span>
   </div>
